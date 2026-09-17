@@ -14,6 +14,19 @@ DeepSeek harness / Codex、豆包、Freebuff / Codebuff、Cursor 等，
 > 从一张 7 屏 Apple Watch 参考图 + 一句话需求，到 74 张资产、88 个文件的完整工程、
 > 再到反渲染逐屏对照——**全程截图**，每步都附 validator 的真实输出。
 
+**本指南导航**
+
+| 我想…… | 看这里 |
+|---|---|
+| 搞清这东西到底能干什么 | [1. 这个技能做什么](#1-这个技能做什么) · [实战走查](#8-实战走查一张参考图--一个能打开的工程) |
+| 开始用 | [2. 前置条件](#2-前置条件) → [3. 两种用法](#3-两种用法) |
+| 知道流程分几步 | [4. 五个阶段](#4-五个阶段) |
+| 直接下指令 | [5. 常见任务 → 这样说就行](#5-常见任务--这样说就行) |
+| 敲命令 | [命令速查](#命令速查新项目) |
+| 接到我的 agent 上 | [接入 agent 工具](#接入-agent-工具)（A–F 六家） |
+| 换个屏幕尺寸/形状 | [移植到新面板尺寸/形状](#移植到新面板尺寸形状) |
+| 出问题 | [7. 出问题先跑什么](#7-出问题先跑什么) · [自检](#自检改完包之后跑这个) |
+
 ---
 
 ## 使用方法
@@ -73,7 +86,9 @@ agent：1. 先写 examples/<Name>/<Name>设计规格文档.md（源真相），�
 | **Stage A**<br>资产 | `generate_assets*.mjs` 用 resvg 把 Lucide 图标 / 自绘 SVG 渲成 PNG（2 px ≈ 1 dp） | `assets/images_*/` | 读 PNG 头核对真实尺寸；与 mockup 引用比对 missing / unused |
 | **Stage B**<br>Mockup | 出静态网格 `mockup.html` + 交互态版；`inline_mockup.mjs` 压成单文件 | `mockup.html` / `*_standalone.html` | 未缩放重叠审计（用 `offsetTop+offsetHeight`，别用 rect） |
 | **Stage C**<br>编译工程 | 常规屏走 spec JSON → `build_from_spec.py`；径向布局等定制几何 → `tools/screens/<name>.py` | `squareline/<Name>/` 完整工程 | `validate_squareline_project.py` + `preview_from_project.py` |
-| **回归 / 发布** | 重建归档工程逐字节比对；发布前体检与打包 | 全绿报告 / `dist/*.zip` | `eval/run_regression.py`、`tools/preflight.py --full` |
+
+> 上面四步就是**全部流程**。只在你要改引擎本身时才需要额外跑回归套件
+> （见「自检」一节）。日常从参考图做工程，跑完 Stage C 拿到 `OK` 就结束了。
 
 > **为什么一定要先有 Stage 0**：规格文档是唯一的「源真相」。而且引擎构建时会
 > **收录文档里出现的每一个字符**进字体子集——所以想改文案，必须先把新词写进 §6.1，
@@ -112,9 +127,10 @@ examples/<Name>/
 ```bash
 python tools/validate_squareline_project.py <工程>   # 工程本身有没有问题
 python tools/preview_from_project.py <工程>          # 不开编辑器看效果
-python eval/run_regression.py                        # 改过 tools/engine/ 之后必跑
-python tools/preflight.py                            # 包是否还健康（秒级）
 ```
+
+这两条就能定位绝大多数问题：**validator 管「工程有没有问题」，
+反渲染管「长得对不对」**。改过技能包本身才需要跑回归套件（见「自检」一节）。
 
 ### 8. 实战走查：一张参考图 → 一个能打开的工程
 
@@ -252,7 +268,7 @@ squareline-design-skills/
 │   ├── screens/*.py                 # 内容层：定制几何的屏幕定义（AIWatch / AIWatchApple）
 │   ├── lib/resvg.mjs                # SVG→PNG 统一入口（原生绑定 + WASM 兜底）
 │   ├── schema_snapshot.json         # 官方 strtype 快照（无本地 Studio 也能校验）
-│   └── ...                          # 构建/校验/预览/打包/preflight 脚本
+│   └── ...                          # 构建/校验/预览等脚本（发布与打包见 tools/RELEASE.md）
 ├── fonts/                # 源字体（Noto Sans SC 400/500/700 TTF，供子集化）
 ├── eval/                 # 回归套件：重建每个归档工程并逐字节比对标准答案
 ├── examples/
@@ -287,11 +303,12 @@ squareline-design-skills/
 | `preview_from_project.py` | .spj → HTML 反渲染预览（工程无关，自动识别尺寸/形状） | python |
 | `sq_catalog.py` | 从官方 examples 提取 schema 快照 | python |
 | `schema_snapshot.json` | 固化后的官方 strtype 快照（校验器的对照源） | 数据 |
-| `preflight.py` | 发布前检查清单（`--full` 含回归套件） | python + node |
-| `package_release.py` | 打包 dist/*.zip，强制 UTF-8 文件名 | python |
 | `vendor_prepare.py` | 侧载各平台 resvg 绑定 / prune lucide-static | python |
 | `probe_headless_render.py` | **可选**深校验：用 LVGL 真渲染一帧 | python + lvgl |
 | `crop_zoom.py` / `grab_window.py` | 截图裁剪/窗口抓取辅助 | python + Pillow |
+
+> `tools/` 里还有几个**维护者工具**（发布体检、打包、回归套件），日常使用不需要碰。
+> 改引擎或要把本技能包发布出去时，见 **[tools/RELEASE.md](tools/RELEASE.md)**。
 
 ## 命令速查（新项目）
 
@@ -313,14 +330,13 @@ python tools/build_from_spec.py  --example     # 打印带注释的 spec 骨架
 # 3) 验证 + 反渲染预览（工程无关，可传任意 squareline/<Name>）
 python tools/validate_squareline_project.py examples/<Name>/squareline/<Name>
 python tools/preview_from_project.py        examples/<Name>/squareline/<Name>
-
-# 4) 改动之后先跑回归，再动手提交
-python eval/run_regression.py       # 重建全部归档工程，与标准答案逐字节比对
-python tools/preflight.py --full    # 发布前检查清单
 ```
 
 验收标准：validator 输出 `OK - project validated, no problems found`；
 预览逐屏与 mockup 一致；SquareLine Studio 1.6.2 打开 .spj 无报错。
+
+> **到这儿就完了。** 接下来只需要用 SquareLine Studio 打开 `.spj` 开始用，
+> 或让 agent 继续加屏幕。只有**改技能包本身**时才需要碰回归套件（见「自检」）。
 
 ## 接入 agent 工具
 
@@ -433,10 +449,9 @@ cp -r squareline-design-skills/tools squareline-design-skills/fonts \
       .workbuddy/skills/squareline-ui-pipeline/
 ```
 
-⚠️ **`.workbuddy/` 既是技能目录也是工作记忆目录**。本技能包自己的 `.gitignore`、
-`.workbuddy/.gitignore` 和打包器白名单（`SHIP_TOP`）三重的就是**这个包自己的工作记忆**，
-不是你要拷进去的 `.workbuddy/skills/`。在**目标项目**里，`.workbuddy/skills/` 应该提交；
-在**本技能包仓库**里，`.workbuddy/` 整个不提交。两个语义不要混。
+⚠️ **`.workbuddy/` 既是技能目录也是工作记忆目录**。在本技能包仓库里，`.workbuddy/`
+是这个包自己的工作记忆（`.workbuddy/memory/*.md`），**不提交**；而在**你的目标项目**里，
+`.workbuddy/skills/` 应该提交。两个语义不要混。
 
 **B-3 触发方式**
 
@@ -616,37 +631,24 @@ cp AGENTS.md .cursorrules        # 或建 .cursor/rules/squareline.mdc
 4. 资产包：描述符里写 `"assets": "examples/<Name>/assets"`（仓库相对），
    裸命令即可重建；否则用 `--assets <dir>` 或 `SQUARELINE_ASSETS`。
 
-## 包自检
+## 自检：改完包之后跑这个
 
 ```bash
-python tools/preflight.py            # 廉价检查（秒级）：渲染后端 / 跨平台绑定 /
-                                     # schema 快照 / 无个人路径 / 全树换行符 /
-                                     # 打包器允许清单 / zip 编码与内容 /
-                                     # README 文档与工具表一致性 / 无悬空引用
-python tools/preflight.py --full     # 追加 eval/run_regression.py
-python eval/run_regression.py        # 重建 3 个归档工程 + 6 个 Stage A 用例，
-                                     # 逐字节比对 + 校验 + 预览（用例说明见 eval/test_cases.md）
-python eval/run_regression.py --update   # 故意改动后刷新标准答案（先看 diff 再刷）
+python tools/preflight.py     # 秒级体检：渲染后端 / 跨平台绑定 / schema 快照 /
+                              # 文档与工具表一致性 / 悬空引用 / 全树换行符
+python tools/preflight.py --full         # 追加下面的回归套件
+python eval/run_regression.py            # 重建 3 个归档工程 + 6 个 Stage A 用例，
+                                         # 逐字节比对 + 校验 + 预览
 ```
 
-当前状态（本机实测）：`preflight.py` **16 项检查：15 通过 / 0 失败 / 1 提示**。
+改过 `tools/engine/` 或任一 `tools/screens/*.py` 之后**必须跑**第二步——
+它会断言三个归档工程与标准答案**逐字节一致**，是「没有改坏」的唯一硬证据。
 
-当前状态（本机实测）：
+当前状态（本机实测）：`preflight.py` **16 项：15 通过 / 0 失败 / 1 提示**；
+`eval/run_regression.py` **18 项全绿**。
 
-```
-Stage A: AIWatchApple assets (native)         74 PNG 与标准答案逐字节一致
-Stage A: AIWatchApple assets (wasm fallback)  74 PNG 与标准答案逐字节一致
-Stage A: AIWatch assets (native)              71 PNG 与标准答案逐字节一致
-Stage C: AIWatchApple / AIWatch / SpecWidget  工程树逐字节一致
-Stage D: 三个工程 validate + preview 全通过
-```
-
-**归档产物不绑定宿主平台。** 引擎写文件一律固定 LF（`engine.dump_json`），
-标准答案（`examples/**/squareline/`）因此是纯 LF。`preflight.py` 会扫描归档工程里
-残留的 CRLF，`eval/run_regression.py` 也会把"仅换行符不同"单独标出来——历史上正是
-这个差异让三个比对在 Linux 上**开箱必红**：标准答案是在 Windows 上落盘的，Python
-的 `open(..., "w")` 会把 `\n` 翻成 CRLF，而 Linux 重建产出 LF。`.gitattributes` 的
-`* text=auto eol=lf` 从 git 层再兜一层，防 `core.autocrlf=true` 在检出时改回去。
+> 想扩一个新面板尺寸、或想动引擎内部（换行符契约、打包与发布流程、
+> 四条改动纪律），见 **[tools/RELEASE.md](tools/RELEASE.md)**——那是维护者文档。
 
 ## 离线 / 容器环境
 
@@ -664,28 +666,4 @@ Stage D: 三个工程 validate + preview 全通过
 - `probe_headless_render.py` 是可选深校验，需要本机有 lvgl 树；**不在主流程里**，
   环境不具备时跳过即可。
 - `.workbuddy/` 是本项目的工作记忆（给 agent 用，`.workbuddy/memory/*.md`），
-  **不是**交付内容。`.gitignore`、`.workbuddy/.gitignore` 与打包器的顶层白名单
-  三重排除它。
-
-## 发布：只发 `dist/squareline-design-skills.zip` 这一个文件
-
-```bash
-python tools/preflight.py --full        # 必须全绿
-python tools/package_release.py         # 产出 dist/squareline-design-skills.zip 并自查
-```
-
-交付时只给这一个文件。这条规则是有代价换来的：曾经有一次交付是把**整个工作目录**
-直接压缩，包里因此带上了 `.workbuddy/`（agent 工作笔记，含本机绝对路径）、一个
-61 MB 的 `dist/*.zip`（自己套自己）、以及评审用的建议文档；又因为用的是资源管理器
-"压缩文件夹"，中文文件名全部退化成 GBK 乱码——**把已经修好的编码问题原样复现了一遍，
-而真正修好的那个包就混在它里面**。
-
-现在有三道防线，任何一道都能独立拦住这类事故：
-
-| 防线 | 位置 | 挡住什么 |
-| --- | --- | --- |
-| **顶层白名单** | `package_release.py` → `SHIP_TOP` | 根目录只发白名单条目，其余不打包**并把清单打印出来**。用白名单而非黑名单，是因为"新冒出来的临时目录"永远不会被漏掉——黑名单只能挡住作者记得写的那些 |
-| **归档内容断言** | `preflight.py: check_zip_contents` | 包里出现 `dist/`、`.workbuddy/`、`__pycache__`、嵌套 `*.zip`、或整包带 `squareline-design-skills/` 前缀（= 压了整个目录）即判定失败 |
-| **交付物点名 + 外部告警** | `preflight.py: check_deliverable` | 明确打印唯一交付物；若仓库旁边躺着"目录形状"的 zip，直接列出来并标注其中的泄漏路径 |
-
-**永远不要**手动压缩整个 `squareline-design-skills/` 目录当交付物。
+  **不是**交付内容，已在 `.gitignore` 里排除。

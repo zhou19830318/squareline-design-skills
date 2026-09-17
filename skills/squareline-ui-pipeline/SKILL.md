@@ -386,4 +386,14 @@ GBK 乱码**——而真正修好的那个包就躺在它里面没被发出去�
     is hand-maintained and never imported, so it is the first thing to rot.
     `check_doc_scripts_linked` cross-checks every `` `x.py` ``/`` `x.mjs` ``
     the README names against the actual files.
+27. **One doc cannot serve two readers.** README is a *user* guide — someone
+    who only wants a project built should never have to read about archive
+    allowlists and byte assertions. Release/packaging mechanics live in
+    `tools/RELEASE.md`; `preflight.py: check_docs` asserts the split holds
+    **in both directions** (README must not name `SHIP_TOP` /
+    `package_release.py` / `dist/*.zip`, and RELEASE.md must document all
+    three). Without a guard the two audiences re-merge on the next edit.
+    When you split docs, also check the destination actually *ships* — a
+    `docs/` top-level dir is not in `SHIP_TOP`, so a maintainer doc written
+    there would vanish from the archive.
 

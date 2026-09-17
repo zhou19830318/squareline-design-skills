@@ -603,6 +603,25 @@ def check_docs():
             if section not in rm:
                 problems.append("README is missing the '%s' section" % section)
 
+        # README is a USER guide.  Release/packaging mechanics belong in the
+        # maintainer doc, because a reader who only wants to build a project
+        # should never have to wade through allowlists and archive assertions.
+        # Guard the split in both directions so it cannot silently regress.
+        release_doc = os.path.join(ROOT, "tools", "RELEASE.md")
+        drifted = [t for t in ("SHIP_TOP", "package_release.py", "dist/*.zip")
+                   if t in rm]
+        if drifted:
+            problems.append("README carries release mechanics (%s) — move them "
+                            "to tools/RELEASE.md" % ", ".join(drifted))
+        if not os.path.exists(release_doc):
+            problems.append("tools/RELEASE.md missing — the release mechanics "
+                            "that were removed from README have no home")
+        else:
+            rl = open(release_doc, encoding="utf-8").read()
+            for t in ("SHIP_TOP", "package_release.py", "dist/*.zip"):
+                if t not in rl:
+                    problems.append("tools/RELEASE.md does not document %s" % t)
+
     return record("docs: template + per-agent integration documented",
                   not problems, "\n".join(problems) if problems else
                   "SKILL.md + template + README (5 hosts) OK (REFERENCE.md: %s)"
