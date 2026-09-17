@@ -6,6 +6,10 @@
 DeepSeek harness / Codex、豆包、Freebuff / Codebuff、Cursor 等，
 各家的接入方式见「[接入 agent 工具](#接入-agent-工具)」。
 
+> ⭐ **推荐用 [Freebuff](https://freebuff.com/?ref=ref-046c65ee-f8d6-4d68-87cd-324439d48da1) 跑**
+> ——每天有免费额度，**不消耗你自己的 token**；它也是本技能包两个实战工程的原始宿主。
+> **模型选 `GLM-5.3-flash`**。接入步骤见 [E 节](#e-freebuff--codebuff--首推)。
+
 ---
 
 ## 使用方法
@@ -35,6 +39,10 @@ SquareLine Studio 打开、且编辑器不报错**的完整工程。
 把整个 `squareline-design-skills/` 拷进你的项目，按下文「接入 agent 工具」配置一次。
 之后用自然语言下指令即可——SKILL.md 的 front-matter 已声明触发词，agent 会自己按
 Stage 0 → A → B → C 走完，并在每个阶段跑对应的机械校验。
+
+> **还没选好 agent？直接上 Freebuff**：<https://freebuff.com/?ref=ref-046c65ee-f8d6-4d68-87cd-324439d48da1>
+> 每天有免费额度、**不费你的 token**，模型选 **`GLM-5.3-flash`**。
+> 详见 [E. Freebuff / Codebuff ⭐ 首推](#e-freebuff--codebuff--首推)。
 
 ```
 用户：这是手表首页的参考图 [图]，做一个 SquareLine 工程，240×240 圆形屏。
@@ -196,16 +204,19 @@ python tools/preflight.py --full    # 发布前检查清单
 
 | Agent | 加载方式 | 一句话配置 |
 |---|---|---|
+| **⭐ Freebuff / Codebuff**<br>**[免费额度，首推](https://freebuff.com/?ref=ref-046c65ee-f8d6-4d68-87cd-324439d48da1)** | `.codebuff/skills/` 自动发现 | 拷贝目录即可，靠 front-matter 触发；**模型选 `GLM-5.3-flash`**（见 E） |
 | **Claude Code** | `CLAUDE.md` + 目录内自动发现 | 根目录放 `CLAUDE.md` 指路（见 A），或把技能目录拷进 `.claude/skills/` |
 | **WorkBuddy** | `~/.workbuddy/skills/` 或项目 `.workbuddy/skills/` | 把 `squareline-ui-pipeline` 整个拷进去，front-matter 触发词自动生效（见 B） |
 | **DeepSeek harness / Codex / Cline / Roo** | `AGENTS.md` / 自定义 system prompt | `AGENTS.md` 一段指路（见 C），无技能自动加载机制 |
 | **豆包 / 通用对话式 agent** | 系统提示词 | 把 SKILL.md 全文粘进「角色设定」，或上传为知识库文件（见 D） |
-| **Freebuff / Codebuff** | `.codebuff/skills/` 自动发现 | 拷贝目录即可，靠 front-matter 触发（见 E） |
 | **Cursor / Windsurf / 通义灵码 等** | `.cursorrules` / 规则文件 | 规则文件里指路（见 F） |
 
 > **通用原则**：不管哪家，**只需要保证 agent 能读到 `skills/squareline-ui-pipeline/SKILL.md`
 > 并且 `tools/`、`fonts/`、`templates/` 在仓库里同构存在**。SKILL.md 里的命令全部是
 > 仓库相对路径（`python tools/...`），所以拷贝后零改动即可跑。
+>
+> **选哪家**：只是想跑通这条流水线，用 **Freebuff（免费额度，不费自己的 token）**；
+> 已有自己的 API 额度、或要深度改造引擎，再用 Claude Code / Codex 这类自带额度的 CLI。
 
 ### 能力分级：你的 agent 属于哪一档
 
@@ -404,9 +415,25 @@ WorkBuddy：先写设计规格文档 → 与你确认 → 生成资产 → 出 m
 - 它有可能「幻觉」出并不存在的 LVGL API 或 `.spj` 字段。**所有技术判断以 REFERENCE.md 为准**，
   它的输出只当文案和几何草案。
 
-### E. Freebuff / Codebuff
+### E. Freebuff / Codebuff ⭐ 首推
 
-这是本技能包的**原始宿主**——两个实战工程（AIWatch / AIWatchApple）都是在它上面跑出来的。
+> **本技能包默认推荐用 Freebuff**：每天有免费额度，**不消耗你自己的 token**，而且它正是
+> 两个实战工程（AIWatch / AIWatchApple）实际跑出来的宿主——兼容性最好、坑最少。
+>
+> **入口**：<https://freebuff.com/?ref=ref-046c65ee-f8d6-4d68-87cd-324439d48da1>
+> **模型选**：`GLM-5.3-flash` ← 按本项目实测，这个模型在「读 SKILL.md 后按阶段执行 +
+> 反复跑校验命令」这类多轮工具调用上最稳，也最省额度。
+
+**为什么它在本文档里排第一**
+
+| | Freebuff ⭐ | 自带 API 的 CLI（Claude Code / Codex 等） |
+|---|---|---|
+| 费用 | **每日免费额度** | 按你的 token 计费 |
+| 本技能包验证度 | **两个实战工程均由它产出** | 未在本项目实测 |
+| 技能加载 | `.codebuff/skills/` 原生发现 | 需靠 `AGENTS.md` / `CLAUDE.md` 指路 |
+| 适合 | 从零跑完整流水线 | 已有额度、想深度改造引擎 |
+
+**接入**
 
 ```bash
 mkdir -p .codebuff/skills
@@ -417,6 +444,14 @@ cp -r squareline-design-skills/tools squareline-design-skills/fonts \
 ```
 
 SKILL.md 的 front-matter 已含触发词，agent 会按 SKILL.md 的阶段流程走。
+
+**上手第一句可以这样说**
+
+```
+读 skills/squareline-ui-pipeline/SKILL.md，严格按它的阶段执行。
+我的参考图在 [图]，做一个 240×240 圆形屏的 SquareLine 工程，
+先写设计规格文档给我确认。
+```
 
 **Freebuff / Codebuff 注意事项**（来自实战踩坑）
 
