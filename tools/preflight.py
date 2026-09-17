@@ -151,7 +151,7 @@ def _text_files():
             for f in filenames:
                 if f.endswith(exts):
                     out.append(os.path.join(dirpath, f))
-    for f in ("README.md",):
+    for f in ("README.md", "README.en.md"):
         p = os.path.join(ROOT, f)
         if os.path.exists(p):
             out.append(p)
@@ -276,6 +276,9 @@ def check_zip():
 # failure loud instead.  Names are suffixed with "/" when a whole dir must ship.
 ZIP_REQUIRED = [
     "README.md",
+    # The translated companion doc ships with the primary one; without this a
+    # packer regression could silently drop the English README.
+    "README.en.md",
     # The line-ending pin travels with the tree, so a re-clone cannot
     # reintroduce CRLF into the byte-compared goldens.
     ".gitattributes",
@@ -568,6 +571,104 @@ def check_no_stale_refs():
 
 
 
+def check_readme_languages():
+    """The two READMEs must exist and actually link to each other.
+
+    A translation rots the moment it is added as a file and forgotten.  The
+    cheap, mechanical invariant is the switcher: each doc must offer a relative
+    link to the other from the top, and the link must resolve.  Anything more
+    (section-by-section drift, command spelling) is a translation-review
+    problem, not something a check can settle — so this stays deliberately
+    narrow and instead asserts the *shared* parts that must stay identical.
+    """
+    zh = os.path.join(ROOT, "README.md")
+    en = os.path.join(ROOT, "README.en.md")
+    problems = []
+    for label, p in (("README.md", zh), ("README.en.md", en)):
+        if not os.path.exists(p):
+            problems.append("%s missing" % label)
+    if problems:
+        return record("docs: README language switcher", False, "\n".join(problems))
+
+    bodies = {}
+    for label, p in (("README.md", zh), ("README.en.md", en)):
+        bodies[label] = open(p, encoding="utf-8").read()
+
+    # Collect every relative href plus its anchor to decide whether the target
+    # file exists and, when an anchor is given, whether it is a real heading.
+    def anchors(text):
+        out = set()
+        for h in re.findall(r"^#{1,6}\s+(.*)$", text, re.M):
+            a = h.strip().lower()
+            a = re.sub(r"[^\w\u4e00-\u9fff\s-]", "", a)
+            out.add(re.sub(r"\s+", "-", a))
+        return out
+
+    def links(body):
+        # One capture group only — the href. Remote, in-page and mailto/tel
+        # targets are not filesystem paths, so they are filtered out here.
+        return [m.group(1) for m in
+                re.finditer(r"\[[^\]]+\]\((?!https?://|mailto:|tel:|#)([^)]+)\)",
+                            body)]
+
+    def hrefs_under(root):
+        got = []
+        for dp, dn, fn in os.walk(root):
+            dn[:] = [d for d in dn
+                     if d not in ("node_modules", ".git", "__pycache__", "dist",
+                                  ".workbuddy")]
+            for f in fn:
+                got.append(os.path.relpath(os.path.join(dp, f), root)
+                           .replace("\\", "/"))
+        return set(got)
+
+    # Each README must point at the other language.
+    pairs = (("README.md", "README.en.md"), ("README.en.md", "README.md"))
+    for src_label, want in pairs:
+        if want not in links(bodies[src_label]):
+            problems.append("%s does not link to %s" % (src_label, want))
+
+    # Anchor-less cross-link is fine, but an anchor that names a heading which
+    # does not exist in the target is a silent 404-ish jump.
+    for src_label, want in pairs:
+        tgt_anchors = anchors(bodies[want])
+        for href in links(bodies[src_label]):
+            base, _, anc = href.partition("#")
+            if base != want or not anc:
+                continue
+            if anc not in tgt_anchors:
+                problems.append("%s links to %s#%s but %s has no such heading"
+                                % (src_label, base, anc, want))
+
+    # Every non-anchor relative link in either doc must resolve on disk, and
+    # every image too — screenshots are the easiest thing to rename away.
+    for label in ("README.md", "README.en.md"):
+        for href in links(bodies[label]):
+            if href.startswith("mailto:") or href.startswith("tel:"):
+                continue
+            target = href.split("#")[0]
+            if not target:
+                continue
+            norm = target[2:] if target.startswith("./") else target
+            if not os.path.exists(os.path.join(ROOT, norm.replace("/", os.sep))):
+                problems.append("%s: link target does not exist: %s" % (label, href))
+
+    # The walkthrough screenshots are the shared evidence for both languages.
+    # A missing one makes the English doc a dead end, so assert them here too.
+    shots = sorted(re.findall(r"!\[[^\]]*\]\(([^)]+)\)", bodies["README.en.md"]))
+    for s in shots:
+        if not os.path.exists(os.path.join(ROOT, s.replace("/", os.sep))):
+            problems.append("README.en.md: image does not exist: %s" % s)
+
+    return record("docs: README language switcher",
+                  not problems,
+                  "\n".join(problems) if problems
+                  else "README.md <-> README.en.md cross-linked; "
+                       "%d relative link(s) and %d image(s) resolve"
+                       % (len(links(bodies["README.en.md"])) + len(links(bodies["README.md"])),
+                          len(shots)))
+
+
 def check_docs():
     skill = os.path.join(ROOT, "skills", "squareline-ui-pipeline", "SKILL.md")
     ref = os.path.join(ROOT, "skills", "squareline-ui-pipeline", "REFERENCE.md")
@@ -735,6 +836,7 @@ def main():
     check_zip()
     check_zip_contents()
     check_docs()
+    check_readme_languages()
     check_doc_scripts_linked()
     check_no_stale_refs()
     check_label_height_guide()

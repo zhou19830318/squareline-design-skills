@@ -48,6 +48,13 @@ Usage
     python tools/package_release.py --list         # just print what would ship
 
 Ship the file it names.  Never zip the working directory.
+
+One deliberate wrinkle in the allowlist: a *translated companion* of an already
+allowlisted root file ships too (``README.md`` -> ``README.en.md``), matched by
+``SHIP_COMPANION_SUFFIXES``.  The stem must still be in ``SHIP_TOP``, so a stray
+new root file is still refused unless somebody allowlisted its stem first —
+keeping the allowlist property intact while making sure a language translation
+cannot be lost because its author forgot one line.
 """
 
 import argparse
@@ -61,7 +68,7 @@ DEFAULT_OUT = os.path.join(ROOT, "dist", "squareline-design-skills.zip")
 # ---- the allowlist: the *only* things that may appear at the archive root ---
 # Add to this deliberately when the skill gains a new top-level directory.
 SHIP_TOP = (
-    "README.md",     # entry point / usage
+    "README.md",     # entry point / usage (Chinese — the primary doc)
     "skills",        # the SKILL.md bundle itself
     "tools",         # every generator, validator, compiler, packer
     "templates",     # the Stage-0 design-spec template
@@ -71,6 +78,18 @@ SHIP_TOP = (
     ".gitignore",    # repo hygiene travels with the tree
     ".gitattributes",
 )
+
+# Suffixes appended to an allowlisted stem, so a translated companion doc rides
+# along without a second allowlist entry: a top-level `README.en.md` maps back to
+# `README.md` (present in SHIP_TOP above) and is kept. Naming the *stem* rather
+# than repeating the full filename is the point — every other `.md` at the repo
+# root is still rejected unless its stem was allowlisted, so this stays a real
+# allowlist and cannot leak by construction.
+#
+# The tag set is deliberately closed: only these languages are accepted, so this
+# can never widen into "any extra dotted `.md`".
+SHIP_COMPANION_SUFFIXES = (".en.md", ".zh.md")
+SHIP_COMPANION_LANGS = tuple(s[:-3] for s in SHIP_COMPANION_SUFFIXES)
 
 # Excluded *within* an allowed top (editor churn, caches, dev leftovers).
 # NB: `node_modules` is deliberately absent — the vendored deps ship on purpose.
@@ -95,6 +114,23 @@ FORBIDDEN_SUFFIXES = (".zip", ".log", ".pyc", ".pyo")
 SKIPPED_TOP = []
 
 
+def is_translation_of_allowlisted(name):
+    """True when `name` is `<allowlisted-stem><lang>.md`, e.g. README.en.md.
+
+    Implementation note: the naive `name[:-len(".en.md")]` is WRONG. Only the
+    extension is fixed; the language tag sits *before* it, so a naive strip
+    leaves `README.en` and the lookup misses. Split off the final extension,
+    then check the remaining `.<lang>` token against the allowlisted tags.
+    """
+    stem, ext = os.path.splitext(name)
+    if ext != ".md":
+        return False
+    base, tag = os.path.splitext(stem)
+    if not base or tag not in SHIP_COMPANION_LANGS:
+        return False
+    return base + ext in SHIP_TOP
+
+
 def walk(skip_vendor=False):
     """Yield (abs_path, archive_relpath) for the shippable file set only."""
     for dirpath, dirnames, filenames in os.walk(ROOT):
@@ -112,6 +148,8 @@ def walk(skip_vendor=False):
             dirnames[:] = keep
             for f in sorted(filenames):
                 if f in SHIP_TOP and not f.endswith(EXCLUDE_FILE_SUFFIX):
+                    yield os.path.join(dirpath, f), f
+                elif is_translation_of_allowlisted(f):
                     yield os.path.join(dirpath, f), f
                 elif f not in EXCLUDE_FILES:
                     SKIPPED_TOP.append(f)

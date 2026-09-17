@@ -37,9 +37,17 @@ python tools/package_release.py         # 产出 dist/squareline-design-skills.z
 当前 `SHIP_TOP`（10 项）与 `dist/` 的实际根目录条目一致：
 
 ```
-README.md  skills  tools  templates  eval  examples  fonts
+README.md  README.en.md  skills  tools  templates  eval  examples  fonts
 .gitignore  .gitattributes
 ```
+
+`README.en.md` 是 `README.md` 的英文版，**不单独占白名单一项**：打包器认的是
+「白名单里已有 `README.md`，所以 `README.<后缀>.md` 一起发」（见
+`SHIP_COMPANION_SUFFIXES`）。这样根目录的 `.md` 仍然只有词干被白名单点名过的
+才发，白名单性质不变，多语言文档也不会因为漏加一行而静静丢失。
+
+两份 README 之间必须**互相有语言切换链接**、且所有相对链接与截图都要落得到实处——
+这条由 `preflight.py: check_readme_languages` 守着。
 
 `.git/`、`.workbuddy/`、`dist/` 一律不发，且打包器会把它们**打印在「not shipped」
 清单里**，让省略可见而不是静默发生。
@@ -50,14 +58,15 @@ README.md  skills  tools  templates  eval  examples  fonts
 python tools/preflight.py            # 廉价检查（秒级）：渲染后端 / 跨平台绑定 /
                                      # schema 快照 / 无个人路径 / 全树换行符 /
                                      # 打包器允许清单 / zip 编码与内容 /
-                                     # README 文档与工具表一致性 / 无悬空引用
+                                     # README 文档与工具表一致性 / 中英 README 互链 /
+                                     # 无悬空引用
 python tools/preflight.py --full     # 追加 eval/run_regression.py
 python eval/run_regression.py        # 重建 3 个归档工程 + 6 个 Stage A 用例，
                                      # 逐字节比对 + 校验 + 预览（用例说明见 eval/test_cases.md）
 python eval/run_regression.py --update   # 故意改动后刷新标准答案（先看 diff 再刷）
 ```
 
-当前状态（本机实测）：`preflight.py` **16 项检查：15 通过 / 0 失败 / 1 提示**
+当前状态（本机实测）：`preflight.py` **19 项检查：18 通过 / 0 失败 / 1 提示**
 （唯一的提示是仓库旁边那个历史遗留的目录形状 zip，见下）。
 
 回归套件（本机实测，18/18 全绿）：

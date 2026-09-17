@@ -6,6 +6,8 @@
 拷贝到任意位置，任何能读写文件、能跑命令的 agent 工具都能驱动它（各家 agent 的
 **接入 agent 工具** 接法见 [接进你的 agent](#接进你的-agent)）。
 
+**语言：** **中文** · [English](README.en.md)
+
 ---
 
 ## 使用方法
@@ -484,6 +486,8 @@ cp AGENTS.md .cursorrules        # Cursor；或建 .cursor/rules/squareline.mdc
 
 ```
 squareline-design-skills/
+├── README.md             # 本指南（中文，主文档）
+├── README.en.md          # 同一份指南的英文版
 ├── skills/squareline-ui-pipeline/
 │   ├── SKILL.md          # 技能定义（工作流 + 全部踩坑教训）—— agent 接入入口
 │   └── REFERENCE.md      # .spj 格式 / 事件 schema / 字体子集 / 资产 深度技术参考
