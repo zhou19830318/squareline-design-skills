@@ -10,6 +10,10 @@ DeepSeek harness / Codex、豆包、Freebuff / Codebuff、Cursor 等，
 > ——每天有免费额度，**不消耗你自己的 token**；它也是本技能包两个实战工程的原始宿主。
 > **模型选 `GLM-5.3-flash`**。接入步骤见 [E 节](#e-freebuff--codebuff--首推)。
 
+> 📸 **想先看结果？** 直接跳到 **[实战走查](#8-实战走查一张参考图--一个能打开的工程)**：
+> 从一张 7 屏 Apple Watch 参考图 + 一句话需求，到 74 张资产、88 个文件的完整工程、
+> 再到反渲染逐屏对照——**全程截图**，每步都附 validator 的真实输出。
+
 ---
 
 ## 使用方法
@@ -112,6 +116,126 @@ python eval/run_regression.py                        # 改过 tools/engine/ 之�
 python tools/preflight.py                            # 包是否还健康（秒级）
 ```
 
+### 8. 实战走查：一张参考图 → 一个能打开的工程
+
+上面都是说明。**这一节是全程截图**——用仓库里的 `examples/AIWatchApple`
+（240×240 圆形屏）把「输入参考图 + 需求」到「生成完整工程」的每一步摊开，
+截图佐证这条流水线确实在跑，而不是文档里写的。
+
+需求原文只有一句：**「这是手表首页的参考图，做一个 SquareLine 工程，240×240 圆形屏。」**
+
+---
+
+#### ① 输入：参考图 + 一句话需求
+
+![输入参考图：7 屏 Apple Watch 圆形表盘概念图](examples/AIWatchApple/docs/steps/01-input-concept.png)
+
+参考图是一张 7 屏 Apple 风格圆形表盘概念图（Home / Clock / Weather / Health /
+Steps / Gemini Chatbot / Setting），**尺寸、坐标、色值一律没给**——这些全部要由
+Stage 0 反推出来。
+
+---
+
+#### ② Stage 0：设计规格文档（= 源真相）
+
+![AIWatchApple 设计规格文档](examples/AIWatchApple/docs/steps/02-spec-doc.png)
+
+产物 `examples/AIWatchApple/AIWatchApple设计规格文档.md`（91 行）。这一步定死了后面
+所有阶段：画布 `240×240 / shape CIRCLE`、8 组强调色、7 屏逐屏的**屏幕绝对坐标**、
+以及**交互汇总表**（全部只用 SquareLine 内置动作）。
+
+- 圆形屏约束写进文档头：内容区 `r≤112`，`112<r≤120` 只放贴边刻度；
+- §6.1 会把界面上出现的**每一个字符**列全——**字体子集就是照这份文档收录的**，
+  漏一个字后面就会缺字。
+
+> 这一步是**人机确认点**：文档没过，不要往下跑。
+
+---
+
+#### ③ Stage A：资产
+
+```
+node tools/generate_assets_apple.mjs --out examples/AIWatchApple/assets/images_apple
+```
+
+产出 **74 张 PNG**（`img_apple_*.png`：图标、指针、心率波形 5 帧、Gemini 星、
+各态麦克风……），统一 **2 px ≈ 1 dp**，由 `tools/lib/resvg.mjs` 渲染
+（原生绑定优先，WASM 兜底——所以 Linux 容器里不装东西也能跑）。
+
+---
+
+#### ④ Stage B：HTML mockup（不进编辑器就能看）
+
+![Stage B mockup：7 屏像素级网格](examples/AIWatchApple/docs/steps/03-mockup.png)
+
+`mockup_apple.html`（含 `mockup_apple_standalone.html` 单文件版，图片已 base64 内联）。
+上面这张就是它渲染出来的：7 屏圆形全部落在内切圆内——Home 的 3×3 图标网格、
+Clock 的刻度+三针、Weather 的 22°C 与逐时卡、Health 的 72bpm 波形、
+Steps 的 94% 活动环、Gemini 的对话卡+麦克风、Settings 的四行列表。
+
+布局对不齐就在这一步改，**不等到工程里再改**。
+
+---
+
+#### ⑤ Stage C：编译工程 + 机械校验
+
+```
+python tools/build_squareline_apple.py     # 定制几何（径向布局/指针对齐）
+python tools/validate_squareline_project.py examples/AIWatchApple/squareline/AIWatchApple
+python tools/preview_from_project.py        examples/AIWatchApple/squareline/AIWatchApple
+```
+
+![生成的工程树与 validator 真实输出](examples/AIWatchApple/docs/steps/04-squareline-project.png)
+
+左：生成的工程树（**88 个文件**，含 `AIWatchApple.spj` 1.26 MB、`.sll / .slp /
+Themes.slt / project.info`，以及 `assets/` 里的 74 张 PNG + 5 套字体三件套）。
+右：validator 的**真实输出**：
+
+| 校验项 | 结果 |
+|---|---|
+| `reference strtypes` | 464 |
+| `screen size / shape` | 240x240 / CIRCLE |
+| `nids` | 5699 unique: 5699 duplicates: **0** |
+| `screens` | 7 |
+| `objects` | 216 |
+| `event handlers` / `actions` | 45 / 86 |
+| `animations` | 6 |
+| `guids` | 216 unique: 216 |
+| `occlusion suspects` | **0** |
+| 生成代码语法 | `syntax OK (70 set_text lines)` |
+| 结论 | **`OK - project validated, no problems found`** |
+
+字体侧同样落盘为 LVGL 三件套（`Body15 / Caption13 / Number36 / TimeBig44 / Title20`
+各一组 `.c + .bin + .fcfg`），字符集就是从 ② 那份规格文档抽的。
+
+---
+
+#### ⑥ 反渲染：把生成的 `.spj` 再渲回图，逐屏对照
+
+![反渲染预览：直接解析 .spj 还原各屏](examples/AIWatchApple/docs/steps/05-reverse-preview.png)
+
+`preview_from_project.py` **直接解析 `AIWatchApple.spj`** 反渲染（工程无关，
+尺寸/形状自动识别），得到上面这张对照图——把它和 ① 的参考图并排看，
+7 屏的几何与文案逐屏一致。这一步是交付前的最后一道闸：
+**validator 管「工程有没有问题」，反渲染管「长得对不对」，两个都过才算完。**
+
+---
+
+#### 链路小结
+
+| # | 阶段 | 输入 | 产物 | 怎么算过 |
+|---|---|---|---|---|
+| ① | 需求 | 参考图 + 一句话 | — | — |
+| ② | **Stage 0** | 参考图 | `AIWatchApple设计规格文档.md`（91 行，源真相） | 人工确认几何/文案 |
+| ③ | **Stage A** | 规格文档 | `assets/images_apple/` **74 PNG** | 与 mockup 引用比对 missing/unused |
+| ④ | **Stage B** | 规格文档 + 资产 | `mockup_apple.html` + standalone | 未缩放重叠审计 |
+| ⑤ | **Stage C** | 规格文档 + 资产 | `squareline/AIWatchApple/` **88 文件** | `OK - project validated` |
+| ⑥ | 反渲染 | `.spj` | 逐屏对照图 | 与 ① 参考图一致 |
+
+两个真实工程（本文的 `AIWatchApple` 240×240，以及 `AIWatch` 410×502）都收录在
+`examples/`，并进了 `eval/run_regression.py` 的逐字节回归——**上面的数字在你自己
+的机器上重跑这三条命令就能复现**。
+
 ---
 
 ## 目录结构
@@ -133,6 +257,7 @@ squareline-design-skills/
 ├── eval/                 # 回归套件：重建每个归档工程并逐字节比对标准答案
 ├── examples/
 │   ├── AIWatchApple/     # 240×240 圆形屏：规格文档 + mockup + **完整生成的 SquareLine 工程**
+│   │   ├── docs/steps/   # ← README「实战走查」全套过程截图（①输入 → ⑥反渲染）
 │   │   └── squareline/AIWatchApple/
 │   ├── AIWatch/          # 410×502 方形屏：规格文档 + 静态/交互 mockup + 生成工程
 │   └── SpecWidget/       # 320×320 最小示例：SpecWidget.spec.json（**声明式规格**，无位图资产）
