@@ -1,0 +1,136 @@
+{
+  "$schema": "squareline-spec/1",
+  "name": "SpecWidget",
+  "width": 320,
+  "height": 320,
+  "shape": "RECT",
+  "description": "SpecWidget — 320x320 声明式规格示例（无位图资产）",
+  "assets_subdir": "images",
+  "spec_docs": ["SpecWidget设计规格文档.md"],
+  "theme_dark": true,
+
+  "palette": {
+    "BG":    [8, 14, 26, 255],
+    "CARD":  [20, 20, 22, 255],
+    "TRACK": [38, 38, 42, 255],
+    "DIM":   [255, 255, 255, 120],
+    "WHITE": [255, 255, 255, 255],
+    "BLUE":  "#0A84FF",
+    "GREEN": "#30D158",
+    "ORANGE": "#FF9F0A"
+  },
+
+  "fonts": [
+    {"codename": "Big48",   "ttf": "noto-sans-sc-v40-chinese-simplified-700.ttf",
+     "size": 48, "kind": "number"},
+    {"codename": "Title20", "ttf": "noto-sans-sc-v40-chinese-simplified-500.ttf",
+     "size": 20, "kind": "text"},
+    {"codename": "Body16",  "ttf": "noto-sans-sc-v40-chinese-simplified-regular.ttf",
+     "size": 16, "kind": "text"}
+  ],
+  "ranges_text": ["0x20-0x7E", "0x00B0", "0x3001", "0x3002"],
+  "ranges_num": ["0x20-0x7E", "0x00B0"],
+  "symbols": {
+    "time": "0123456789:",
+    "number": "0123456789:.%",
+    "text": ""
+  },
+  "skip": "℃≈├📍⚠💡⏸→←🔋▶─️",
+
+  "screens": [
+    {
+      "name": "home",
+      "bg": "BG",
+      "children": [
+        {"type": "ARC", "name": "ring", "rect": [80, 76, 160, 160],
+         "value": 68, "max": 100, "indicator": "GREEN", "track": "TRACK",
+         "width": 12},
+        {"type": "LABEL", "name": "steps", "rect": [60, 128, 200, 64],
+         "text": "8642", "font": "Big48", "color": "WHITE", "align": "CENTER"},
+        {"type": "LABEL", "name": "steps_unit", "rect": [60, 196, 200, 22],
+         "text": "步", "font": "Body16", "color": "DIM", "align": "CENTER"},
+        {"type": "LABEL", "name": "hint", "rect": [30, 272, 260, 24],
+         "text": "左滑进入设置", "font": "Body16", "color": "DIM",
+         "align": "CENTER"}
+      ]
+    },
+    {
+      "name": "settings",
+      "bg": "BG",
+      "children": [
+        {"type": "LABEL", "name": "title", "rect": [24, 26, 272, 28],
+         "text": "设置", "font": "Title20", "color": "WHITE", "align": "LEFT"},
+
+        {"type": "PANEL", "name": "card_display", "rect": [24, 72, 272, 96],
+         "bg": "CARD", "radius": 16,
+         "children": [
+           {"type": "LABEL", "name": "cd_label", "rect": [40, 86, 180, 24],
+            "text": "显示", "font": "Title20", "color": "WHITE", "align": "LEFT"},
+           {"type": "LABEL", "name": "cd_value", "rect": [180, 88, 100, 22],
+            "text": "自动", "font": "Body16", "color": "BLUE", "align": "RIGHT"}
+         ],
+         "events": [{"on": "CLICKED", "actions": [
+           {"type": "HIDE", "object": "cd_value"},
+           {"type": "SHOW", "object": "cd_value_manual"}]}]},
+
+        {"type": "LABEL", "name": "cd_value_manual", "rect": [180, 88, 100, 22],
+         "text": "手动", "font": "Body16", "color": "ORANGE", "align": "RIGHT",
+         "hidden": true,
+         "events": [{"on": "CLICKED", "actions": [
+           {"type": "SHOW", "object": "cd_value"},
+           {"type": "HIDE", "object": "cd_value_manual"}]}]},
+
+        {"type": "PANEL", "name": "card_about", "rect": [24, 184, 272, 96],
+         "bg": "CARD", "radius": 16,
+         "children": [
+           {"type": "LABEL", "name": "ca_label", "rect": [40, 198, 180, 24],
+            "text": "关于本机", "font": "Title20", "color": "WHITE", "align": "LEFT"},
+           {"type": "LABEL", "name": "ca_value", "rect": [180, 200, 100, 22],
+            "text": "v1.0", "font": "Body16", "color": "DIM", "align": "RIGHT"}
+         ],
+         "events": [{"on": "CLICKED", "actions": [
+           {"type": "SHOW", "object": "panel_about"}]}]},
+
+        {"type": "PANEL", "name": "panel_about", "rect": [40, 96, 240, 128],
+         "bg": "TRACK", "radius": 18, "hidden": true,
+         "children": [
+           {"type": "LABEL", "name": "pa_title", "rect": [60, 116, 200, 26],
+            "text": "SpecWidget", "font": "Title20", "color": "WHITE",
+            "align": "CENTER"},
+           {"type": "LABEL", "name": "pa_body", "rect": [60, 150, 200, 44],
+            "text": "320x320\\n声明式规格示例", "font": "Body16", "color": "DIM",
+            "align": "CENTER"}
+         ],
+         "events": [{"on": "CLICKED", "actions": [
+           {"type": "HIDE", "object": "panel_about"}]}]},
+
+        {"type": "LABEL", "name": "back", "rect": [24, 288, 272, 24],
+         "text": "右滑返回", "font": "Body16", "color": "BLUE",
+         "align": "CENTER",
+         "events": [{"on": "CLICKED", "actions": [
+           {"type": "CHANGE_SCREEN", "target": "home"}]}]}
+      ]
+    }
+  ],
+
+  "order": ["home", "settings"],
+  "initial_screen": "home",
+
+  "animations": [
+    {"name": "ring pulse",
+     "target": "home/ring",
+     "tracks": [{"property": "opacity",
+                 "frames": [[120, 0], [255, 260], [200, 420]],
+                 "duration": 420}],
+     "duration": 420,
+     "path": "ease_out"}
+  ],
+
+  "screen_events": {
+    "home": [
+      {"on": "SCREEN_LOAD_START", "name": "home_pulse",
+       "actions": [{"type": "PLAY_ANIMATION", "animation": "ring pulse",
+                    "object": "home/ring"}]}
+    ]
+  }
+}

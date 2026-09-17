@@ -1,0 +1,17 @@
+{
+  "codename": "TimeBig44",
+  "ttf_path": "/assets/fonts/noto-sans-sc-v40-chinese-simplified-700.ttf",
+  "bin_path": "/assets/fonts\\ui_font_TimeBig44.bin",
+  "c_path": "/assets/fonts\\ui_font_TimeBig44.c",
+  "cfg_path": "/assets/fonts\\ui_font_TimeBig44.fcfg",
+  "size": 44,
+  "bpp": 4,
+  "letters": 0,
+  "ranges": [
+    "0x20-0x7E",
+    "0x00B0"
+  ],
+  "symbols": "0123456789:三二六周四日月",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}

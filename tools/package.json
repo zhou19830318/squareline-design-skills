@@ -1,0 +1,29 @@
+{
+  "name": "squareline-design-tools",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Asset + font toolchain for the SquareLine watch-UI pipeline (PNG via resvg+lucide, LVGL fonts via lv_font_conv).",
+  "type": "module",
+  "scripts": {
+    "vendor": "cd .. && python tools/vendor_prepare.py --prune-lucide --verify",
+    "vendor:list": "cd .. && python tools/vendor_prepare.py --list",
+    "assets": "node generate_assets.mjs",
+    "assets:apple": "node generate_assets_apple.mjs"
+  },
+  "dependencies": {
+    "lucide-static": "1.42.0",
+    "lv_font_conv": "1.5.3"
+  },
+  "optionalDependencies": {
+    "@resvg/resvg-js": "2.6.2",
+    "@resvg/resvg-wasm": "2.6.2",
+    "@resvg/resvg-js-win32-x64-msvc": "2.6.2",
+    "@resvg/resvg-js-darwin-x64": "2.6.2",
+    "@resvg/resvg-js-darwin-arm64": "2.6.2",
+    "@resvg/resvg-js-linux-x64-gnu": "2.6.2",
+    "@resvg/resvg-js-linux-x64-musl": "2.6.2",
+    "@resvg/resvg-js-linux-arm64-gnu": "2.6.2",
+    "@resvg/resvg-js-linux-arm64-musl": "2.6.2"
+  },
+  "//": "node_modules is vendored offline. `npm install` only ever fetches the binding for the CURRENT machine, so a Windows-built tree dies on Linux with 'Cannot find module @resvg/resvg-js-linux-x64-gnu'. Use `python tools/vendor_prepare.py --prune-lucide` instead: it side-loads every platform binding (plus the resvg-wasm fallback) and prunes lucide-static's unused font/dist trees (~46 MB)."
+}

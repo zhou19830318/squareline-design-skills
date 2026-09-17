@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------------------
+# Line endings are part of the artifact contract.
+#
+# eval/run_regression.py compares every archived golden project under
+# examples/**/squareline/ BYTE FOR BYTE against a fresh build, and the engine
+# pins LF on every host (tools/engine/squareline_engine.py -> dump_json).
+#
+# If git rewrote line endings on checkout — `core.autocrlf=true` is the default
+# in many Windows installs — the goldens would come back as CRLF, every
+# engine-written file (.spj/.sll/.slp/Themes.slt/project.info/*.fcfg) would
+# differ from a Linux build, and three comparisons would go red for a reason
+# that is invisible in the diff.  tools/preflight.py and the regression suite
+# both guard against it; this file stops it at the source.
+#
+# So: normalise to LF in the repository AND in the working tree, everywhere.
+# ---------------------------------------------------------------------------
+* text=auto eol=lf
+
+# Real binaries: never touched.
+*.png  binary
+*.bin  binary
+*.ttf  binary
+*.node binary
+*.zip  binary
+*.dav  binary

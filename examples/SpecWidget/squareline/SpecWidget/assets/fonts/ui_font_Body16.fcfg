@@ -1,0 +1,19 @@
+{
+  "codename": "Body16",
+  "ttf_path": "/assets/fonts/noto-sans-sc-v40-chinese-simplified-regular.ttf",
+  "bin_path": "/assets/fonts\\ui_font_Body16.bin",
+  "c_path": "/assets/fonts\\ui_font_Body16.c",
+  "cfg_path": "/assets/fonts\\ui_font_Body16.fcfg",
+  "size": 16,
+  "bpp": 4,
+  "letters": 0,
+  "ranges": [
+    "0x20-0x7E",
+    "0x00B0",
+    "0x3001",
+    "0x3002"
+  ],
+  "symbols": "#()*+-./0123456789>BCDEFGHIKLRSTUVW\\_`abcdefghijlmnopqrstuvwxy|°×—、。「」一上下不与两中为主义也于互交产亮以份会位体何作例保值偏充免入全关写准几出分切到前动单卡厂原反发取可右号同名后品器回图在坐声备复大天契子字存定容寸对小尺层屏左幕度建式引张录形律心态恢成所手打扰换接播擎收改放数文无时明是显有未本机来板构染查标样格案档检模正步气氧浮消深清温渲湿源滑点父片版状率环现用电画界留的直相眠睡知确示离移符答系约纯绝编缺置能自致色节英藏血被见规角触言计设语说象费资距路辑输过返这进逐途通部里重量钟闭隐集面音页项预题首验（），：；",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}

@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>AIWatch 交互演示 — 单表动态切换 UI（滑动/点按）</title>
+<style>
+/* ================= 字体（本地 Noto Sans SC） ================= */
+@font-face{font-family:'NotoSansSC';src:url('assets/fonts/noto-sans-sc-v40-chinese-simplified-regular.ttf') format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:'NotoSansSC';src:url('assets/fonts/noto-sans-sc-v40-chinese-simplified-500.ttf') format('truetype');font-weight:500;font-display:swap}
+@font-face{font-family:'NotoSansSC';src:url('assets/fonts/noto-sans-sc-v40-chinese-simplified-700.ttf') format('truetype');font-weight:700;font-display:swap}
+
+/* 手表UI尺寸体系：2px≈1dp（410×502 @ ~315ppi），触控≥96px，8pt×2网格 */
+:root{
+  --s:1.05;                 /* 单表展示比例（410×502 → 430×527） */
+  --blue:#3B82F6; --purple:#8B5CF6; --red:#FF5A3C;
+  --green:#3DD874; --pink:#FF2D8A; --yellow:#FFD60A;
+  --line:#26262A; --card:#141416;
+  --t2:rgba(255,255,255,.62); --t3:rgba(255,255,255,.38);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:#000;
+  background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1.4px);
+  background-size:26px 26px;
+  font-family:'NotoSansSC',system-ui,sans-serif;
+  color:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  overflow:hidden;
+  -webkit-user-select:none;user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ================= 手表外壳 ================= */
+.watch{
+  position:relative;
+  width:calc(410px*var(--s) + 30px);
+  height:calc(502px*var(--s) + 30px);
+  border-radius:60px;padding:15px;
+  background:linear-gradient(150deg,#454b54 0%,#23262b 22%,#111316 55%,#2c3037 88%,#14161a 100%);
+  box-shadow:0 30px 60px rgba(0,0,0,.8), inset 0 1px 1px rgba(255,255,255,.18), inset 0 -1px 2px rgba(0,0,0,.8);
+}
+.watch::after{content:'';position:absolute;right:-3px;top:130px;width:3px;height:70px;border-radius:2px;
+  background:linear-gradient(180deg,#3a3f46,#191c20)}
+.bezel{width:100%;height:100%;border-radius:46px;padding:8px;background:#07080a;
+  box-shadow:inset 0 0 0 1px #000, inset 0 2px 6px rgba(0,0,0,.9)}
+.viewport{position:relative;width:calc(410px*var(--s));height:calc(502px*var(--s));border-radius:38px;overflow:hidden;background:#000;
+  touch-action:none;cursor:grab}
+.viewport.dragging{cursor:grabbing}
+
+/* 屏幕层叠：当前屏 + 进出动画（内容按 410×502 设计，整体 scale 到视口） */
+.screen{
+  position:absolute;top:0;left:0;width:410px;height:502px;
+  transform:scale(var(--s));transform-origin:top left;
+  background:#000;overflow:hidden;border-radius:34px;
+  font-family:'NotoSansSC',system-ui,sans-serif;
+  visibility:hidden;
+  transition:none;
+}
+.screen.active{visibility:visible}
+/* 水平滑动动画：非拖拽时的过渡 */
+.screen.anim{transition:transform .32s cubic-bezier(.22,.9,.3,1), opacity .32s ease}
+.screen.left{transform:scale(var(--s)) translateX(-14%);opacity:0}
+.screen.right{transform:scale(var(--s)) translateX(14%);opacity:0}
+.screen.center{transform:scale(var(--s)) translateX(0);opacity:1}
+
+/* ================= 屏幕内通用组件（与 mockup.html 同一体系） ================= */
+.status-time{font-size:28px;font-weight:500;color:#fff}
+.appbar{position:absolute;top:0;left:0;right:0;height:88px;display:flex;align-items:center;padding:28px 32px 0;gap:12px}
+.appbar .ttl{font-size:32px;font-weight:500}
+.appbar .st{margin-left:auto}
+.chev{width:14px;height:24px;color:var(--t3)}
+
+/* ---------- 1. 总览预览 ---------- */
+.s-home{background:radial-gradient(120% 90% at 50% 0%, #0D1B33 0%, #060A14 60%, #000 100%)}
+.home-hd{display:flex;justify-content:space-between;align-items:flex-start;padding:32px 32px 0}
+.home-hd .time{font-size:44px;font-weight:700;line-height:1}
+.home-hd .date{font-size:26px;color:var(--t2);margin-top:10px}
+.batt{display:flex;align-items:center;gap:10px;margin-top:12px}
+.batt .wifi{width:18px;height:18px;opacity:.9}
+.batt img.frame{width:22px;height:12px}
+.batt span{font-size:22px;color:var(--t2)}
+.home-grid{position:absolute;top:120px;left:16px;right:16px;display:grid;grid-template-columns:repeat(3,1fr);row-gap:10px;justify-items:center}
+.app{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.app .ico{width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 16px rgba(0,0,0,.4);transition:transform .18s ease, box-shadow .18s ease}
+.app.pressed .ico{transform:scale(.92);box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.app .ico img{width:40px;height:40px}
+.app .ico svg{width:40px;height:40px}
+.app .lb{font-size:22px;line-height:1.2;color:var(--t2)}
+.app.settings{grid-column:2}
+.c-blue{background:var(--blue)} .c-purple{background:var(--purple)} .c-red{background:var(--red)}
+.c-green{background:var(--green)} .c-gray{background:#2E3036} .c-sky{background:#2E7CF6}
+
+/* ---------- 2. 时间（表盘） ---------- */
+.s-clock{background:#000}
+.s-clock .wall{position:absolute;inset:0;width:410px;height:502px;object-fit:cover}
+.wf-block{position:absolute;left:0;right:0;top:150px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.wf-date{font-size:26px;color:rgba(255,255,255,.85);text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.wf-time{font-size:88px;font-weight:700;color:#fff;line-height:1.08;text-shadow:0 2px 12px rgba(0,0,0,.5);letter-spacing:1px}
+.wf-loc{display:flex;align-items:center;gap:8px;font-size:24px;color:rgba(255,255,255,.92);margin-top:8px;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.wf-loc img{width:15px;height:17px}
+.wf-card{position:absolute;left:20px;top:408px;width:370px;height:80px;border-radius:28px;
+  background:rgba(0,0,0,.38);backdrop-filter:blur(2px);display:flex;align-items:center;padding:0 24px;gap:18px}
+.wf-card img.wico{width:48px;height:48px}
+.wf-card .t{font-size:34px;font-weight:700}
+.wf-card .d{font-size:24px;color:var(--t2);margin-top:3px}
+
+/* ---------- 3. 天气 ---------- */
+.wx-hd{position:absolute;top:24px;left:0;right:0;display:flex;align-items:center;padding:0 32px;gap:8px}
+.wx-hd img{width:18px;height:18px}
+.wx-hd .city{font-size:28px;color:#EDEDED}
+.wx-main{position:absolute;top:92px;left:32px;right:32px;display:flex;align-items:center}
+.wx-main{cursor:pointer}
+.wx-main img.big{position:absolute;left:0;top:0;width:112px;height:112px;opacity:0}
+.wx-main img.big.on{position:relative;opacity:1}
+.wx-main .temp{font-size:76px;font-weight:700;margin-left:28px;line-height:1}
+.wx-main .temp sup{font-size:38px;font-weight:700;color:var(--t2);vertical-align:34px}
+.wx-sub{position:absolute;top:220px;left:172px;font-size:30px;color:var(--t2)}
+.wx-range{position:absolute;top:262px;left:172px;right:44px;font-size:26px;color:var(--t3);display:flex;align-items:center;justify-content:space-between}
+.wx-div{position:absolute;top:308px;left:32px;right:32px;height:1px;background:var(--line)}
+.wx-hours{position:absolute;top:330px;left:0;right:0;display:flex;justify-content:space-evenly}
+.wx-hours .col{display:flex;flex-direction:column;align-items:center;gap:16px}
+.wx-hours .h{font-size:22px;color:var(--t3)}
+.wx-hours img{width:56px;height:56px}
+.wx-hours .t{font-size:28px;color:#EDEDED}
+.wx-handle{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:36px;height:4px;opacity:.55}
+
+/* ---------- 4. AI对话 ---------- */
+.ai-hd img{width:36px;height:36px;border-radius:50%}
+.ai-bubble-row{position:absolute;top:96px;left:32px;display:flex;gap:14px;align-items:flex-start}
+.ai-bubble-row .ava{width:80px;height:80px;border-radius:50%}
+.ai-bubble{background:linear-gradient(135deg,#3A3A6E,#262646);border-radius:28px;border-top-left-radius:10px;
+  padding:16px 22px;max-width:240px;font-size:26px;line-height:1.5;color:#fff}
+.ai-hist-t{position:absolute;top:216px;left:32px;right:32px;display:flex;align-items:center}
+.ai-hist-t .t{font-size:28px;color:#EDEDED}
+.ai-list{position:absolute;top:250px;left:32px;right:32px;display:flex;flex-direction:column;gap:8px}
+.ai-item{display:flex;align-items:center;gap:16px;background:var(--card);border-radius:28px;padding:10px 20px;cursor:pointer}
+.ai-item.pressed{background:#1E2026}
+.ai-item img{width:28px;height:28px}
+.ai-item .tt{font-size:24px;line-height:1.25;color:#F2F2F2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ai-item .ts{font-size:22px;line-height:1.1;color:var(--t3);margin-top:2px}
+.s-ai .mic-status{margin:10px 0 0 8px;opacity:.9}
+/* AI 语音对话模式：三态麦克风 + 5 帧波形（img_ai_waveform_frame01-05） */
+.s-ai .back{display:none}
+.s-ai.voice .back{display:flex;align-items:center;justify-content:center;width:56px;height:56px;position:absolute;top:16px;left:16px;cursor:pointer}
+.s-ai.voice .ai-hd .ai-ava{display:none}
+.s-ai.voice .ai-bubble-row,.s-ai.voice .ai-hist-t,.s-ai.voice .ai-list{display:none}
+.voice-ui{position:absolute;top:88px;left:0;right:0;bottom:0;display:none;flex-direction:column;align-items:center}
+.s-ai.voice .voice-ui{display:flex}
+.voice-bot{width:80px;height:80px;border-radius:50%;margin-top:24px}
+.voice-bot.listening{animation:vpulseP 1.2s ease-in-out infinite}
+.voice-bot.speaking{animation:vpulseV 1.2s ease-in-out infinite}
+@keyframes vpulseP{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,45,138,0)}50%{transform:scale(1.05);box-shadow:0 0 0 16px rgba(255,45,138,.14)}}
+@keyframes vpulseV{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(139,92,246,0)}50%{transform:scale(1.05);box-shadow:0 0 0 16px rgba(139,92,246,.14)}}
+.voice-state{margin-top:16px;font-size:26px;color:var(--t2)}
+.voice-wave{position:relative;width:200px;height:40px;margin-top:20px}
+.voice-wave img{position:absolute;inset:0;width:200px;height:40px;opacity:0}
+.voice-wave img.on{opacity:1}
+.voice-mic{position:relative;width:96px;height:96px;border-radius:50%;background:#1E2024;display:flex;align-items:center;justify-content:center;margin-top:auto;margin-bottom:48px;cursor:pointer;transition:transform .15s ease}
+.voice-mic.pressed{transform:scale(.93)}
+.voice-mic img{position:absolute;inset:0;margin:auto;width:48px;height:48px;opacity:0}
+.voice-mic img.on{opacity:1}
+
+/* ---------- 5. 番茄时钟 ---------- */
+.pd-hd img{width:32px;height:32px}
+.ring-wrap{position:absolute;left:50%;transform:translateX(-50%)}
+.pd-ring-wrap{top:104px;width:248px;height:248px}
+.ring{width:100%;height:100%;border-radius:50%;
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 17px),#000 calc(100% - 16.5px));
+          mask:radial-gradient(farthest-side,transparent calc(100% - 17px),#000 calc(100% - 16.5px))}
+.pd-ring{background:conic-gradient(from 0deg,#FF2D55,#FF5A3C 30%,#FF7A45 55%,#FF375F 80%,#FF2D55)}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.pd-c-tomato{width:40px;height:40px}
+.pd-c-time{font-size:56px;font-weight:700;line-height:1;margin-top:2px}
+.pd-c-sub{font-size:24px;color:var(--t2)}
+.pd-ctrl{position:absolute;bottom:40px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:40px}
+.cbtn{border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:transform .15s ease;color:#fff}
+.cbtn.pressed{transform:scale(.93)}
+.cbtn.sm{width:72px;height:72px;background:#1E2024}
+.cbtn.sm img{width:28px;height:28px;opacity:.85}
+.cbtn.lg{width:96px;height:96px;background:var(--pink);box-shadow:0 8px 22px rgba(255,45,138,.35)}
+.cbtn.lg img{width:34px;height:34px}
+.cbtn svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cbtn.lg svg{width:34px;height:34px}
+.cbtn.lg svg.f{fill:#fff;stroke:none}
+/* 番茄钟运行时圆环旋转 + 播放键呼吸光晕 */
+.pd-ring.spin{animation:ringspin 6s linear infinite}
+@keyframes ringspin{to{transform:rotate(360deg)}}
+.cbtn.lg.glow{animation:pdglow 1.8s ease-in-out infinite}
+@keyframes pdglow{0%,100%{box-shadow:0 8px 22px rgba(255,45,138,.35)}50%{box-shadow:0 10px 36px rgba(255,45,138,.62)}}
+
+/* ---------- 6. 计步 ---------- */
+.st-hd img{width:32px;height:32px}
+.step-ring-wrap{top:104px;width:224px;height:224px}
+.step-ring{background:conic-gradient(from 318deg,#3DD874 0deg 266deg,rgba(61,216,116,.14) 266deg 358deg,transparent 358deg);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 16px),#000 calc(100% - 15.5px));
+          mask:radial-gradient(farthest-side,transparent calc(100% - 16px),#000 calc(100% - 15.5px))}
+.step-c-shoe{width:32px;height:32px}
+.step-c-num{font-size:56px;font-weight:700;line-height:1;margin-top:8px}
+.step-c-num i{font-style:normal;font-size:24px;font-weight:400;color:var(--t2);margin-left:6px}
+.step-stats{position:absolute;top:344px;left:0;right:0;display:flex;justify-content:center;gap:64px}
+.step-stats .blk{display:flex;align-items:center;gap:12px}
+.step-stats img{width:24px;height:24px}
+.step-stats .v{font-size:30px;font-weight:700;line-height:1.1}
+.step-stats .u{font-size:22px;color:var(--t3);margin-top:2px}
+.step-chart{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+  width:60px;height:60px;border-radius:50%;background:#1E2024;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.step-chart svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+/* 柱状图（图表键切换） */
+.step-bars{position:absolute;inset:18px;display:none;align-items:flex-end;justify-content:space-between;gap:8px;padding:0 6px}
+.step-bars i{flex:1;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#8CF5B0,#3DD874);min-height:12%}
+/* 进入计步页：圆环从 12 点方向充能到目标弧度 */
+@keyframes ringfill{from{transform:rotate(-90deg)}to{transform:rotate(176deg)}}
+.step-ring.filling{animation:ringfill 1.4s cubic-bezier(.65,0,.35,1) forwards}
+
+/* ---------- 7. MP3 ---------- */
+.mu-hd img{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mu-info{position:absolute;top:104px;left:32px;right:32px;display:flex;align-items:center;gap:24px}
+.mu-info img.cov{width:96px;height:96px;border-radius:20px}
+.mu-info .tt{font-size:34px;font-weight:700}
+.mu-info .ar{font-size:26px;color:var(--t2);margin-top:10px}
+.mu-ctrl{position:absolute;top:284px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:44px}
+.mu-ctrl .side{width:80px;height:80px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s ease}
+.mu-ctrl .side.pressed{transform:scale(.9)}
+.mu-ctrl .side img{width:32px;height:32px}
+.mu-ctrl .big{width:104px;height:104px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 22px rgba(255,45,138,.4);cursor:pointer;transition:transform .15s ease}
+.mu-ctrl .big.pressed{transform:scale(.94)}
+.mu-ctrl .big img{width:36px;height:36px}
+.mu-bar{position:absolute;top:396px;left:32px;right:32px;height:6px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden}
+.mu-bar i{display:block;height:100%;width:62%;border-radius:3px;background:linear-gradient(90deg,#E0148C,var(--pink))}
+.mu-time{position:absolute;top:414px;left:0;right:0;text-align:center;font-size:22px;color:var(--t2)}
+.mu-foot{position:absolute;bottom:18px;left:36px;right:36px;display:flex;justify-content:space-between}
+.mu-foot img{width:26px;height:26px;opacity:.9;cursor:pointer}
+.shuffle{position:relative;width:26px;height:26px;display:block;cursor:pointer}
+.batt .chg{display:none;width:22px;height:12px}
+body.charging .batt .chg{display:block}
+body.charging .batt img.frame{display:none}
+.batt .wifi-off{display:none;width:18px;height:18px;opacity:.55}
+body.offline .batt .wifi{display:none}
+body.offline .batt .wifi-off{display:block}
+.shuffle img{position:absolute;inset:0;width:26px;height:26px;opacity:0}
+.shuffle img.on{opacity:1}
+
+/* ---------- 8. 设置 ---------- */
+.se-hd img{width:22px;height:22px}
+.se-list{position:absolute;top:96px;left:32px;right:32px;display:flex;flex-direction:column;gap:10px}
+.se-item{display:flex;align-items:center;gap:18px;background:var(--card);border-radius:28px;padding:0 22px;height:70px;cursor:pointer}
+.se-item.pressed{background:#1E2026}
+.se-item .ico{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+.se-item .ico img{width:22px;height:22px}
+.se-item .nm{font-size:28px;color:#F2F2F2}
+.se-item .val{margin-left:auto;font-size:24px;color:var(--t3)}
+.se-item .arr{width:12px;height:20px;margin-left:10px;opacity:.55;transform:scale(1.4);color:var(--t3)}
+
+/* ================= 底部提示 & 指示器 ================= */
+.hint{font-size:14px;color:#8A8F98;text-align:center;line-height:1.6}
+.hint b{color:#C8CDD4;font-weight:500}
+.dots{display:flex;gap:10px}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.22);transition:all .25s ease}
+.dot.on{background:#fff;width:26px;border-radius:4px}
+
+/* ================= 内联 SVG 符号 ================= */
+.syms{position:absolute;width:0;height:0;overflow:hidden}
+</style>
+</head>
+<body>
+
+<svg class="syms" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <symbol id="i-runner" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9 1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/>
+    </symbol>
+    <symbol id="i-tomato" viewBox="0 0 24 24">
+      <circle cx="12" cy="14.2" r="8.2" fill="#FF4133"/>
+      <path fill="#3DD874" d="M12 6.6c-.4-1.6-1.5-2.8-3-3.4-.2 1 .1 2.1.7 2.9C8.1 5.5 6.3 5.8 5 7c1.4 1.2 3.3 1.6 5 1.1.6-.2 1.4-.9 2-1.5z"/>
+      <path fill="#2FB862" d="M12 6.6c.4-1.6 1.5-2.8 3-3.4.2 1-.1 2.1-.7 2.9 1.6-.6 3.4-.3 4.7.9-1.4 1.2-3.3 1.6-5 1.1-.6-.2-1.4-.9-2-1.5z"/>
+    </symbol>
+    <symbol id="i-play" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M7 4.8v14.4c0 .9 1 1.5 1.8 1L20.4 13c.8-.5.8-1.6 0-2.1L8.8 3.8C8 3.3 7 3.9 7 4.8z"/>
+    </symbol>
+    <symbol id="i-pause2" viewBox="0 0 24 24">
+      <rect x="6" y="4" width="4.6" height="16" rx="1.6" fill="currentColor"/>
+      <rect x="13.4" y="4" width="4.6" height="16" rx="1.6" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-chev" viewBox="0 0 12 20">
+      <path d="m2.5 4 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="7" y="12" width="3" height="6" rx="1" fill="#fff" stroke="none"/><rect x="12" y="8" width="3" height="10" rx="1" fill="#fff" stroke="none"/><rect x="17" y="4" width="3" height="14" rx="1" fill="#fff" stroke="none"/></symbol>
+    <symbol id="i-shoe" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 14h9.5a3.5 3.5 0 0 0 3.5-3.5V9l4.6 2.3a3.5 3.5 0 0 1 1.9 3.1V16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/>
+        <path d="M2 18v-4"/><path d="M13 9 9.5 11"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="watch">
+  <div class="bezel">
+    <div class="viewport" id="viewport">
+
+      <!-- 1. 总览预览 -->
+      <div class="screen s-home" data-name="home">
+        <div class="home-hd">
+          <div><div class="time">10:27</div><div class="date">4月26日 周六</div></div>
+          <div class="batt"><img class="wifi" src="assets/images/img_status_wifi.png" alt="" width="18" height="18"><img class="wifi-off" src="assets/images/img_status_wifi_off.png" alt="" width="18" height="18"><img class="frame" src="assets/images/img_status_battery_frame.png" alt="" width="22" height="12"><img class="chg" src="assets/images/img_status_battery_charging.png" alt="" width="22" height="12"><span>78%</span></div>
+        </div>
+        <div class="home-grid">
+          <div class="app" data-go="clock"><div class="ico c-blue"><img src="assets/images/img_home_icon_clock.png" alt=""></div><div class="lb">时间</div></div>
+          <div class="app" data-go="weather"><div class="ico c-sky"><img src="assets/images/img_home_icon_weather.png" alt=""></div><div class="lb">天气</div></div>
+          <div class="app" data-go="ai"><div class="ico c-purple"><img src="assets/images/img_home_icon_ai.png" alt=""></div><div class="lb">AI对话</div></div>
+          <div class="app" data-go="pomodoro"><div class="ico c-red"><img src="assets/images/img_home_icon_tomato.png" alt=""></div><div class="lb">番茄时钟</div></div>
+          <div class="app" data-go="steps"><div class="ico c-green"><img src="assets/images/img_home_icon_runner.png" alt=""></div><div class="lb">计步</div></div>
+          <div class="app" data-go="mp3"><div class="ico c-purple"><img src="assets/images/img_home_icon_music.png" alt=""></div><div class="lb">MP3</div></div>
+          <div class="app settings" data-go="settings"><div class="ico c-gray"><img src="assets/images/img_home_icon_settings.png" alt=""></div><div class="lb">设置</div></div>
+        </div>
+      </div>
+
+      <!-- 2. 时间（表盘） -->
+      <div class="screen s-clock" data-name="clock">
+        <img class="wall" src="assets/images/img_watchface_bg_01.png" alt="">
+        <div class="wf-block">
+          <div class="wf-date">4月26日 周六</div>
+          <div class="wf-time">10:27</div>
+          <div class="wf-loc"><img src="assets/images/img_watchface_icon_location.png" alt="">北京</div>
+        </div>
+        <div class="wf-card">
+          <img class="wico" src="assets/images/img_watchface_icon_weather_mini.png" alt="">
+          <div><div class="t">18°C</div></div>
+          <div><div class="d">多云&nbsp;&nbsp;22° / 12°</div></div>
+        </div>
+      </div>
+
+      <!-- 3. 天气 -->
+      <div class="screen" data-name="weather">
+        <div class="wx-hd">
+          <img src="assets/images/img_weather_icon_location_pin.png" alt=""><span class="city">北京</span>
+          <span class="status-time st" style="margin-left:auto">10:27</span>
+        </div>
+        <div class="wx-main" id="wxCycle" title="点按切换天气">
+          <img class="big" data-wx="sunny" src="assets/images/img_weather_icon_sunny_72.png" alt="">
+          <img class="big on" data-wx="cloudy" src="assets/images/img_weather_icon_cloudy_72.png" alt="">
+          <img class="big" data-wx="overcast" src="assets/images/img_weather_icon_overcast_72.png" alt="">
+          <img class="big" data-wx="rain" src="assets/images/img_weather_icon_rain_72.png" alt="">
+          <img class="big" data-wx="heavyrain" src="assets/images/img_weather_icon_heavyrain_72.png" alt="">
+          <img class="big" data-wx="thunder" src="assets/images/img_weather_icon_thunder_72.png" alt="">
+          <img class="big" data-wx="snow" src="assets/images/img_weather_icon_snow_72.png" alt="">
+          <img class="big" data-wx="fog" src="assets/images/img_weather_icon_fog_72.png" alt="">
+          <div class="temp">18<sup>°C</sup></div>
+        </div>
+        <div class="wx-sub" id="wxSub">多云</div>
+        <div class="wx-range"><span>22° / 12°</span><svg class="chev"><use href="#i-chev"/></svg></div>
+        <div class="wx-div"></div>
+        <div class="wx-hours" id="wxHours">
+          <div class="col"><div class="h">11时</div><img data-hour="0" src="assets/images/img_weather_icon_sunny_28.png" alt=""><div class="t">20°</div></div>
+          <div class="col"><div class="h">14时</div><img src="assets/images/img_weather_icon_cloudy_28.png" alt=""><div class="t">21°</div></div>
+          <div class="col"><div class="h">17时</div><img src="assets/images/img_weather_icon_overcast_28.png" alt=""><div class="t">19°</div></div>
+          <div class="col"><div class="h">20时</div><img src="assets/images/img_weather_icon_rain_28.png" alt=""><div class="t">16°</div></div>
+        </div>
+        <img class="wx-handle" src="assets/images/img_weather_drag_handle.png" alt="" width="36" height="4">
+      </div>
+
+      <!-- 4. AI对话 -->
+      <div class="screen s-ai" data-name="ai">
+        <div class="appbar ai-hd">
+          <img class="ai-ava" src="assets/images/img_ai_avatar_bot.png" alt="">
+          <span class="ttl">AI对话</span>
+          <span class="status-time st">10:27</span>
+          <img class="mic-status" id="micStatus" src="assets/images/img_status_mic_active.png" alt="" width="18" height="18" style="display:none">
+        </div>
+        <div class="back" id="voiceBack"><img src="assets/images/img_nav_back_arrow.png" alt="" width="14" height="24"></div>
+        <div class="ai-bubble-row">
+          <img class="ava" src="assets/images/img_ai_avatar_bot.png" alt="">
+          <div class="ai-bubble">你好！有什么我可以帮你的吗？</div>
+        </div>
+        <div class="ai-hist-t"><span class="t">历史对话</span><svg class="chev" style="color:#fff"><use href="#i-chev"/></svg></div>
+        <div class="ai-list">
+          <div class="ai-item"><img src="assets/images/img_ai_icon_history_bubble.png" alt="">
+            <div style="min-width:0"><div class="tt">帮我写一份项目计划书</div><div class="ts">04-26 09:15</div></div></div>
+          <div class="ai-item"><img src="assets/images/img_ai_icon_history_bubble.png" alt="">
+            <div style="min-width:0"><div class="tt">明天天气怎么样？</div><div class="ts">04-25 20:32</div></div></div>
+          <div class="ai-item"><img src="assets/images/img_ai_icon_history_bubble.png" alt="">
+            <div style="min-width:0"><div class="tt">推荐一些适合阅读的书</div><div class="ts">04-24 16:20</div></div></div>
+        </div>
+        <div class="voice-ui">
+          <img class="voice-bot" id="voiceBot" src="assets/images/img_ai_avatar_bot.png" alt="">
+          <div class="voice-state" id="voiceState">点击麦克风开始对话</div>
+          <div class="voice-wave" id="voiceWave">
+            <img data-fr="1" src="assets/images/img_ai_waveform_frame01.png" alt="">
+            <img data-fr="2" src="assets/images/img_ai_waveform_frame02.png" alt="">
+            <img data-fr="3" src="assets/images/img_ai_waveform_frame03.png" alt="">
+            <img data-fr="4" src="assets/images/img_ai_waveform_frame04.png" alt="">
+            <img data-fr="5" src="assets/images/img_ai_waveform_frame05.png" alt="">
+          </div>
+          <div class="voice-mic" id="voiceMic">
+            <img class="on" id="micIdle" src="assets/images/img_ai_icon_mic_idle.png" alt="" width="48" height="48">
+            <img id="micListen" src="assets/images/img_ai_icon_mic_listening.png" alt="" width="48" height="48">
+            <img id="micSpeak" src="assets/images/img_ai_icon_mic_speaking.png" alt="" width="48" height="48">
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. 番茄时钟 -->
+      <div class="screen" data-name="pomodoro">
+        <div class="appbar pd-hd">
+          <svg style="width:32px;height:32px"><use href="#i-tomato"/></svg>
+          <span class="ttl">番茄时钟</span>
+          <span class="status-time st">10:27</span>
+        </div>
+        <div class="ring-wrap pd-ring-wrap">
+          <div class="ring pd-ring"></div>
+          <div class="ring-center">
+            <svg class="pd-c-tomato"><use href="#i-tomato"/></svg>
+            <div class="pd-c-time">25:00</div>
+            <div class="pd-c-sub">专注时间</div>
+          </div>
+        </div>
+        <div class="pd-ctrl">
+          <button class="cbtn sm"><img src="assets/images/img_pomodoro_icon_list.png" alt="" width="28" height="28"></button>
+          <button class="cbtn lg" id="pdToggle"><img id="pdIcon" src="assets/images/img_pomodoro_icon_play.png" alt="" width="34" height="34"></button>
+          <button class="cbtn sm"><img src="assets/images/img_pomodoro_icon_settings.png" alt="" width="28" height="28"></button>
+        </div>
+      </div>
+
+      <!-- 6. 计步 -->
+      <div class="screen" data-name="steps">
+        <div class="appbar st-hd">
+          <svg style="width:32px;height:32px;color:var(--green)"><use href="#i-runner"/></svg>
+          <span class="ttl">计步</span>
+          <span class="status-time st">10:27</span>
+        </div>
+        <div class="ring-wrap step-ring-wrap">
+          <div class="ring step-ring filling" id="stepRing"></div>
+          <div class="ring-center">
+            <svg class="step-c-shoe" style="color:#3DD874"><use href="#i-shoe"/></svg>
+            <div class="step-c-num">6820<i>步</i></div>
+          </div>
+        </div>
+        <div class="step-stats">
+          <div class="blk"><img src="assets/images/img_steps_icon_fire.png" alt="">
+            <div><div class="v">320</div><div class="u">卡路里</div></div></div>
+          <div class="blk"><img src="assets/images/img_steps_icon_location.png" alt="">
+            <div><div class="v">4.8</div><div class="u">公里</div></div></div>
+        </div>
+        <div class="step-chart" id="stepViz" title="切换圆环/柱状图"><img src="assets/images/img_steps_icon_chart.png" alt="" width="24" height="24"></div>
+      </div>
+
+      <!-- 7. MP3 -->
+      <div class="screen" data-name="mp3">
+        <div class="appbar mu-hd">
+          <img src="assets/images/img_music_icon_note.png" alt="">
+          <span class="ttl">MP3</span>
+          <span class="status-time st">10:27</span>
+        </div>
+        <div class="mu-info">
+          <img class="cov" src="assets/images/img_music_album_placeholder.png" alt="">
+          <div><div class="tt">Yesterday</div><div class="ar">The Beatles</div></div>
+        </div>
+        <div class="mu-ctrl">
+          <div class="side"><img src="assets/images/img_music_icon_prev.png" alt=""></div>
+          <div class="big" id="muToggle"><img src="assets/images/img_music_icon_pause.png" alt="" id="muIcon"></div>
+          <div class="side"><img src="assets/images/img_music_icon_next.png" alt=""></div>
+        </div>
+        <div class="mu-bar"><i id="muBarFill"></i></div>
+        <div class="mu-time" id="muTime">01:24 / 02:03</div>
+        <div class="mu-foot">
+          <div class="shuffle" id="muShuffle" title="随机播放">
+            <img class="on" id="shuffleOff" src="assets/images/img_music_icon_shuffle.png" alt="" width="26" height="26">
+            <img id="shuffleOn" src="assets/images/img_music_icon_shuffle_active.png" alt="" width="26" height="26">
+          </div>
+          <img src="assets/images/img_music_icon_volume.png" alt="">
+        </div>
+      </div>
+
+      <!-- 8. 设置 -->
+      <div class="screen" data-name="settings">
+        <div class="appbar se-hd">
+          <img src="assets/images/img_settings_icon_gear.png" alt="">
+          <span class="ttl">设置</span>
+          <span class="status-time st">10:27</span>
+        </div>
+        <div class="se-list">
+          <div class="se-item"><div class="ico c-blue"><img src="assets/images/img_settings_icon_bluetooth.png" alt=""></div>
+            <span class="nm">蓝牙</span><span class="val">已连接</span><svg class="arr"><use href="#i-chev"/></svg></div>
+          <div class="se-item"><div class="ico" style="background:var(--yellow)"><img src="assets/images/img_settings_icon_brightness.png" alt=""></div>
+            <span class="nm">亮度</span><span class="val">自动</span><svg class="arr"><use href="#i-chev"/></svg></div>
+          <div class="se-item"><div class="ico" style="background:var(--purple)"><img src="assets/images/img_settings_icon_volume.png" alt=""></div>
+            <span class="nm">声音</span><span class="val">70%</span><svg class="arr"><use href="#i-chev"/></svg></div>
+          <div class="se-item"><div class="ico c-sky"><img src="assets/images/img_settings_icon_language.png" alt=""></div>
+            <span class="nm">语言</span><span class="val">简体中文</span><svg class="arr"><use href="#i-chev"/></svg></div>
+          <div class="se-item"><div class="ico c-gray"><img src="assets/images/img_settings_icon_about.png" alt=""></div>
+            <span class="nm">关于本机</span><svg class="arr"><use href="#i-chev"/></svg></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="dots" id="dots"></div>
+<div class="hint"><b>左右滑动</b>切换页面 · 点按<b>主页图标</b>直达应用 · <b>AI头像</b>进语音 · <b>天气图</b>换天气 · 番茄钟/MP3 可播放</div>
+
+<script>
+/* ================= 屏幕切换引擎 ================= */
+const ORDER = ['home','clock','weather','ai','pomodoro','steps','mp3','settings'];
+const viewport = document.getElementById('viewport');
+const screens = Object.fromEntries([...document.querySelectorAll('.screen')].map(s=>[s.dataset.name, s]));
+let current = 'home';
+let animating = false;
+
+/* 初始屏 */
+screens[current].classList.add('active','center');
+
+/* 指示器 */
+const dots = document.getElementById('dots');
+ORDER.forEach(n=>{const d=document.createElement('div');d.className='dot'+(n===current?' on':'');d.dataset.name=n;dots.appendChild(d);});
+function paintDots(){[...dots.children].forEach(d=>d.classList.toggle('on', d.dataset.name===current));}
+
+/* 显示某屏（带方向动画） */
+function show(name, dir){ // dir: +1 进入的屏在右, -1 在左, 0 无动画
+  const next = screens[name]; if(!next || name===current || animating) return; // 动画期间忽略新切换，防状态机竞态
+  const prev = screens[current];
+  animating = true;
+  if(dir===0){ prev.classList.remove('active','center'); next.classList.add('active','center'); settle(name); }
+  else{
+    next.classList.add('active');
+    next.classList.remove('left','right','anim');
+    next.style.transform = dir>0 ? 'scale(var(--s)) translateX(14%)' : 'scale(var(--s)) translateX(-14%)';
+    next.style.opacity = '0';
+    void next.offsetWidth; // reflow
+    next.classList.add('anim');
+    prev.classList.add('anim');
+    next.style.transform='scale(var(--s)) translateX(0)'; next.style.opacity='1';
+    prev.style.transform = dir>0 ? 'scale(var(--s)) translateX(-14%)' : 'scale(var(--s)) translateX(14%)';
+    prev.style.opacity='0';
+    setTimeout(()=>{
+      settle(name);
+      next.classList.add('center');
+      animating=false;
+    }, 330);
+  }
+  current = name; paintDots();
+}
+const go = (name)=> show(name, ORDER.indexOf(name)>ORDER.indexOf(current)?1:-1);
+
+/* 状态归位：除指定屏外，全部卸载（防滑动跟随态残留） */
+function settle(except){
+  ORDER.forEach(n=>{
+    if(n===except) return;
+    const s=screens[n];
+    s.classList.remove('active','anim','left','right','center');
+    s.style.transform=''; s.style.opacity='';
+  });
+}
+
+/* 拖拽/滑动 */
+let sx=0, sy=0, dx=0, dy=0, dragging=false, decided=false, vertical=false;
+const TH = 70;        // 触发切换阈值 px
+const EDGE = 18;      // 视口拖动跟随比例
+function pos(e){ return e.touches ? {x:e.touches[0].clientX, y:e.touches[0].clientY} : {x:e.clientX, y:e.clientY}; }
+
+function down(e){
+  if(animating) return;
+  dragging=true; decided=false; vertical=false;
+  const p=pos(e); sx=p.x; sy=p.y; dx=0; dy=0;
+  viewport.classList.add('dragging');
+}
+function move(e){
+  if(!dragging || animating) return;
+  const p=pos(e); dx=p.x-sx; dy=p.y-sy;
+  if(!decided){
+    if(Math.abs(dx)>10 || Math.abs(dy)>10){
+      decided=true; vertical = Math.abs(dy)>Math.abs(dx);
+      if(!vertical){ // 进入拖拽跟随态
+        const idx=ORDER.indexOf(current);
+        const L=ORDER[idx-1], R=ORDER[idx+1];
+        if(L) {const s=screens[L]; s.classList.remove('left','right'); s.classList.add('active','left');}
+        if(R) {const s=screens[R]; s.classList.remove('left','right'); s.classList.add('active','right');}
+      }
+    }
+  }
+  if(decided && !vertical){
+    e.preventDefault?.();
+    const cl=Math.max(-410,Math.min(410,dx));
+    const from=screens[current]; const idx=ORDER.indexOf(current);
+    const L=ORDER[idx-1], R=ORDER[idx+1];
+    const f=cl/410; // -1..1
+    from.style.transform=`scale(var(--s)) translateX(${cl/EDGE}px)`;
+    from.style.opacity=String(1-Math.min(1,Math.abs(f)*1.2));
+    if(L && cl>0){const s=screens[L]; s.style.transform=`scale(var(--s)) translateX(${cl/410*14-14}%)`; s.style.opacity=String(Math.min(1,cl/180));}
+    if(R && cl<0){const s=screens[R]; s.style.transform=`scale(var(--s)) translateX(${14+cl/410*14}%)`; s.style.opacity=String(Math.min(1,-cl/180));}
+  }
+}
+function up(){
+  if(!dragging) return;
+  dragging=false; viewport.classList.remove('dragging');
+  if(decided && !vertical){
+    const idx=ORDER.indexOf(current);
+    if(dx<=-TH && ORDER[idx+1]) show(ORDER[idx+1], 1);
+    else if(dx>=TH && ORDER[idx-1]) show(ORDER[idx-1], -1);
+    else { // 回弹
+      const from=screens[current];
+      from.classList.add('anim'); from.style.transform='scale(var(--s)) translateX(0)'; from.style.opacity='1';
+      ORDER.forEach(n=>{ if(n!==current){const s=screens[n]; s.classList.add('anim'); s.classList.toggle('left', ORDER.indexOf(n)<idx); s.classList.toggle('right', ORDER.indexOf(n)>idx); s.style.opacity=''; s.style.transform='';}});
+      setTimeout(()=>{ settle(current); from.classList.remove('anim'); },330);
+    }
+  }
+  decided=false;
+}
+viewport.addEventListener('mousedown',down); window.addEventListener('mousemove',move); window.addEventListener('mouseup',up);
+viewport.addEventListener('touchstart',down,{passive:true}); viewport.addEventListener('touchmove',move,{passive:false}); viewport.addEventListener('touchend',up);
+
+/* 点按交互 */
+let downAt=0, downPos={x:0,y:0};
+viewport.addEventListener('mousedown',e=>{downAt=Date.now();downPos={x:e.clientX,y:e.clientY};});
+viewport.addEventListener('touchstart',e=>{const t=e.touches[0];downAt=Date.now();downPos={x:t.clientX,y:t.clientY};},{passive:true});
+
+function tap(e){
+  const t=Date.now()-downAt, d=Math.hypot(e.clientX-downPos.x, e.clientY-downPos.y);
+  if(t>350 || d>12) return; // 长按或拖拽不算点按
+  const app = e.target.closest('[data-go]');
+  if(app){ press(app); setTimeout(()=>go(app.dataset.go), 120); return; }
+  const pd = e.target.closest('#pdToggle');
+  if(pd){ press(pd); setTimeout(togglePomodoro, 120); return; }
+  const mu = e.target.closest('#muToggle');
+  if(mu){ press(mu); setTimeout(toggleMusic, 120); return; }
+  const el = e.target.closest('.cbtn, .se-item, .ai-item, .step-chart, .side');
+  if(el) press(el);
+}
+viewport.addEventListener('click', tap);
+function press(el){ el.classList.add('pressed'); setTimeout(()=>el.classList.remove('pressed'), 180); }
+
+/* 番茄钟播放/暂停（运行时圆环旋转 + 播放键呼吸光晕） */
+let pdRunning=false, pdLeft=25*60, pdTimer=null;
+const pdTime=document.querySelector('.pd-c-time'), pdIcon=document.getElementById('pdIcon');
+const PD_PLAY='assets/images/img_pomodoro_icon_play.png', PD_PAUSE='assets/images/img_pomodoro_icon_pause.png';
+pdIcon.src=PD_PLAY;
+const pdRingEl=document.querySelector('.pd-ring'), pdBtn=document.getElementById('pdToggle');
+function renderPd(){ pdTime.textContent = String(Math.floor(pdLeft/60)).padStart(2,'0')+':'+String(pdLeft%60).padStart(2,'0'); }
+function togglePomodoro(){
+  pdRunning=!pdRunning;
+  pdIcon.src = pdRunning ? PD_PAUSE : PD_PLAY;
+  pdRingEl.classList.toggle('spin', pdRunning);
+  pdBtn.classList.toggle('glow', pdRunning);
+  if(pdRunning){ pdTimer=setInterval(()=>{ if(pdLeft>0){pdLeft--; renderPd();} else clearInterval(pdTimer); },1000); }
+  else clearInterval(pdTimer);
+}
+renderPd();
+
+/* MP3 播放/暂停 + 进度 + 随机播放开关 */
+let muPlaying=false, muSec=84, muTotal=123, muTimer=null;
+const muIcon=document.getElementById('muIcon'), muBar=document.getElementById('muBarFill'), muTime=document.getElementById('muTime');
+function renderMu(){ muBar.style.width=(muSec/muTotal*100).toFixed(1)+'%';
+  muTime.textContent=String(Math.floor(muSec/60)).padStart(2,'0')+':'+String(muSec%60).padStart(2,'0')+' / 02:03'; }
+function toggleMusic(){
+  muPlaying=!muPlaying;
+  muIcon.src = muPlaying ? 'assets/images/img_music_icon_play.png' : 'assets/images/img_music_icon_pause.png';
+  if(muPlaying){ muTimer=setInterval(()=>{ if(muSec<muTotal){muSec++; renderMu();} else clearInterval(muTimer); },1000); }
+  else clearInterval(muTimer);
+}
+renderMu();
+
+let muShuffleOn=false;
+document.getElementById('muShuffle').addEventListener('click',()=>{
+  muShuffleOn=!muShuffleOn;
+  document.getElementById('shuffleOff').classList.toggle('on', !muShuffleOn);
+  document.getElementById('shuffleOn').classList.toggle('on', muShuffleOn);
+});
+
+/* ================= 天气：点按主图循环切换 8 种天气图标 ================= */
+const WX_LABEL = {sunny:'晴', cloudy:'多云', overcast:'阴', rain:'小雨', heavyrain:'大雨', thunder:'雷阵雨', snow:'小雪', fog:'雾'};
+const wxCycle=document.getElementById('wxCycle'), wxSub=document.getElementById('wxSub');
+let wxIdx=1; /* 默认多云 */
+const wxImgs=[...wxCycle.querySelectorAll('img.big')];
+wxCycle.addEventListener('click',()=>{
+  wxImgs[wxIdx].classList.remove('on');
+  wxIdx=(wxIdx+1)%wxImgs.length;
+  wxImgs[wxIdx].classList.add('on');
+  wxSub.textContent = WX_LABEL[wxImgs[wxIdx].dataset.wx]||'多云';
+  /* 逐时预报跟随当前天气（只有第一列切换图标，演示联动） */
+  const WX_HOURLY = {sunny:'assets/images/img_weather_icon_sunny_28.png', cloudy:'assets/images/img_weather_icon_cloudy_28.png', overcast:'assets/images/img_weather_icon_overcast_28.png', rain:'assets/images/img_weather_icon_rain_28.png', heavyrain:'assets/images/img_weather_icon_heavyrain_28.png', thunder:'assets/images/img_weather_icon_thunder_28.png', snow:'assets/images/img_weather_icon_snow_28.png', fog:'assets/images/img_weather_icon_fog_28.png'};
+  document.querySelector('#wxHours img[data-hour]').src = WX_HOURLY[wxImgs[wxIdx].dataset.wx]||WX_HOURLY.cloudy;
+});
+
+/* ================= AI 语音对话模式（麦克风三态 + 波形动画） =================
+   idle（待机）→ listening（按下麦克风，粉色脉冲+波形）→ speaking（AI 回复，紫色脉冲+波形）→ 回到 idle */
+const sAi=document.querySelector('.s-ai');
+const voiceMic=document.getElementById('voiceMic'), voiceBot=document.getElementById('voiceBot'), voiceState=document.getElementById('voiceState');
+const micImgs={idle:document.getElementById('micIdle'), listening:document.getElementById('micListen'), speaking:document.getElementById('micSpeak')};
+const waveFrames=[...document.querySelectorAll('#voiceWave img')];
+let vState='idle', vTimer=null, vWave=null;
+function setMic(state){ for(const k in micImgs) micImgs[k].classList.toggle('on', k===state); }
+function startWave(){ stopWave(); let f=0; vWave=setInterval(()=>{ f=(f+1)%waveFrames.length; waveFrames.forEach((im,i)=>im.classList.toggle('on', i===f)); },120); }
+function stopWave(){ if(vWave){clearInterval(vWave); vWave=null;} waveFrames.forEach(im=>im.classList.remove('on')); }
+function enterVoice(){ sAi.classList.add('voice'); setState('idle'); }
+function exitVoice(){ sAi.classList.remove('voice'); setState(null); }
+function setState(next){
+  vState=next;
+  clearInterval(vTimer);
+  document.getElementById('micStatus').style.display = (next==='listening'||next==='speaking') ? '' : 'none';
+  voiceMic.classList.remove('listening','speaking');
+  voiceBot.classList.remove('listening','speaking');
+  stopWave();
+  if(next==='listening'){ setMic('listening'); voiceBot.src='assets/images/img_ai_avatar_user.png'; voiceBot.classList.add('listening'); voiceState.textContent='正在聆听…'; startWave(); }
+  else if(next==='speaking'){ setMic('speaking'); voiceBot.src='assets/images/img_ai_avatar_bot.png'; voiceBot.classList.add('speaking'); voiceState.textContent='AI 正在回复…'; startWave(); }
+  else if(next==='idle'){ setMic('idle'); voiceBot.src='assets/images/img_ai_avatar_bot.png'; voiceState.textContent='点击麦克风开始对话'; }
+}
+voiceMic.addEventListener('click',()=>{
+  if(vState==='idle'){ setState('listening'); vTimer=setTimeout(()=>setState('speaking'), 2600); }
+  else if(vState==='listening'){ setState('speaking'); }
+  else { setState('idle'); }
+});
+document.getElementById('voiceBack').addEventListener('click', exitVoice);
+/* 每次 AI 对话页打开时先进入文本视图，点按头像进入语音模式 */
+document.querySelector('.ai-hd .ai-ava').addEventListener('click', enterVoice);
+
+/* 键盘左右（桌面预览辅助）；C 键切换充电状态，V 键切换断网状态 */
+window.addEventListener('keydown',e=>{
+  const idx=ORDER.indexOf(current);
+  if(e.key==='ArrowRight' && ORDER[idx+1]) go(ORDER[idx+1]);
+  if(e.key==='ArrowLeft' && ORDER[idx-1]) go(ORDER[idx-1]);
+  if(e.key==='c'||e.key==='C') document.body.classList.toggle('charging');
+  if(e.key==='v'||e.key==='V') document.body.classList.toggle('offline');
+});
+
+/* ================= 计步：进入时圆环充能；点按图表键切换 圆环/柱状图 ================= */
+const stepRing=document.getElementById('stepRing');
+let vizTimer=null;
+function refillRing(){
+  stepRing.classList.remove('filling'); void stepRing.offsetWidth; stepRing.classList.add('filling');
+}
+/* 切换页面到计步时触发充能动画；离开 AI 页时退出语音模式 */
+const _show=show;
+show=function(name,dir){ _show(name,dir); if(name==='steps') setTimeout(refillRing, 60); if(name!=='ai' && typeof exitVoice==='function') exitVoice(); };
+
+let vizBars=false;
+document.getElementById('stepViz').addEventListener('click',()=>{
+  vizBars=!vizBars;
+  const wrap=stepRing.parentElement, center=wrap.querySelector('.ring-center');
+  if(vizBars){
+    stepRing.style.display='none';
+    if(!wrap.querySelector('.step-bars')){
+      const bars=document.createElement('div');
+      bars.className='step-bars';
+      bars.innerHTML=[38,52,30,64,45,72,58,84,66,48,78,60].map(h=>`<i style="height:${h}%"></i>`).join('');
+      wrap.appendChild(bars);
+    }
+    wrap.querySelector('.step-bars').style.display='flex';
+    center.style.opacity='0';
+    document.querySelector('.step-c-num').textContent='近12时';
+  } else {
+    stepRing.style.display='';
+    wrap.querySelector('.step-bars').style.display='none';
+    center.style.opacity='';
+    document.querySelector('.step-c-num').innerHTML='6820<i>步</i>';
+    refillRing();
+  }
+});
+</script>
+</body>
+</html>

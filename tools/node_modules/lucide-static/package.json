@@ -1,0 +1,49 @@
+{
+  "name": "lucide-static",
+  "description": "Lucide is a community-run fork of Feather Icons, open for anyone to contribute icons.",
+  "version": "1.42.0",
+  "license": "ISC",
+  "homepage": "https://lucide.dev",
+  "bugs": "https://github.com/lucide-icons/lucide/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucide-icons/lucide.git"
+  },
+  "keywords": [
+    "Lucide",
+    "Static",
+    "Sprite",
+    "NodeJS",
+    "Feather",
+    "Icons",
+    "Icon",
+    "SVG",
+    "Feather Icons",
+    "Fontawesome",
+    "Font Awesome"
+  ],
+  "source": "src/lucide-static.js",
+  "main": "dist/cjs/lucide-static.js",
+  "module": "dist/esm/lucide-static.mjs",
+  "typings": "dist/lucide-static.d.ts",
+  "sideEffects": false,
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "prettier": "3.9.6",
+    "rollup": "^4.63.1",
+    "rollup-plugin-dts": "^6.5.1",
+    "svgson": "^5.3.1",
+    "@lucide/build-icons": "1.1.0",
+    "@lucide/helpers": "1.0.0",
+    "@lucide/rollup-plugins": "1.0.0"
+  },
+  "scripts": {
+    "copy:license": "cp ../../LICENSE ./LICENSE",
+    "build": "pnpm clean && pnpm copy:license && pnpm build:icons && pnpm build:bundles && pnpm build:lib && pnpm build:tags",
+    "build:tags": "node ./scripts/migrateIconsToTags.mts",
+    "build:icons": "build-icons --output=./src --templateSrc=./scripts/exportTemplate.mts --iconFileExtension=.ts --withAliases --aliasNamesOnly --aliasesFileExtension=.ts --exportFileName=index.ts",
+    "build:lib": "node ./scripts/buildLib.mts",
+    "build:bundles": "rollup -c rollup.config.mjs",
+    "clean": "rm -rf lib && rm -rf build && rm -rf icons && rm -f sprite.svg"
+  }
+}

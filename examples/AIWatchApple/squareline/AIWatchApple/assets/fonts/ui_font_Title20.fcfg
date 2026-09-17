@@ -1,0 +1,27 @@
+{
+  "codename": "Title20",
+  "ttf_path": "/assets/fonts/noto-sans-sc-v40-chinese-simplified-500.ttf",
+  "bin_path": "/assets/fonts\\ui_font_Title20.bin",
+  "c_path": "/assets/fonts\\ui_font_Title20.c",
+  "cfg_path": "/assets/fonts\\ui_font_Title20.fcfg",
+  "size": 20,
+  "bpp": 4,
+  "letters": 0,
+  "ranges": [
+    "0x20-0x7E",
+    "0x00B0",
+    "0x2014",
+    "0x2018-0x2019",
+    "0x201C-0x201D",
+    "0x2026",
+    "0x3001",
+    "0x3002",
+    "0x300A-0x300B",
+    "0xFF01-0xFF49",
+    "0xFF4B-0xFF59",
+    "0xFF5B-0xFF5E"
+  ],
+  "symbols": " #%()*+,-./0123456789:<=>ABCDEFGHILMNOPRSTUVWY\\_`abcdefghiklmnopqrstuvwxy|°×–、。三不两个中为主么乐事二于云互交亮人什仅今以件任位低体何余作你侧值健元克全关内击分切列则刻剪副动化区单卡印参反变叠只可右各周四回图圆在块域声复多大天头好子字安容宽寸对小尺局层居屏山左已布帧帮幕序应底度康开弹强形径循心必态怎总息或所手拟指按换据接控收放效数文无日旧时星显景晴最月有本机标样格档模次正步每气水汇池波活消深渐温滑滴灰点照片版牙率环用电画白的盘目直眠睡示种秒第签箭粉系素紫红级统绿网置考聊背脚自色落蓝行表裁装规视觉角触计设调贴起超跑距身轴边返进连逐部金针钟钮链键闭间阴阵附集雨雪雷雾青静音页顶项顺须题风饰馈高麦黄黑齐！（），：；？",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}

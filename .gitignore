@@ -1,0 +1,53 @@
+# ---------------------------------------------------------------------------
+# Agent / tooling state — never tracked, never shipped.
+#
+# .workbuddy/ holds this project's working memory (.workbuddy/memory/*.md).
+# tools/package_release.py also refuses to ship it: the archive root is an
+# explicit allowlist (SHIP_TOP), so even a naive "zip the working directory"
+# cannot put it in the release.
+# ---------------------------------------------------------------------------
+.workbuddy/
+
+# ---------------------------------------------------------------------------
+# Build output — regenerate with `python tools/package_release.py`.
+# ---------------------------------------------------------------------------
+dist/
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# ---------------------------------------------------------------------------
+# Editors / OS
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------------------
+# SquareLine editor churn — created on save inside a project directory.
+# tools/package_release.py and eval/run_regression.py ignore the same names.
+# ---------------------------------------------------------------------------
+**/squareline/*/backup/
+**/squareline/*/cache/
+**/squareline/*/components/
+**/squareline/*/ui/
+
+# ---------------------------------------------------------------------------
+# Generated previews — the tool re-creates them on demand.
+# NB: examples/*/mockup*.html are Stage-B *deliverables*; do not ignore those.
+# ---------------------------------------------------------------------------
+**/preview_from_project.html
+
+# ---------------------------------------------------------------------------
+# Local scratch
+# ---------------------------------------------------------------------------
+*.log
+*.bak
+*.orig
+*.rej

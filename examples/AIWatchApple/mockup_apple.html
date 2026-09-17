@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>AIWatch Apple — 240 圆形屏 7 屏</title>
+<style>
+@font-face{font-family:'NS400';src:url('assets/fonts/noto-sans-sc-v40-chinese-simplified-regular.ttf') format('truetype');font-weight:400}
+@font-face{font-family:'NS500';src:url('assets/fonts/noto-sans-sc-v40-chinese-simplified-500.ttf') format('truetype');font-weight:500}
+@font-face{font-family:'NS700';src:url('assets/fonts/noto-sans-sc-v40-chinese-simplified-700.ttf') format('truetype');font-weight:700}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#05060a;color:#e8ecf4;font-family:system-ui,sans-serif;padding:28px}
+h1{font-size:18px;font-weight:600;margin-bottom:4px}
+p.sub{color:#8b93a3;font-size:12px;margin-bottom:22px}
+.grid{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-start}
+figure{display:flex;flex-direction:column;align-items:center;gap:8px}
+.watch{width:240px;height:240px;position:relative;background:#000;border-radius:50%;
+  outline:3px solid #3a3d42;overflow:hidden;flex:none}
+.screen{position:absolute;inset:0;border-radius:50%}
+figcaption{font-size:12px;color:#9aa3b2}
+figcaption b{color:#e8ecf4;font-size:13px}
+.abs{position:absolute}
+img{display:block}
+:root{--t2:rgba(255,255,255,.62);--t3:rgba(255,255,255,.38)}
+.t2{color:var(--t2)} .t3{color:var(--t3)}
+.center{left:0;right:0;text-align:center}
+.f11{font-family:NS400;font-size:11px;line-height:1.2}
+.f13{font-family:NS400;font-size:13px;line-height:1.2}
+.f14{font-family:NS400;font-size:14px;line-height:1.25}
+.f15{font-family:NS400;font-size:15px;line-height:1.3}
+.f16{font-family:NS500;font-size:16px;line-height:1.25}
+.f18{font-family:NS500;font-size:18px;line-height:1.25}
+.f20{font-family:NS500;font-size:20px;line-height:1.25}
+.f22{font-family:NS500;font-size:22px;line-height:1.25}
+.f24b{font-family:NS700;font-size:24px;line-height:1.2}
+.f36{font-family:NS700;font-size:36px;line-height:1.15}
+.f44{font-family:NS700;font-size:44px;line-height:1.1}
+.circle{position:absolute;width:44px;height:44px;border-radius:50%}
+.dot{position:absolute;width:6px;height:6px;border-radius:50%;background:#5A5A5A}
+.dot.on{background:#fff}
+.hrow{position:absolute;left:40px;width:160px;height:36px;border-radius:14px;background:#141416}
+</style></head><body>
+<h1>AIWatch · Apple 风格 7 屏（240×240 圆形）</h1>
+<p class="sub">home → clock → weather → health → steps → ai → settings · SquareLine shape=CIRCLE</p>
+<div class="grid">
+
+<!-- ================= home ================= -->
+<figure><div class="watch"><div class="screen" id="scr-home">
+  <div class="abs f20 center" style="top:18px;font-family:NS700">10:09</div>
+  <img class="abs" src="assets/images_apple/img_apple_battery.png" style="left:164px;top:22px;width:18px;height:10px">
+  <!-- row 1 -->
+  <div class="circle" style="left:41px;top:52px;background:#FFFFFF"></div>
+  <img class="abs" src="assets/images_apple/img_apple_icon_clock.png" style="left:51px;top:62px;width:24px;height:24px">
+  <div class="circle" style="left:98px;top:52px;background:#0A84FF"></div>
+  <img class="abs" src="assets/images_apple/img_apple_icon_weather.png" style="left:108px;top:62px;width:24px;height:24px">
+  <div class="circle" style="left:155px;top:52px;background:#FF453A"></div>
+  <img class="abs" src="assets/images_apple/img_apple_icon_heart.png" style="left:165px;top:62px;width:24px;height:24px">
+  <!-- row 2 -->
+  <div class="circle" style="left:41px;top:108px;background:#30D158"></div>
+  <img class="abs" src="assets/images_apple/img_apple_icon_runner.png" style="left:51px;top:118px;width:24px;height:24px">
+  <img class="abs" src="assets/images_apple/img_apple_circle_gemini.png" style="left:98px;top:108px;width:44px;height:44px">
+  <div class="circle" style="left:155px;top:108px;background:#8E8E93"></div>
+  <img class="abs" src="assets/images_apple/img_apple_icon_settings.png" style="left:165px;top:118px;width:24px;height:24px">
+  <!-- row 3 -->
+  <div class="circle" style="left:41px;top:164px;background:#2C2C2E"></div>
+  <img class="abs" src="assets/images_apple/img_apple_icon_grid.png" style="left:51px;top:174px;width:24px;height:24px">
+  <div class="circle" style="left:98px;top:164px;background:#FF2D8A"></div>
+  <img class="abs" src="assets/images_apple/img_apple_icon_music.png" style="left:108px;top:174px;width:24px;height:24px">
+  <div class="circle" style="left:155px;top:164px;background:#0A84FF"></div>
+  <img class="abs" src="assets/images_apple/img_apple_icon_message.png" style="left:165px;top:174px;width:24px;height:24px">
+  <!-- page dots -->
+  <div class="dot on" style="left:102px;top:216px"></div>
+  <div class="dot" style="left:112px;top:216px"></div>
+  <div class="dot" style="left:122px;top:216px"></div>
+  <div class="dot" style="left:132px;top:216px"></div>
+</div></div><figcaption><b>home</b> · App 网格</figcaption></figure>
+
+<!-- ================= clock ================= -->
+<figure><div class="watch"><div class="screen" id="scr-clock">
+  <!-- baked-rotation ticks (same assets as the .spj) -->
+  <img class="abs" src="assets/images_apple/img_apple_tick_M0.png" style="left:114px;top:7px;width:12px;height:12px">
+  <img class="abs" src="assets/images_apple/img_apple_tick_m30.png" style="left:166px;top:15px;width:12px;height:12px">
+  <img class="abs" src="assets/images_apple/img_apple_tick_m60.png" style="left:206px;top:55px;width:12px;height:12px">
+  <img class="abs" src="assets/images_apple/img_apple_tick_M90.png" style="left:221px;top:114px;width:12px;height:12px">
+  <img class="abs" src="assets/images_apple/img_apple_tick_m120.png" style="left:206px;top:173px;width:12px;height:12px">
+  <img class="abs" src="assets/images_apple/img_apple_tick_m150.png" style="left:166px;top:213px;width:12px;height:12px">
+  <img class="abs" src="assets/images_apple/img_apple_tick_M180.png" style="left:114px;top:221px;width:12px;height:12px">
+  <img class="abs" src="assets/images_apple/img_apple_tick_m210.png" style="left:62px;top:213px;width:12px;height:12px">
+  <img class="abs" src="assets/images_apple/img_apple_tick_m240.png" style="left:22px;top:173px;width:12px;height:12px">
+  <img class="abs" src="assets/images_apple/img_apple_tick_M270.png" style="left:7px;top:114px;width:12px;height:12px">
+  <img class="abs" src="assets/images_apple/img_apple_tick_m300.png" style="left:22px;top:55px;width:12px;height:12px">
+  <img class="abs" src="assets/images_apple/img_apple_tick_m330.png" style="left:62px;top:15px;width:12px;height:12px">
+  <div class="abs f44 center" style="top:32px">10:09</div>
+  <div class="abs f14 t2 center" style="top:92px">周二 4月22日</div>
+  <!-- baked-rotation hands, 10:09:35 -->
+  <img class="abs" src="assets/images_apple/img_apple_hand_hour.png" style="left:96px;top:128px;width:48px;height:48px">
+  <img class="abs" src="assets/images_apple/img_apple_hand_minute.png" style="left:88px;top:120px;width:64px;height:64px">
+  <img class="abs" src="assets/images_apple/img_apple_hand_second.png" style="left:86px;top:118px;width:68px;height:68px">
+  <div class="abs" style="left:116px;top:148px;width:8px;height:8px;border-radius:50%;background:#0A84FF"></div>
+  <img class="abs" src="assets/images_apple/img_apple_footsteps.png" style="left:96px;top:194px;width:14px;height:14px;opacity:.6">
+  <div class="abs f16 t2" style="left:114px;top:190px;width:60px">7532</div>
+</div></div><figcaption><b>clock</b> · 模拟表盘</figcaption></figure>
+
+<!-- ================= weather ================= -->
+<figure><div class="watch"><div class="screen" id="scr-weather">
+  <img class="abs" src="assets/images_apple/img_apple_pin.png" style="left:62px;top:16px;width:16px;height:16px">
+  <div class="abs f18" style="left:84px;top:13px">旧金山</div>
+  <img class="abs" src="assets/images_apple/img_apple_weather_cloudy_64.png" style="left:30px;top:46px;width:64px;height:64px">
+  <div class="abs f36" style="left:120px;top:52px;width:96px;text-align:right">22°C</div>
+  <div class="abs f18" style="left:30px;top:120px">局部多云</div>
+  <div class="abs f14 t2" style="left:30px;top:146px">最高 24° 最低 16°</div>
+  <!-- hourly columns (no card, fits the round bezel) -->
+  <img class="abs" src="assets/images_apple/img_apple_weather_cloudy_24.png" style="left:50px;top:172px;width:24px;height:24px">
+  <img class="abs" src="assets/images_apple/img_apple_weather_sunny_24.png" style="left:90px;top:172px;width:24px;height:24px">
+  <img class="abs" src="assets/images_apple/img_apple_weather_sunny_24.png" style="left:130px;top:172px;width:24px;height:24px">
+  <img class="abs" src="assets/images_apple/img_apple_moon_24.png" style="left:170px;top:172px;width:24px;height:24px">
+  <div class="abs f13 t2" style="left:49px;top:202px;width:26px;text-align:center">22°</div>
+  <div class="abs f13 t2" style="left:89px;top:202px;width:26px;text-align:center">24°</div>
+  <div class="abs f13 t2" style="left:129px;top:202px;width:26px;text-align:center">23°</div>
+  <div class="abs f13 t2" style="left:169px;top:202px;width:26px;text-align:center">19°</div>
+</div></div><figcaption><b>weather</b> · 天气</figcaption></figure>
+
+<!-- ================= health ================= -->
+<figure><div class="watch"><div class="screen" id="scr-health">
+  <img class="abs" src="assets/images_apple/img_apple_health_heart.png" style="left:60px;top:12px;width:20px;height:20px">
+  <div class="abs f36" style="left:90px;top:2px">72</div>
+  <div class="abs f13 t3" style="left:148px;top:28px">bpm</div>
+  <img class="abs" src="assets/images_apple/img_apple_health_trace.png" style="left:30px;top:48px;width:180px;height:48px">
+  <!-- rows -->
+  <div class="hrow" style="top:110px;left:48px;width:144px;height:30px"></div>
+  <div class="abs" style="left:56px;top:116px;width:18px;height:18px;border-radius:50%;background:#FF453A"></div>
+  <img class="abs" src="assets/images_apple/img_apple_health_drop.png" style="left:59px;top:119px;width:12px;height:12px">
+  <div class="abs f15" style="left:82px;top:117px">SpO₂</div>
+  <div class="abs f15" style="left:120px;top:117px;width:64px;text-align:right">98%</div>
+  <div class="hrow" style="top:144px;left:48px;width:144px;height:30px"></div>
+  <div class="abs" style="left:56px;top:150px;width:18px;height:18px;border-radius:50%;background:#64D2FF"></div>
+  <img class="abs" src="assets/images_apple/img_apple_health_temp.png" style="left:59px;top:153px;width:12px;height:12px">
+  <div class="abs f15" style="left:82px;top:151px">体温</div>
+  <div class="abs f15" style="left:112px;top:151px;width:72px;text-align:right">36.5°C</div>
+  <div class="hrow" style="top:178px;left:48px;width:144px;height:30px"></div>
+  <div class="abs" style="left:56px;top:184px;width:18px;height:18px;border-radius:50%;background:#BF5AF2"></div>
+  <img class="abs" src="assets/images_apple/img_apple_health_sleep.png" style="left:59px;top:187px;width:12px;height:12px">
+  <div class="abs f15" style="left:82px;top:185px">睡眠</div>
+  <div class="abs f15" style="left:116px;top:185px;width:68px;text-align:right">7时48分</div>
+</div></div><figcaption><b>health</b> · 健康</figcaption></figure>
+
+<!-- ================= steps ================= -->
+<figure><div class="watch"><div class="screen" id="scr-steps">
+  <img class="abs" src="assets/images_apple/img_apple_steps_runner.png" style="left:108px;top:12px;width:24px;height:24px">
+  <!-- activity ring 104px at (68,58) -->
+  <div class="abs" style="left:68px;top:58px;width:104px;height:104px;border-radius:50%;
+    background:conic-gradient(from 0deg,#30D158 0deg 338deg,rgba(48,209,88,.16) 338deg 360deg)"></div>
+  <div class="abs" style="left:80px;top:70px;width:80px;height:80px;border-radius:50%;background:#000"></div>
+  <div class="abs f36 center" style="top:92px">7532</div>
+  <div class="abs f13 t3 center" style="top:134px">steps</div>
+  <!-- stats -->
+  <img class="abs" src="assets/images_apple/img_apple_steps_flame.png" style="left:59px;top:168px;width:14px;height:14px">
+  <img class="abs" src="assets/images_apple/img_apple_steps_location.png" style="left:113px;top:168px;width:14px;height:14px">
+  <img class="abs" src="assets/images_apple/img_apple_steps_floors.png" style="left:167px;top:168px;width:14px;height:14px">
+  <div class="abs f24b" style="left:38px;top:180px;width:52px;text-align:center">320</div>
+  <div class="abs f24b" style="left:94px;top:180px;width:52px;text-align:center">5.8</div>
+  <div class="abs f24b" style="left:150px;top:180px;width:52px;text-align:center">9</div>
+  <div class="abs f11 t3" style="left:38px;top:210px;width:52px;text-align:center">kcal</div>
+  <div class="abs f11 t3" style="left:94px;top:210px;width:52px;text-align:center">km</div>
+  <div class="abs f11 t3" style="left:150px;top:210px;width:52px;text-align:center">floors</div>
+</div></div><figcaption><b>steps</b> · 计步</figcaption></figure>
+
+<!-- ================= ai (Gemini) ================= -->
+<figure><div class="watch"><div class="screen" id="scr-ai">
+  <img class="abs" src="assets/images_apple/img_apple_ai_chevron_left.png" style="left:26px;top:18px;width:16px;height:16px">
+  <img class="abs" src="assets/images_apple/img_apple_ai_star.png" style="left:104px;top:10px;width:32px;height:32px">
+  <img class="abs" src="assets/images_apple/img_apple_ai_more.png" style="left:198px;top:18px;width:16px;height:16px">
+  <div class="abs f22 center" style="top:50px">Gemini</div>
+  <div class="abs" style="left:24px;top:84px;width:192px;height:58px;border-radius:14px;background:#1C1C2E"></div>
+  <div class="abs f15" style="left:40px;top:96px;width:162px;line-height:1.35">你好！今天有什么可以帮你？</div>
+  <div class="abs" style="left:92px;top:162px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3E6BFF,#7B4DFF)"></div>
+  <img class="abs" src="assets/images_apple/img_apple_ai_mic.png" style="left:108px;top:178px;width:24px;height:24px">
+</div></div><figcaption><b>ai</b> · Gemini 对话</figcaption></figure>
+
+<!-- ================= settings ================= -->
+<figure><div class="watch"><div class="screen" id="scr-settings">
+  <div class="abs f20 center" style="top:12px">设置</div>
+  <div class="hrow" style="top:46px;left:40px"></div>
+  <div class="abs" style="left:48px;top:53px;width:22px;height:22px;border-radius:50%;background:#0A84FF"></div>
+  <img class="abs" src="assets/images_apple/img_apple_settings_wifi.png" style="left:53px;top:58px;width:12px;height:12px">
+  <div class="abs f16" style="left:80px;top:51px">Wi-Fi</div>
+  <div class="abs f13 t3" style="left:122px;top:54px;width:42px;text-align:right">已连接</div>
+  <img class="abs" src="assets/images_apple/img_apple_chevron.png" style="left:172px;top:55px;width:10px;height:16px">
+  <div class="hrow" style="top:88px;left:40px"></div>
+  <div class="abs" style="left:48px;top:95px;width:22px;height:22px;border-radius:50%;background:#FFD60A"></div>
+  <img class="abs" src="assets/images_apple/img_apple_settings_brightness.png" style="left:53px;top:100px;width:12px;height:12px">
+  <div class="abs f16" style="left:80px;top:93px">显示</div>
+  <div class="abs f13 t3" style="left:124px;top:96px;width:40px;text-align:right">自动</div>
+  <img class="abs" src="assets/images_apple/img_apple_chevron.png" style="left:172px;top:97px;width:10px;height:16px">
+  <div class="hrow" style="top:130px;left:40px"></div>
+  <div class="abs" style="left:48px;top:137px;width:22px;height:22px;border-radius:50%;background:#BF5AF2"></div>
+  <img class="abs" src="assets/images_apple/img_apple_settings_volume.png" style="left:53px;top:142px;width:12px;height:12px">
+  <div class="abs f16" style="left:80px;top:135px">声音</div>
+  <div class="abs f13 t3" style="left:132px;top:138px;width:32px;text-align:right">70%</div>
+  <img class="abs" src="assets/images_apple/img_apple_chevron.png" style="left:172px;top:139px;width:10px;height:16px">
+  <div class="hrow" style="top:172px;left:40px"></div>
+  <div class="abs" style="left:48px;top:179px;width:22px;height:22px;border-radius:50%;background:#8E8E93"></div>
+  <img class="abs" src="assets/images_apple/img_apple_settings_info.png" style="left:53px;top:184px;width:12px;height:12px">
+  <div class="abs f16" style="left:80px;top:177px">关于</div>
+  <img class="abs" src="assets/images_apple/img_apple_chevron.png" style="left:172px;top:181px;width:10px;height:16px">
+</div></div><figcaption><b>settings</b> · 设置</figcaption></figure>
+
+</div>
+</body></html>
