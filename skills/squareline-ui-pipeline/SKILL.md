@@ -179,6 +179,54 @@ python tools/build_from_spec.py --example        # 打印带注释的骨架
 裸命令就能重建工程，不用记参数；否则漏掉 `--assets` 的后果是工程里
 一张图都不复制、validator 报一屏 `missing image files`（很难一眼看出是路径问题）。
 
+#### `asset` 是扁平路径 —— `assets_subdir` 不参与引用
+
+```jsonc
+{"assets_subdir": "images"}                        // 只决定读哪个「源」素材包
+{"type":"IMAGE", "asset":"assets/img_logo.png"}    // ✅ 引用永远是扁平的
+```
+
+`assets_subdir` 只挑选输入包（`SRC_IMAGES = ASSETS_ROOT/assets_subdir`），
+**从不写进产物引用**。写成 `assets/images/img_logo.png` 等于让工程指向一个
+它没有的文件 → 每张图 `missing`（实测症状：「39 张图全部 missing」）。
+`mk_image_of()` 现在会在 spec 阶段直接 `fail` 并打印正确写法。
+
+#### 用 `tools/layout.py` 算坐标，别手算
+
+网格铺砖、卡片行、图标+文字这三类布局反复出现，手算 `rect` 是 2~4px 漂移和
+「最后一列溢出面板」的来源。`tools/layout.py` 提供纯函数（返回可直接塞进
+`children[]` 的普通 dict）：
+
+```python
+from layout import grid, stack, card_row, icon_text, label_sized
+
+tiles = grid((20, 60, 360, 220), cols=3, rows=2, gap_x=12, gap_y=12,
+             factory=lambda x, y, w, h: panel("t", [x, y, w, h], radius=14))
+rows  = stack((24, 70), 272, [96, 96], gap=16,
+              factory=lambda x, y, w, h: panel("c", [x, y, w, h], radius=16))
+pair  = icon_text({"name":"ic","asset":"assets/img_a.png"},
+                  {"name":"tx","text":"已连接","font":"Body16"}, [40,88,240,24])
+card  = card_row("card_display", [24,72,272,96], "显示", "自动", "Title20", "Body16")
+lbl   = label_sized("hint", (30, 272), 260, "左滑进入设置", 16, "Body16")
+```
+
+`grid()` 会在间距放不下时**抛错**而不是输出负宽度；
+`label_sized()` 用 `ceil(size * 1.35)` 自动定高，绕开下面那条行高陷阱。
+自检：`python tools/layout.py`。
+
+#### LABEL 高度 ≥ 行高，而行高 > 字号（且随工程变）
+
+`run_build()` 拒绝 `height < line_height`。要点：
+
+- `line_height` **一定大于** `size`（含 ascender+descender），实测比例 1.19~1.31；
+- 它**不是常量**：取决于工程收进了哪些字形。`Body16@16` 在 AIWatch 是 21
+  （820 字形）、在 SpecWidget 是 20（293 字形）；
+- 因此规范做法是**留余量**：`height >= ceil(size * 1.35)`，
+  权威值看构建输出的 `lineheight:` 一行。
+
+速查表 `tools/LABEL_SIZING.md` 由 `tools/label_sizing.py` 从真实字体 `.c`
+生成（`preflight.py` 校验同步），别手改。
+
 ### C-2 定制几何 → `tools/screens/<name>.py`
 
 径向图标环、弦宽算术、预烘焙指针这类**必须写代码**的几何，才落到
@@ -396,4 +444,76 @@ GBK 乱码**——而真正修好的那个包就躺在它里面没被发出去�
     When you split docs, also check the destination actually *ships* — a
     `docs/` top-level dir is not in `SHIP_TOP`, so a maintainer doc written
     there would vanish from the archive.
+28. **The IMAGE `asset` path is flat; `assets_subdir` is not part of it.**
+    A spec writes `assets/img_x.png`.  `assets_subdir` (default `"images"`) only
+    chooses which *source* pack the builder reads from
+    (`SRC_IMAGES = ASSETS_ROOT/assets_subdir`) — it **never** appears in the
+    emitted reference.  Writing `assets/images/img_x.png` therefore produces a
+    reference to a file that the project does not have, and every image is
+    reported `missing`.  Symptom in the wild: "39 images, all missing" after a
+    perfectly reasonable-looking spec edit.
+29. **`line_height` is not a constant per font+size — it depends on the glyph
+    set, so it differs between projects.**  It is
+    `max(ascent) + max(descent)` over the glyphs actually included, e.g.
+    `Body16@16` is **21** in AIWatch (820 glyphs) but **20** in SpecWidget
+    (293 glyphs).  Consequences: (a) a hand-typed `size -> height` table is
+    only an estimate, so leave margin (`ceil(size * 1.35)`) rather than sitting
+    on the boundary; (b) the authoritative value is always the `lineheight:`
+    line of *your* build.  `tools/LABEL_SIZING.md` is generated from real
+    artifacts and `preflight.py` fails if it drifts.
+30. **`line_height` is only knowable after fonts are built, which is why the
+    height check feels like trial-and-error.**  `run_build()` rejects
+    `height < line_height`, but `line_height` is recovered by regex-parsing the
+    generated `.c` — so at spec-authoring time there was nothing to consult and
+    engineers hit the same clip three times in one project (Display96 110<116,
+    Big64 72<78, Score40 48<49).  Use `tools/LABEL_SIZING.md` / `layout.label_sized`
+    for the spec-time estimate, and read `lineheight:` for the truth.
+31. **Do not render arcs with CSS `conic-gradient`.**  It is unsupported by the
+    older WebKit that many sandboxes (and `wkhtmltoimage`) ship, and it fails
+    *silently*: the `.spj` is correct, only the preview picture is wrong, so the
+    ring is simply invisible and cannot be reviewed.  Stroked inline SVG is
+    supported by every rasteriser worth using, including ancient ones —
+    `preview_from_project.py: arc_svg()` is the reference implementation.
+32. **A stale spec markdown cannot break existing labels — know which source
+    actually feeds the charset.**  `build_fonts()` unions *all real LABEL texts
+    from the built .spj* (`collect_label_texts`) with whatever extra characters
+    the spec markdown contributes (`doc_charset`).  The `.spj` is the primary
+    source, so a forgotten doc edit only costs future-proofing, never a missing
+    glyph today.  The residual defect was that this margin was invisible, so a
+    stale doc looked identical to a healthy one; the build now prints
+    `charset : ui-text N, doc-headroom M (+K usable)` to make it legible.
+
+## Referencing a real brand product — self-check list
+
+Recurring across three separate projects here (AIWatchApple, AIWatch, and the
+Series-12 optimisation pass), and every time the same question had to be
+re-asked from scratch: *did we copy their visual assets, or only their design
+language?*  Run this list before delivering anything that names or evokes a real
+product.  "品牌自查" means: confirm each line is a deliberate **yes**.
+
+- [ ] **Assets are original.** Every PNG/SVG under `assets*` was produced by our
+      own generator (`tools/generate_assets*.mjs`) or drawn for this project.
+      None was extracted from the reference product, its firmware, its app
+      bundle, its press kit, or a screenshot.
+- [ ] **No trademarked marks.** No logos, word marks, product names rendered as
+      artwork, or distinctive UI chrome copied verbatim.  A generic analogue is
+      used instead (a generic AI orb, not a specific vendor's logo).
+- [ ] **Design language only.** Layout rhythm, spacing scale, corner radii,
+      type scale and colour *roles* may echo the reference; the actual glyph
+      shapes, icon sets and brand colours must be ours.
+- [ ] **Naming.** Spec/project/screen names must not imply affiliation.  A name
+      like `AIWatchApple` is fine as an internal example label only if it is
+      never presented as an Apple product; prefer a neutral name for anything
+      customer-facing.
+- [ ] **Asset path convention holds** (pitfall 28): every `IMAGE.asset` is the
+      flat `assets/img_x.png`, and the source pack is selected by
+      `assets_subdir` alone.  This is also where "did a reference screenshot
+      quietly become a shipped asset?" gets caught — a flat path with an
+      unexplained provenance is the tell.
+- [ ] **Honest review copy.** The preview/mockup is derived from our own `.spj`,
+      not a screenshot of the reference device, so what a reviewer sees is what
+      we actually built.
+
+If any line is "no", fix the asset or rename before delivering — do not ship
+with a note to sort it out later.
 

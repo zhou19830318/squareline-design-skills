@@ -33,12 +33,24 @@ Top level: name, width, height, shape (RECT|RECTANGLE|CIRCLE), description,
 lvgl_version, assets_subdir, spec_docs[], palette{}, fonts[], ranges_text[],
 ranges_num[], symbols{}, skip, screens[], order[], initial_screen, animations[].
 
+  assets_subdir: which *source* asset pack to read from
+      (<assets root>/<assets_subdir>).  It ONLY chooses the inputs.
+      It is NEVER written into a reference: an IMAGE always records the flat
+      path `assets/<file>`, never `assets/<assets_subdir>/<file>`.  Writing the
+      subdir into `asset` makes every image report `missing` (the project then
+      points at a file it does not have).  Default: "images".
+
 screen: name, bg, children[]
 child:  type (PANEL|LABEL|IMAGE|ARC), name, rect [x,y,w,h] (screen-absolute,
         top-left), hidden, children[] (PANEL only), events[]
-  PANEL  : bg, radius
+  PANEL  : bg, radius, clickable
   LABEL  : text, font, color, align (LEFT|CENTER|RIGHT)
-  IMAGE  : asset (path relative to the project dir, e.g. assets/img_x.png), rotation
+           height must be >= the font's line_height or CJK is clipped; that
+           value is only known after a build, so use
+           tools/LABEL_SIZING.md (or layout.label_sized) for the spec-time
+           estimate and read the `lineheight:` build line for the truth.
+  IMAGE  : asset (FLAT path relative to the project dir — `assets/img_x.png`,
+           NOT `assets/<assets_subdir>/img_x.png`), rotation
   ARC    : value, max, indicator, track, width, angles [from, to]
 
 colours are a palette key, a "#rrggbb"/"#rrggbbaa" string, or [r,g,b,a].
@@ -197,7 +209,19 @@ def mk_image_of(spec, screen, o, palette, where):
     if not o.get("asset"):
         fail("%s: IMAGE needs \"asset\" (path relative to the project dir, "
              "e.g. assets/img_x.png)" % where)
-    return mk_image(o["name"], x, y, w, h, o["asset"],
+    asset = str(o["asset"])
+    # Catch the single most common spec mistake at author time.  `assets_subdir`
+    # selects the input pack only; it never belongs in the emitted reference, so
+    # `assets/<subdir>/x.png` names a file the project will not have and every
+    # image comes back "missing" (seen as "39 images, all missing").
+    sub = spec.get("assets_subdir", "images")
+    if sub and asset.replace("\\", "/").startswith("assets/%s/" % sub):
+        fail("%s: IMAGE \"asset\" must be the FLAT path assets/<file>, got %r.\n"
+             "         \"assets_subdir\": %r only picks the SOURCE pack and is "
+             "never written into a reference —\n"
+             "         write \"asset\": \"assets/%s\" instead."
+             % (where, asset, sub, asset.replace("\\", "/").split("/", 2)[-1]))
+    return mk_image(o["name"], x, y, w, h, asset,
                     events=compile_events(spec, screen, o.get("events"), palette, where),
                     hidden=bool(o.get("hidden")),
                     rotation=int(o.get("rotation", 0)))

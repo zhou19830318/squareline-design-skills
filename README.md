@@ -132,7 +132,66 @@ python tools/preview_from_project.py <工程>          # 不开编辑器看效�
 这两条就能定位绝大多数问题：**validator 管「工程有没有问题」，
 反渲染管「长得对不对」**。改过技能包本身才需要跑回归套件（见「自检」一节）。
 
-### 8. 实战走查：一张参考图 → 一个能打开的工程
+### 8. 两条最容易踩的约定
+
+写 spec 时有两个地方**反直觉**，实测中都真实踩过坑，先看这两条能省好几轮返工。
+
+**① `asset` 是扁平路径，`assets_subdir` 不写进引用**
+
+```jsonc
+{
+  "assets_subdir": "images",              // 只决定「从哪个源目录读素材」
+  "screens": [{"children": [
+    {"type": "IMAGE", "asset": "assets/img_logo.png"}   // ✅ 扁平路径
+    //                "asset": "assets/images/img_logo.png"  ❌ 必错
+  ]}]
+}
+```
+
+`assets_subdir` 仅用于挑选**输入**素材包；工程里记录的引用**永远是** `assets/<文件名>`。
+写成 `assets/images/...` 会让工程指向一个它并不拥有的文件，于是每张图都报 `missing`。
+（症状：明明素材都在，却「39 张图全部 missing」。）
+
+现在 `build_from_spec.py` 会在**写 spec 的阶段**就拦下来并给出正确写法，不用等构建完：
+
+```
+spec error: screen home/logo: IMAGE "asset" must be the FLAT path assets/<file>,
+            got 'assets/images/img_logo.png'.
+            "assets_subdir": 'images' only picks the SOURCE pack and is never
+            written into a reference — write "asset": "assets/img_logo.png" instead.
+```
+
+**② LABEL 高度必须 ≥ 字体行高，而行高大于字号**
+
+中文上下被裁切的根因：`line_height = max(ascent) + max(descent)`，**一定大于 `size`**。
+所以按「高度 = 字号」留尺寸必然翻车。实测 `line_height / size` 落在 1.19 ~ 1.31。
+
+**并且行高不是常量** —— 它取决于该工程收进了哪些字形，同一个字体同一个字号在不同工程里不同：
+
+| 字体 | size | 字形数 | line_height | 工程 |
+|---|---|---|---|---|
+| `Body16` | 16 | 820 | **21** | `examples/AIWatch` |
+| `Body16` | 16 | 293 | **20** | `examples/SpecWidget` |
+
+所以稳妥做法是**留余量**而不是压线：
+
+```
+height >= ceil(size * 1.35)        # 单行中文的安全下界
+```
+
+想精确核对，跑一次构建，看 `lineheight:` 那一行（列出本工程真实行高）：
+
+```bash
+python tools/build_from_spec.py <spec.json>
+# ...
+# lineheight: {'Title20': 23, 'Body16': 20}
+```
+
+速查表见 **[`tools/LABEL_SIZING.md`](tools/LABEL_SIZING.md)**（由 `label_sizing.py`
+从真实字体 `.c` 自动生成，`preflight.py` 校验它与工程同步）。
+写代码生成 spec 时可以直接用 `tools/layout.py` 的 `label_sized()`，高度自动算。
+
+### 9. 实战走查：一张参考图 → 一个能打开的工程
 
 上面都是说明。**这一节是全程截图**——用仓库里的 `examples/AIWatchApple`
 （240×240 圆形屏）把「输入参考图 + 需求」到「生成完整工程」的每一步摊开，
@@ -296,6 +355,8 @@ squareline-design-skills/
 | `build_squareline_project.py` | 入口：410×502 方形工程（定制几何） | python |
 | `build_squareline_apple.py` | 入口：240×240 圆形工程（定制几何） | python |
 | `engine/squareline_engine.py` | 引擎层：属性 plumbing / nid·guid / 事件动画 / rebase / 字体子集 | python |
+| `layout.py` | **排版辅助函数库**：网格铺砖 / 卡片行 / 图标+文字 / 安全文字高度 | python |
+| `label_sizing.py` | 生成 `LABEL_SIZING.md` 速查表（从真实字体 `.c` 反推行高） | python |
 | `generate_assets*.mjs` | Lucide/自绘 SVG → PNG（resvg），2px≈1dp | node |
 | `generate_fonts.mjs` | TTF → LVGL 子集字体（lv_font_conv 三件套） | node |
 | `inline_mockup.mjs` | HTML mockup 图片/字体 base64 内联 → standalone | node |
@@ -306,6 +367,10 @@ squareline-design-skills/
 | `vendor_prepare.py` | 侧载各平台 resvg 绑定 / prune lucide-static | python |
 | `probe_headless_render.py` | **可选**深校验：用 LVGL 真渲染一帧 | python + lvgl |
 | `crop_zoom.py` / `grab_window.py` | 截图裁剪/窗口抓取辅助 | python + Pillow |
+
+`LABEL_SIZING.md` 是 `label_sizing.py` 的产物，随工程一起更新：
+改完字体或文案后跑一次 `python tools/label_sizing.py` 重新生成即可。
+写 spec 时拿不准 LABEL 高度，先看它。
 
 > `tools/` 里还有几个**维护者工具**（发布体检、打包、回归套件），日常使用不需要碰。
 > 改引擎或要把本技能包发布出去时，见 **[tools/RELEASE.md](tools/RELEASE.md)**。

@@ -14,6 +14,14 @@
 dist/
 
 # ---------------------------------------------------------------------------
+# Default build output of `build_from_spec.py` (its --out defaults to
+# <repo>/squareline).  The real examples keep their projects under
+# examples/<Name>/squareline/<Name>/, which is NOT ignored — only this
+# top-level scratch build is.  package_release.py excludes it from SHIP_TOP.
+# ---------------------------------------------------------------------------
+/squareline/
+
+# ---------------------------------------------------------------------------
 # Python
 # ---------------------------------------------------------------------------
 __pycache__/

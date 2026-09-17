@@ -33,6 +33,7 @@ Run: python tools/preview_from_project.py [squareline/<name> | path/to/x.spj]
 
 import html
 import json
+import math
 import os
 import sys
 
@@ -155,6 +156,59 @@ def part_style(props, part):
     return {}
 
 
+def arc_svg(x, y, w, h, start_lv, sweep, ind_deg, ind_rgba, bg_rgba, width):
+    """Draw an LVGL ARC as inline SVG (two stroked circle segments).
+
+    Why SVG and not `conic-gradient`: the CSS version renders as an empty ring
+    on any engine without conic-gradient support — notably the old WebKit in
+    `wkhtmltoimage`, which is what a lot of sandboxes ship.  The failure is
+    silent (the .spj is correct, only the picture is wrong), so the reviewer
+    could not visually confirm the rings at all.  Stroked SVG arcs are
+    supported by every rasteriser down to ancient WebKit/IE, which makes the
+    preview portable *and* actually checkable.
+
+    LVGL angles: 0deg is at 3 o'clock and proceeds clockwise.  SVG y grows
+    downward, so a clockwise LVGL sweep is the same direction in SVG.
+    """
+    cx, cy = x + w / 2.0, y + h / 2.0
+    r = max(1.0, (min(w, h) - width) / 2.0)
+    stroke = max(1, int(round(width)))
+
+    def pt(deg):
+        rad = math.radians(deg)
+        return cx + r * math.cos(rad), cy + r * math.sin(rad)
+
+    def seg(from_deg, span, colour):
+        """One stroked arc path; None when the span is empty."""
+        if span <= 0.01:
+            return None
+        sx, sy = pt(from_deg)
+        ex, ey = pt(from_deg + span)
+        # a full 360 arc degenerates to a single point, so draw two halves
+        if span >= 359.9:
+            mx, my = pt(from_deg + 180)
+            return ('<path d="M %.2f %.2f A %.2f %.2f 0 0 1 %.2f %.2f '
+                    'A %.2f %.2f 0 0 1 %.2f %.2f" fill="none" stroke="%s" '
+                    'stroke-width="%d" stroke-linecap="butt"/>'
+                    % (sx, sy, r, r, mx, my, r, r, ex, ey, colour, stroke))
+        large = 1 if span > 180 else 0
+        return ('<path d="M %.2f %.2f A %.2f %.2f 0 %d 1 %.2f %.2f" fill="none" '
+                'stroke="%s" stroke-width="%d" stroke-linecap="butt"/>'
+                % (sx, sy, r, r, large, ex, ey, colour, stroke))
+
+    parts = []
+    track = seg(start_lv, sweep, rgba(bg_rgba))
+    if track:
+        parts.append(track)
+    ind_part = seg(start_lv, ind_deg, rgba(ind_rgba))
+    if ind_part:
+        parts.append(ind_part)
+
+    return ('<svg class="o" width="%d" height="%d" viewBox="0 0 %d %d" '
+            'style="left:%dpx;top:%dpx;overflow:visible">%s</svg>'
+            % (w, h, w, h, x, y, "".join(parts)))
+
+
 def render_node(node, parent, force_show, force_hide, screen_bg, out):
     """parent = (px, py, pw, ph) absolute rect of the containing object."""
     props = node.get("properties") or []
@@ -207,19 +261,13 @@ def render_node(node, parent, force_show, force_hide, screen_bg, out):
         sweep = 360.0 if (start_lv == 0 and end_lv == 360) else \
             float((end_lv - start_lv) % 360)
         ind_deg = max(0.0, min(sweep, frac * sweep))
-        css_from = start_lv + 90          # LVGL 0deg at 3 o'clock, CSS at 12
         ind = part_style(props, "lv.PART.INDICATOR").get("_style/Arc_Color", {})
         bgc = part_style(props, "lv.PART.MAIN").get("_style/Arc_Color", {})
         width = part_style(props, "lv.PART.MAIN").get("_style/Arc_Width", {}
                                                        ).get("integer", 16)
-        ring = ('conic-gradient(from %.1fdeg, %s 0deg %.1fdeg, %s %.1fdeg %.1fdeg, '
-                'transparent %.1fdeg 360deg)') % (
-            css_from, rgba(ind.get("intarray", [255, 45, 138, 255])), ind_deg,
-            rgba(bgc.get("intarray", [40, 40, 44, 255])), ind_deg, sweep, sweep)
-        out.append('<div class="o arc" style="left:%dpx;top:%dpx;width:%dpx;'
-                   'height:%dpx;background:%s">'
-                   '<div class="arc-in" style="inset:%dpx;background:%s"></div></div>'
-                   % (x, y, w, h, ring, width, screen_bg))
+        out.append(arc_svg(x, y, w, h, start_lv, sweep, ind_deg,
+                           ind.get("intarray", [255, 45, 138, 255]),
+                           bgc.get("intarray", [40, 40, 44, 255]), width))
 
     for c in node.get("children", []) or []:
         render_node(c, (x, y, w, h), force_show, force_hide, screen_bg, out)
@@ -315,8 +363,7 @@ figure{display:flex;flex-direction:column;gap:8px}
 .lbl{white-space:pre-wrap;overflow:hidden}
 .pnl{display:block}
 .pnl.tap{outline:1px dashed rgba(120,200,255,.35);outline-offset:-1px}
-.arc{border-radius:50%%}
-.arc-in{position:absolute;display:block;border-radius:50%%}
+svg.o{overflow:visible}
 img.o{object-fit:contain}
 figcaption{font-size:12px;color:#9aa3b2;display:flex;flex-direction:column;gap:2px;text-align:center}
 figcaption b{color:#e8ecf4;font-size:13px}

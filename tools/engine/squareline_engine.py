@@ -1004,6 +1004,31 @@ def collect_label_texts(spj):
     return out, texts
 
 
+def _charset_provenance(all_ui, headroom, have):
+    """Report where the glyph set came from, so a *stale* spec doc is visible.
+
+    The real risk this guards against: an engineer edits a spec markdown but the
+    doc is never re-read, and a label then renders with missing glyphs - with
+    nothing in the output explaining why.  The mirror case (doc edited, text
+    never used) looks identical from the outside.  Counting the two sources
+    separately makes both visible instead of silently trusting the doc.
+
+    NOTE the direction of the dependency: `all_ui` (the real LABEL texts in the
+    generated .spj) is the *primary* source and is always complete for the
+    project as built.  The spec markdown only contributes extra headroom for
+    copy that is not in the project yet.  So a stale doc can never break an
+    existing label - it can only reduce future-proofing.  This line exists to
+    make that headroom margin legible.
+    """
+    doc_new = {c for c in headroom if c not in all_ui and ord(c) in have}
+    doc_dropped = {c for c in headroom if ord(c) not in have}
+    parts = ["ui-text %d" % len(all_ui),
+             "doc-headroom %d (+%d usable)" % (len(headroom), len(doc_new))]
+    if doc_dropped:
+        parts.append("doc-only %d not in TTF" % len(doc_dropped))
+    return "charset   : " + ", ".join(parts)
+
+
 def build_fonts(ui_texts):
     os.makedirs(OUT_FONTS, exist_ok=True)
     headroom = doc_charset()
@@ -1090,6 +1115,10 @@ def build_fonts(ui_texts):
         dump_json(os.path.join(OUT_FONTS, base + ".fcfg"), fcfg, indent=2)
         made.append({"codename": codename, "size": size, "symbols": symbols,
                      "ranges": ranges, "ttf": dst_ttf, "base": base})
+    # stash the provenance so run_build() can print it instead of recomputing
+    build_fonts.provenance = _charset_provenance(
+        all_ui, headroom, ttf_cmap(os.path.join(OUT_FONTS, FONTS[0][1]))
+        if FONTS else set())
     return made
 
 
@@ -1308,6 +1337,7 @@ def run_build():
     print("animations:", len(ANIMS))
     print("images    : %d  missing: %s" % (len(used), missing))
     print("fonts     :", [(f["codename"], f["size"], len(f["symbols"])) for f in fonts_meta])
+    print(getattr(build_fonts, "provenance", ""))
     print("coverage  :", stats["coverage"])
     print("lineheight:", stats["line_height"])
     for w in warns:

@@ -628,6 +628,78 @@ def check_docs():
                   % ("present" if os.path.exists(ref) else "MISSING"))
 
 
+def check_label_height_guide():
+    """The LABEL-height rule must be reachable BEFORE the post-build error.
+
+    `run_build()` already errors on `height < line_height`, but only *after*
+    fonts are built, and the line height itself is only known by regex-parsing
+    the generated .c — so at the moment an author writes coordinates there is
+    nothing to consult.  Engineers hit this three times in one project
+    (Display96 110<116, Big64 72<78, Score40 48<49).  This check guarantees the
+    lookup table exists and that its numbers match what the engine really
+    produces, so the doc cannot rot silently.
+    """
+    doc = os.path.join(ROOT, "tools", "LABEL_SIZING.md")
+    if not os.path.exists(doc):
+        return record("docs: LABEL height vs line-height guide", False,
+                      "tools/LABEL_SIZING.md missing — authors have no lookup "
+                      "table for the height>=line_height rule")
+    txt = open(doc, encoding="utf-8").read()
+    problems = []
+    for need in ("line_height", "行高", "height"):
+        if need not in txt:
+            problems.append("LABEL_SIZING.md does not mention %r" % need)
+    # the table must be generated from the real font configs, not hand-typed
+    gen = os.path.join(ROOT, "tools", "label_sizing.py")
+    if not os.path.exists(gen):
+        problems.append("tools/label_sizing.py missing — the table has no "
+                        "regenerator and will drift from the engine")
+    else:
+        r = run([PY, gen, "--check"])
+        if r.returncode != 0:
+            problems.append("label_sizing --check failed: %s"
+                            % (r.stdout + r.stderr).strip()[-400:])
+    return record("docs: LABEL height vs line-height guide",
+                  not problems,
+                  "\n".join(problems) if problems else
+                  "tools/LABEL_SIZING.md present and in sync with the engine")
+
+
+def check_brand_safety_doc():
+    """Self-check list for 'inspired by a real product' designs.
+
+    Three separate projects in this repo referenced a real brand (AIWatchApple,
+    iWatch, and the Series-12 optimisation), and each time the question "did we
+    copy their visual assets, or only their design language?" had to be re-asked
+    from scratch.  A written checklist turns that into a reviewable step.
+    """
+    problems = []
+    hits = []
+    # The skill docs live under skills/<name>/, not the repo root.
+    cands = [os.path.join(ROOT, "skills", "squareline-ui-pipeline", "SKILL.md"),
+             os.path.join(ROOT, "skills", "squareline-ui-pipeline", "REFERENCE.md")]
+    body = ""
+    for p in cands:
+        if not os.path.exists(p):
+            continue
+        t = open(p, encoding="utf-8").read()
+        body += t
+        if "品牌" in t and ("自查" in t or "清单" in t):
+            hits.append(os.path.relpath(p, ROOT))
+    if not hits:
+        problems.append("no brand-safety self-check list found in "
+                        "skills/squareline-ui-pipeline/{SKILL,REFERENCE}.md "
+                        "(looking for 品牌 + 自查/清单)")
+    # the checklist must name the specific tripwires, not just gesture at them
+    for token in ("assets_subdir", "asset"):
+        if token not in body:
+            problems.append("brand/asset checklist does not cover %r" % token)
+    return record("docs: brand-reference self-check list",
+                  not problems,
+                  "\n".join(problems) if problems else
+                  "present in %s" % ", ".join(hits))
+
+
 def check_eval():
     sh = os.path.join(ROOT, "eval", "run_regression.sh")
     py = os.path.join(ROOT, "eval", "run_regression.py")
@@ -665,6 +737,8 @@ def main():
     check_docs()
     check_doc_scripts_linked()
     check_no_stale_refs()
+    check_label_height_guide()
+    check_brand_safety_doc()
     if args.full:
         check_eval()
 
