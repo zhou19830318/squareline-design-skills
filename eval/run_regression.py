@@ -68,37 +68,33 @@ IGNORE_DIRS = {"backup", "cache", "components", "ui", "__pycache__",
 IGNORE_FILES = {"preview_from_project.html"}
 IGNORE_SUFFIXES = (".preview.json",)
 
-# Stage A: (case name, generator, output subdir of the scratch dir, golden dir)
+# Stage A: (case name, [node argv...], output subdir of the scratch dir,
+#           golden dir, env)  — `{out}` in argv is replaced by the scratch path.
 ASSET_CASES = [
-    ("AIWatchApple assets (native)",
-     "tools/generate_assets_apple.mjs", "images_apple",
-     "examples/AIWatchApple/assets/images_apple", {}),
-    ("AIWatchApple assets (wasm fallback)",
-     "tools/generate_assets_apple.mjs", "images_apple_wasm",
-     "examples/AIWatchApple/assets/images_apple", {"RESVG_FORCE_WASM": "1"}),
-    ("AIWatch assets (native)",
-     "tools/generate_assets.mjs", "images",
-     "examples/AIWatch/assets/images", {}),
+    ("NovaWatchS12 assets (native)",
+     ["tools/generate_assets_from_manifest.mjs",
+      "--manifest", "examples/NovaWatchS12/assets.manifest.json",
+      "--out", "{out}"],
+     "images",
+     "examples/NovaWatchS12/assets/images", {}),
+    ("NovaWatchS12 assets (wasm fallback)",
+     ["tools/generate_assets_from_manifest.mjs",
+      "--manifest", "examples/NovaWatchS12/assets.manifest.json",
+      "--out", "{out}"],
+     "images_wasm",
+     "examples/NovaWatchS12/assets/images", {"RESVG_FORCE_WASM": "1"}),
 ]
 
 # Stage C: (case name, argv builder, scratch subdir, golden project dir)
-# Deliberately the BARE command — each project carries its own asset pack in its
-# descriptor (PROJECT["assets"]), so no --assets flag is needed.  If that ever
-# regresses, the diff shows up as `missing: assets/*.png` right here.
+# Deliberately the BARE command — the spec carries its own asset pack in
+# spec["assets"], so no --assets flag is needed.  If that ever regresses, the
+# diff shows up as `missing: assets/*.png` right here.
 PROJECT_CASES = [
-    ("AIWatchApple",
-     lambda out: [PY, "tools/build_squareline_apple.py", "--out", out],
-     "golden_apple",
-     "examples/AIWatchApple/squareline/AIWatchApple"),
-    ("AIWatch",
-     lambda out: [PY, "tools/build_squareline_project.py", "--out", out],
-     "golden_rect",
-     "examples/AIWatch/squareline/AIWatch"),
-    ("SpecWidget",
+    ("NovaWatchS12",
      lambda out: [PY, "tools/build_from_spec.py",
-                  "examples/SpecWidget/SpecWidget.spec.json", "--out", out],
-     "golden_spec",
-     "examples/SpecWidget/squareline/SpecWidget"),
+                  "examples/NovaWatchS12/NovaWatchS12.spec.json", "--out", out],
+     "golden_nova",
+     "examples/NovaWatchS12/squareline/NovaWatchS12"),
 ]
 
 RESULTS = []
@@ -224,9 +220,9 @@ def check_assets(scratch, no_assets):
         record("Stage A: asset generators reproducible", True,
                "skipped (--no-assets)")
         return
-    for name, script, subdir, golden_rel, env in ASSET_CASES:
+    for name, argv, subdir, golden_rel, env in ASSET_CASES:
         out = os.path.join(scratch, subdir)
-        p = run([NODE, script, "--out", out], env_extra=env)
+        p = run([NODE] + [a.replace("{out}", out) for a in argv], env_extra=env)
         if p.returncode != 0:
             record("Stage A: %s" % name, False, tail(p))
             continue

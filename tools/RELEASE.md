@@ -61,7 +61,7 @@ python tools/preflight.py            # 廉价检查（秒级）：渲染后端 /
                                      # README 文档与工具表一致性 / 中英 README 互链 /
                                      # 无悬空引用
 python tools/preflight.py --full     # 追加 eval/run_regression.py
-python eval/run_regression.py        # 重建 3 个归档工程 + 6 个 Stage A 用例，
+python eval/run_regression.py        # 重建归档工程 + Stage A 用例（native / wasm 各一遍），
                                      # 逐字节比对 + 校验 + 预览（用例说明见 eval/test_cases.md）
 python eval/run_regression.py --update   # 故意改动后刷新标准答案（先看 diff 再刷）
 ```
@@ -82,11 +82,11 @@ Stage D: 三个工程 validate + preview 全通过
 ## 改动的四条纪律
 
 1. **只改 builder / spec 后重新生成，绝不手改 `.spj`。**
-   编辑器保存 `AIWatchApple.spj` 时会在里面写 UTF-8 中文。
+   编辑器保存 `NovaWatchS12.spj` 时会在里面写 UTF-8 中文。
    任何「用文本工具直接改 `.spj`」的尝试都会踩到编码坑，且下次重建即被覆盖。
 2. **交互只用内置动作白名单。** 动作名写错不会报错，只会在 Studio 里静默失效。
 3. **改 `tools/engine/` 之前先跑 `python eval/run_regression.py`**，改完再跑一次。
-   三个归档工程必须仍然逐字节一致。
+   归档工程必须仍然逐字节一致。
 4. **改 README / SKILL.md 之后跑 `python tools/preflight.py`**，
    它会交叉核对「README 里点名的脚本是否都存在」与「是否有悬空引用」。
 
@@ -100,7 +100,7 @@ Python 的 `open(..., "w")` 会把 `\n` 翻成 CRLF，而 Linux 重建产出 LF�
 `.gitattributes` 的 `* text=auto eol=lf` 从 git 层再兜一层，
 防 `core.autocrlf=true` 在检出时改回去。
 
-`preflight.py` 的 `check_artifact_eol` 会扫描**整棵交付树里 91 个文本文件**，
+`preflight.py` 的 `check_artifact_eol` 会扫描**整棵交付树里的全部文本文件**，
 `eval/run_regression.py` 也会把「仅换行符不同」单独标出来。
 
 > 注意：这个检查早先只扫 `examples/`，于是 `tools/` 下两个 CRLF 文件长期漏网。
@@ -112,17 +112,24 @@ Python 的 `open(..., "w")` 会把 `\n` 翻成 CRLF，而 Linux 重建产出 LF�
 发布范围由 `tools/package_release.py` 的 `SHIP_TOP` 决定，两者刻意分开：
 README 讲能做什么，`SHIP_TOP` 管发什么。
 
-- `docs/steps/*.png`（README 实战走查的过程截图）挂在 `examples/` 之下，
-  随包发布——**README 里嵌的图必须发**，否则读者看到一堆裂图。
-- `preview_from_project.html` 是**生成物**（跑一次 preview 就会在归档工程里落一个），
-  已在 `EXCLUDE_FILES` 里排除，不随包发。
-- `mockup*.html` 是 Stage B 的**交付物**，保留。
+- `preview_from_project.html` 与 `*.spec_preview.html` 是**生成物**
+  （跑一次 preview / spec_preview 就会在工程或规格旁边落一个），
+  已在 `EXCLUDE_FILES` / `EXCLUDE_FILE_SUFFIX` 里排除，不随包发。
+- `mockup*.html`、`examples/<Name>/preview_*/` 是 Stage B 的**交付物**，保留。
+- `examples/<Name>/.workbuddy/` 是嵌套的 **agent 工作记忆**，已进 `EXCLUDE_DIR_NAMES`。
+  注意它是*嵌套*的：`FORBIDDEN_SEGMENTS` 早就声明这种路径不许发，但那条只在打包**之后**
+  校验，所以文件会先被写进 zip、再由校验把构建打红。移到 `walk()` 里排除，
+  才是构建时就守住。
+- `tools/_*`（下划线前缀）是本地草稿，已由 `EXCLUDE_PREFIXES` 排除。
 
 ## 已知维护项
 
-- `preflight.py: check_deliverable` 会一直在仓库父目录扫 `.zip`。若那里躺着一个
-  目录形状的旧包（本次实测 123.2 MB，泄漏 `.workbuddy/`），它会以 SKIP 形式报出来。
-  **这不是本仓库的问题**，但删除它可以消除唯一的提示项。
 - `probe_headless_render.py` 是可选深校验，需要本机有 lvgl 树；不在主流程里，
   环境不具备时跳过即可。它也**不能被列进 SKILL.md 的主流程代码块**（preflight 会红）。
 - `e2e` 的 `dist/*.zip` 是构建产物，不进版本库（`.gitignore` 已排除）。
+- **生成物里会带出绝对路径**：`lv_font_conv` 会把它整条命令行写进字体 `.c` 的
+  `Opts:` 注释，包括 `--font C:\Users\<你>\...\foo.ttf` 和 `-o` 的输出路径。
+  历史上有 6 个这样的文件落在 `examples/AIWatch/assets/fonts/lvgl/` 并进了 git 历史。
+  `check_no_personal_paths` 早先只扫 `tools/`、`skills/`、`eval/`（手写代码），
+  恰好漏掉**生成物所在的 `examples/`**，所以现在把 `examples/` 和字体类后缀一并纳入。
+  发布前若新增示例，留意字体 `.c` 的这一行；不要指望它自己干净。

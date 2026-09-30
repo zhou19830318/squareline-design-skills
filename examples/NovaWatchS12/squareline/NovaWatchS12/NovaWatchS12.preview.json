@@ -1,0 +1,26 @@
+{
+  "titles": {
+    "watchface": "表盘 10:09",
+    "apps": "应用网格",
+    "health": "健身三环",
+    "weather": "天气",
+    "alarms": "闹钟",
+    "workout": "体能训练",
+    "stopwatch": "秒表",
+    "breathe": "正念呼吸",
+    "voice": "AI 语音",
+    "settings": "设置"
+  },
+  "states": [
+    {"screen": "alarms", "show": ["al1_off"], "hide": ["al1_on"],
+     "caption": "闹钟 06:30 关闭态（整行点击切换）"},
+    {"screen": "workout", "show": ["wk_active"], "hide": ["wk_start"],
+     "caption": "训练进行中（点开始后）"},
+    {"screen": "voice", "show": ["wave_listening", "voice_listening"],
+     "hide": ["voice_idle"],
+     "caption": "语音聆听态（点麦克风后）"},
+    {"screen": "voice", "show": ["wave_speaking", "voice_speaking"],
+     "hide": ["voice_idle"],
+     "caption": "语音播报态"}
+  ]
+}

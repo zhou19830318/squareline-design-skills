@@ -98,6 +98,9 @@ def load_font_src(src_dir):
 
 
 FONT_SRC = load_font_src(OUT)
+
+# Populated in main(): flat asset path -> data URI (single-file contact sheet).
+ASSET_DATA_URIS = {}
 DEFAULT_FONT = next(iter(FONT_SRC.values()),
                     ("noto-sans-sc-v40-chinese-simplified-regular.ttf", 16, 400))
 
@@ -170,7 +173,12 @@ def arc_svg(x, y, w, h, start_lv, sweep, ind_deg, ind_rgba, bg_rgba, width):
     LVGL angles: 0deg is at 3 o'clock and proceeds clockwise.  SVG y grows
     downward, so a clockwise LVGL sweep is the same direction in SVG.
     """
-    cx, cy = x + w / 2.0, y + h / 2.0
+    # The <svg> below carries viewBox="0 0 w h", i.e. its own local origin, and
+    # is positioned with left/top.  So the path must be built in LOCAL
+    # coordinates — using screen-absolute x/y here would push every arc down
+    # and to the right by exactly (x, y).  (overflow:visible hides the mistake
+    # by still painting the arc, just in the wrong place.)
+    cx, cy = w / 2.0, h / 2.0
     r = max(1.0, (min(w, h) - width) / 2.0)
     stroke = max(1, int(round(width)))
 
@@ -243,8 +251,9 @@ def render_node(node, parent, force_show, force_hide, screen_bg, out):
         asset = get(props, "IMAGE/Asset", "strval", "")
         rot = get(props, "IMAGE/Rotation", "integer", 0) or 0
         extra = "transform:rotate(%.1fdeg);" % (rot / 10.0) if rot else ""
+        src = ASSET_DATA_URIS.get(asset, asset)
         out.append('<img class="o" src="%s" style="left:%dpx;top:%dpx;width:%dpx;'
-                   'height:%dpx;%s" alt="%s">' % (asset, x, y, w, h, extra, name))
+                   'height:%dpx;%s" alt="%s">' % (src, x, y, w, h, extra, name))
     elif kind in ("PANEL", "CONTAINER"):
         bg = st.get("_style/Bg_Color", {}).get("intarray", [0, 0, 0, 0])
         radius = st.get("_style/Bg_Radius", {}).get("integer", 0)
@@ -312,6 +321,25 @@ def main():
         "@font-face{font-family:'F%d';src:url('assets/fonts/%s') "
         "format('truetype');font-weight:%d;font-display:block}\n"
         % (size, ttf, weight) for ttf, size, weight in FONT_SRC.values())
+
+    # Inline every referenced PNG as a data URI so the contact sheet is a
+    # self-contained single file (same reason inline_mockup.mjs exists): it
+    # must survive being registered/served as ONE html file where relative
+    # asset paths 404.  Fonts stay external -- they are large and only affect
+    # typography, not geometry.
+    for _node in spj["root"]["children"]:
+        def _collect(n):
+            a = get(n.get("properties", {}), "IMAGE/Asset", "strval", "")
+            if a and a not in ASSET_DATA_URIS:
+                p = os.path.join(OUT, a.replace("/", os.sep))
+                if os.path.exists(p):
+                    import base64 as _b64
+                    with open(p, "rb") as fh:
+                        ASSET_DATA_URIS[a] = ("data:image/png;base64,"
+                                              + _b64.b64encode(fh.read()).decode("ascii"))
+            for k in n.get("children", []) or []:
+                _collect(k)
+        _collect(_node)
 
     def card(screen, force_show, force_hide, caption, tag=""):
         sc = by_name[screen]

@@ -17,15 +17,20 @@ is never touched to add a screen.
 
 Scope: this covers the *regular* case well - panels, labels, images, arcs, a
 swipe ring, and the five built-in actions.  Bespoke geometry (radial icon rings,
-chord-width math, pre-baked clock hands) still belongs in a screens/<x>.py module;
-tools/screens/aiwatch_apple.py is the worked example of that.  The boundary is
-deliberate: the spec must stay small enough to read in one go.
+chord-width math, pre-baked clock hands) belongs in a small **project-local**
+module next to the spec it serves, e.g.
+examples/NovaWatchS12/tools/render_240_watch.py.  The boundary is deliberate:
+the spec must stay small enough to read in one go, and per-project code lives
+with its project rather than accumulating in tools/.
 
 Usage
 -----
-    python tools/build_from_spec.py tools/spec/specwidget.json
-    python tools/build_from_spec.py tools/spec/specwidget.json --assets <dir> --out <dir>
+    python tools/build_from_spec.py examples/<Name>/<Name>.spec.json
+    python tools/build_from_spec.py examples/<Name>/<Name>.spec.json --assets <dir> --out <dir>
     python tools/build_from_spec.py --example          # print a commented skeleton
+
+    Relative --assets / --out paths resolve against the current shell directory.
+    Descriptor paths such as spec["assets"] remain relative to the repo root.
 
 Spec reference
 --------------
@@ -58,7 +63,8 @@ event:  on (CLICKED|PRESSED|RELEASED|SCREEN_LOAD_START|SCREEN_LOADED|
         SCREEN_UNLOAD_START|SCREEN_UNLOADED|GESTURE_LEFT|GESTURE_RIGHT|
         GESTURE_UP|GESTURE_DOWN), actions[]
 action: CHANGE_SCREEN{target}, HIDE{object}, SHOW{object},
-        SET_OPACITY{object,value}, PLAY_ANIMATION{animation,object}
+        SET_OPACITY{object,value}, PLAY_ANIMATION{animation,object},
+        CALL_FUNCTION{function,dont_export}
         object = "name" (same screen) | "screen/name" | {"screen":..,"name":..}
 animation: name, target (object ref), tracks[{property, frames[[value,ms]..],
         duration}], duration, path (linear|ease_in|ease_out|overshoot),
@@ -160,9 +166,14 @@ def compile_actions(spec, screen, acts, palette, where):
                      "(declare it in \"animations\")" % (where, nm))
             ref = a.get("object")
             out.append(act_anim(nm, obj_ref(screen, ref, where) if ref else ""))
+        elif kind == "CALL_FUNCTION":
+            name = a.get("function") or a.get("name")
+            if not name:
+                fail("%s: CALL_FUNCTION needs \"function\"" % where)
+            out.append(act_call(str(name), bool(a.get("dont_export", False))))
         else:
             fail("%s: unknown action %r (CHANGE_SCREEN|HIDE|SHOW|SET_OPACITY|"
-                 "PLAY_ANIMATION)" % (where, kind))
+                 "PLAY_ANIMATION|CALL_FUNCTION)" % (where, kind))
     return out
 
 
@@ -410,7 +421,10 @@ def main():
     specs = [a for a in args if not a.startswith("-") and a.endswith(".json")]
     if not specs:
         sys.exit("usage: python tools/build_from_spec.py <spec.json> "
-                 "[--assets <dir>] [--out <dir>]    (--example prints a skeleton)")
+                 "[--assets <dir>] [--out <dir>]\n"
+                 "       relative --assets/--out resolve against the current "
+                 "shell directory.\n"
+                 "       --example prints a skeleton")
     path = specs[0]
     if not os.path.exists(path):
         sys.exit("no such spec: " + path)

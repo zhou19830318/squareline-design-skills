@@ -15,9 +15,11 @@ and run commands can drive it (per-agent recipes under
 ## Usage
 
 The one-minute version: **copy `skills/` + `tools/` somewhere your agent can read
-them → hand it a reference image and a requirement → it walks the five stages →
-you run a check at each stage → open the resulting
-`squareline/<Name>/<Name>.spj` in SquareLine Studio.**
+them → hand it a concept image and a requirement file (template at
+`templates/UI需求清单模板.md`; the agent asks for whatever is missing) → it walks
+the five stages → you run a check at each stage → open the resulting
+`squareline/<Name>/<Name>.spj` in SquareLine Studio. Want changes? Send feedback
+through the multi-round refinement loop.**
 
 To actually do it, work through the sections below in order.
 
@@ -31,34 +33,35 @@ To actually do it, work through the sections below in order.
 
 ### 2. Run your first project
 
-Three finished projects already ship in the repo. **Running one of those is the
-fastest way in** — you do not need a reference image yet:
+One finished project ships in the repo: `examples/NovaWatchS12` (456×456 round,
+10-screen full-feature watch UI). **Running it is the fastest way in** — you do
+not need a reference image yet:
 
 ```bash
 # Validate the project (should print OK - project validated, no problems found)
-python tools/validate_squareline_project.py examples/SpecWidget/squareline/SpecWidget
+python tools/validate_squareline_project.py examples/NovaWatchS12/squareline/NovaWatchS12
 
-# Look at it without opening the editor (writes preview_from_project.html)
-python tools/preview_from_project.py examples/SpecWidget/squareline/SpecWidget
+# Look at it without opening the editor (writes a single-file preview HTML)
+python tools/preview_from_project.py examples/NovaWatchS12/squareline/NovaWatchS12
 ```
 
 Those two commands are the core loop of this package — **the validator answers
 "is the project sound?", the re-render answers "does it look right?"**. You will
 run the same two over and over when you build your own.
 
-To compile a project from scratch (`SpecWidget` is the minimal example — 320×320,
-no bitmap assets):
+To rebuild it from scratch (the spec carries its own asset pack, so the bare
+command works):
 
 ```bash
-python tools/build_from_spec.py examples/SpecWidget/SpecWidget.spec.json \
-       --out examples/SpecWidget/squareline/SpecWidget
+node tools/generate_assets_from_manifest.mjs examples/NovaWatchS12/assets.manifest.json
+python tools/build_from_spec.py examples/NovaWatchS12/NovaWatchS12.spec.json
 ```
 
 It prints the project summary; success means no `ERROR` at the end:
 
 ```
-screens   : 2
-objects   : 18
+screens   : 10
+objects   : 103
 images    : 0  missing: []
 fonts     : [('Big48', 48, 13), ('Title20', 20, 293), ('Body16', 16, 293)]
 charset   : ui-text 46, doc-headroom 291 (+246 usable)
@@ -72,10 +75,10 @@ Five stages, **each with its own check, so you can stop and inspect at any point
 
 | Stage | What happens | Output | Pass condition |
 |---|---|---|---|
-| **Stage 0**<br>write the spec | Copy `templates/设计规格文档模板.md` and fill it in section by section as `<Name>设计规格文档.md` | The design spec — **every later stage is measured against it** | Three manual checks: every `rect` uses absolute screen coordinates; the text charset is complete; control height ≥ font line height |
-| **Stage A**<br>generate assets | `node tools/generate_assets*.mjs` rasterises icons / hand-drawn SVG to PNG (2px ≈ 1dp) | `assets/images_*/` | Read the PNG header to confirm real size; compare against mockup references for missing / unused |
+| **Stage 0**<br>requirements → spec | Collect requirements from `templates/UI需求清单模板.md` (size/shape/screens/switching/animations/asset preferences), then copy `templates/设计规格文档模板.md` and fill it in section by section as `<Name>设计规格文档.md` | The design spec — **every later stage is measured against it** | Three manual checks: every `rect` uses absolute screen coordinates; the text charset is complete; control height ≥ font line height |
+| **Stage A**<br>collect + generate assets | Manifest-driven `node tools/generate_assets_from_manifest.mjs` (three sources: vendored Lucide, downloaded SVGs, inline SVG); one-off conversions with `node tools/svg_to_png.mjs`; icon-site directory and licences in `ICON_SOURCES.md` | `assets/images_*/` | Read the PNG header to confirm real size; compare against mockup references for missing / unused |
 | **Stage B**<br>produce the mockup | Emit `mockup.html`, squash it to a single file with `inline_mockup.mjs` | `mockup.html` / `*_standalone.html` | Unscaled overlap audit |
-| **Stage C**<br>compile the project | Ordinary screens go spec JSON → `build_from_spec.py`; custom geometry (radial, etc.) → `tools/screens/<name>.py` | A complete project in `squareline/<Name>/` | `validate_squareline_project.py` + `preview_from_project.py` |
+| **Stage C**<br>compile the project | Ordinary screens go spec JSON → `build_from_spec.py`; rare custom geometry via a small project-local Python module (SKILL.md C-2) | A complete project in `squareline/<Name>/` | `validate_squareline_project.py` + `preview_from_project.py` |
 
 > **Why Stage 0 comes first**: the spec is the single source of truth. The engine
 > collects every character that appears in the document into the font subset, so
@@ -86,14 +89,18 @@ Five stages, **each with its own check, so you can stop and inspect at any point
 The minimum viable sequence:
 
 ```bash
-# 1) Copy the template and fill in your design spec (= source of truth)
+# 0) Fill in the requirement file (size/shape/screens/switching/animations/assets)
+cp templates/UI需求清单模板.md examples/<Name>/UI需求清单.md
+
+# 1) The agent copies the spec template and fills in your design spec (= source of truth)
 cp templates/设计规格文档模板.md examples/<Name>/<Name>设计规格文档.md
 
-# 2) Generate assets + mockup
-node tools/generate_assets_apple.mjs --out examples/<Name>/assets/images_apple
+# 2) Generate assets + mockup (icon sites and licences: ICON_SOURCES.md)
+node tools/generate_assets_from_manifest.mjs examples/<Name>/assets.manifest.json
 node tools/inline_mockup.mjs examples/<Name>/mockup.html examples/<Name>/mockup_standalone.html
 
-# 3) Compile the project (declarative spec for ordinary screens — recommended)
+# 3) Design-time preview (no build) → compile (declarative spec for ordinary screens)
+python tools/spec_preview.py     examples/<Name>/<Name>.spec.json --scale 1
 python tools/build_from_spec.py  examples/<Name>/<Name>.spec.json --out examples/<Name>/squareline/<Name>
 python tools/build_from_spec.py  --example     # print an annotated spec skeleton
 
@@ -107,7 +114,10 @@ preview matches the mockup screen by screen; SquareLine Studio 1.6.2 opens the
 `.spj` without errors.
 
 **That is the whole job** — from here, open the `.spj` in SquareLine Studio and
-use it, or let the agent keep adding screens.
+use it, or let the agent keep adding screens. To change things, send feedback
+(recorded in the requirement file's iteration table): the agent updates the
+spec/manifest → confirms with `spec_preview.py` → rebuilds → validates green,
+one round at a time.
 
 ### 4. What you end up with
 
@@ -126,83 +136,72 @@ examples/<Name>/
 
 ---
 
-## Walkthrough: one reference image → a project that opens
+## Walkthrough: NovaWatchS12 (a full-feature Apple-Watch-S12-style watch)
 
 That covers the steps. This section unpacks each one using
-`examples/AIWatchApple` (240×240 round screen) with **screenshots throughout**, so
-you can follow along.
+`examples/NovaWatchS12` (456×456 round) — a real "Apple Watch S12 style
+full-feature UI" project with **10 screens**: watch face (pre-baked analogue
+hands), app grid, activity rings, weather, alarms, workout, stopwatch,
+mindful breathing, AI voice (three states), and settings.
 
-The entire original requirement was one sentence: **"This is the watch home-screen
-reference image; make a SquareLine project, 240×240 round screen."**
+### ① Input: the requirement file
 
-### ① Input: a reference image plus one sentence
-
-![Input reference: 7-screen Apple Watch round-face concept](examples/AIWatchApple/docs/steps/01-input-concept.png)
-
-The reference is a 7-screen round-face concept — **no sizes, coordinates or colour
-values are given**. Stage 0 has to derive all of them.
+The requirement file lives at `examples/NovaWatchS12/UI需求清单.md` (filled from
+`templates/UI需求清单模板.md`): 456×456 CIRCLE, 10-screen list with switching
+logic, per-screen element sketches, interactions and animations, asset
+preferences. This project had no external concept image — the requirement is
+text-only; yours can ship with concept images.
 
 ### ② Stage 0: the design spec
 
-![AIWatchApple design spec](examples/AIWatchApple/docs/steps/02-spec-doc.png)
+The output is `examples/NovaWatchS12/NovaWatchS12设计规格文档.md`. Canvas
+`456×456 / shape CIRCLE` (r=228; every visible element's corners within 216 of
+the centre), **absolute screen coordinates** for all 10 screens, an interaction
+table plus 3 animations, 4 font tiers, and the **text charset** (with
+future-proofing words — the build collects 414 characters into the font subsets
+so wording can change later without missing glyphs).
 
-The output is `examples/AIWatchApple/AIWatchApple设计规格文档.md` (91 lines). This
-step pins down everything downstream: canvas `240×240 / shape CIRCLE`, 8 accent
-colours, **absolute screen coordinates** for all 7 screens, and an interaction
-summary (using only SquareLine built-in actions).
-
-The round-screen constraints are stated at the top of the document: content area
-`r≤112`, and `112<r≤120` is for edge-hugging ticks only.
-
-### ③ Stage A: generate assets
+### ③ Stage A: manifest-driven asset generation
 
 ```
-node tools/generate_assets_apple.mjs --out examples/AIWatchApple/assets/images_apple
+node tools/generate_assets_from_manifest.mjs examples/NovaWatchS12/assets.manifest.json
 ```
 
-Produces **74 PNGs** (icons, hands, 5 heart-rate waveform frames, the Gemini star,
-microphone states…), all at 2px ≈ 1dp. Rasterisation goes through
-`tools/lib/resvg.mjs` (native binding preferred, WASM fallback), so it runs in a
-Linux container with nothing installed.
+Produces **22 PNGs**: the 456px **pre-baked analogue dial** (bezel + ticks +
+three hands in a 10:09:30 pose, inline-drawn builtin SVG), 8 app icons + 3
+complication icons + 5 weather icons (offline Lucide source), and the
+three voice waveform states (builtin). Rasterisation goes through
+`tools/lib/resvg.mjs` (native binding preferred, WASM fallback), so it runs in
+a Linux container with nothing installed.
 
-### ④ Stage B: produce the HTML mockup
-
-![Stage B mockup: 7 screens on a pixel grid](examples/AIWatchApple/docs/steps/03-mockup.png)
-
-`mockup_apple.html` (plus a standalone single-file version with images inlined as
-base64). All 7 round screens sit inside the inscribed circle. **Fix layout
-misalignment here, not after it is in the project.**
-
-### ⑤ Stage C: compile the project + validate
+### ④ Design-time preview + Stage C: compile the project
 
 ```
-python tools/build_squareline_apple.py     # custom geometry (radial layout / hand alignment)
-python tools/validate_squareline_project.py examples/AIWatchApple/squareline/AIWatchApple
-python tools/preview_from_project.py        examples/AIWatchApple/squareline/AIWatchApple
+python tools/spec_preview.py examples/NovaWatchS12/NovaWatchS12.spec.json --scale 0.9
+python tools/build_from_spec.py examples/NovaWatchS12/NovaWatchS12.spec.json
+python tools/validate_squareline_project.py squareline/NovaWatchS12
+python tools/preview_from_project.py        squareline/NovaWatchS12
 ```
 
-![Generated project tree and real validator output](examples/AIWatchApple/docs/steps/04-squareline-project.png)
-
-Left: the generated project tree (**88 files**, including a 1.26 MB `.spj`,
-`.sll/.slp/Themes.slt/project.info`, plus 74 PNGs and 5 font trios under
-`assets/`). Right: the validator's real output:
+The validator's real output:
 
 | Check | Result |
 |---|---|
-| `screen size / shape` | 240x240 / CIRCLE |
-| `nids` | 5699 unique: 5699 duplicates: **0** |
-| `screens` / `objects` | 7 / 216 |
-| `event handlers` / `actions` | 45 / 86 |
+| `screen size / shape` | 456x456 / CIRCLE |
+| `nids` | 3058 unique: 3058 duplicates: **0** |
+| `screens` / `objects` | 10 / 119 |
+| `event handlers` / `actions` | 22 / 35 |
+| `images` | 22, missing: **[]** |
 | `occlusion suspects` | **0** |
 | Verdict | **`OK - project validated, no problems found`** |
 
-### ⑥ Re-render: turn the generated `.spj` back into images
-
-![Re-render preview: parsing .spj directly to reconstruct each screen](examples/AIWatchApple/docs/steps/05-reverse-preview.png)
+### ⑤ Re-render: turn the generated `.spj` back into images
 
 `preview_from_project.py` parses the `.spj` directly and re-renders it (project
-agnostic — size and shape are detected automatically). Put it side by side with
-the reference image from ① and the geometry and wording match screen by screen.
+agnostic — size and shape detected automatically, images inlined so the sheet
+is one self-contained file). The sidecar (`<Name>.preview.json`) supplies
+human titles and 4 interaction-state cards (alarm-off, workout-active, voice
+listening / speaking).
 
 ---
 
@@ -243,8 +242,9 @@ actually pulled in, so the same font at the same size differs between projects:
 
 | Font | size | Glyphs | line_height | Project |
 |---|---|---|---|---|
-| `Body16` | 16 | 820 | **21** | `examples/AIWatch` |
-| `Body16` | 16 | 293 | **20** | `examples/SpecWidget` |
+| `Big72` | 72 | 13 | **86** | `examples/NovaWatchS12` |
+| `Title28` | 28 | 429 | **34** | `examples/NovaWatchS12` |
+| `Body20` | 20 | 429 | **24** | `examples/NovaWatchS12` |
 
 To check precisely, run a build and read the `lineheight:` line (it lists this
 project's real line heights). There is a lookup table in
@@ -288,12 +288,14 @@ change the skill package itself (see [Self-check](#self-check-after-changing-the
 # Build
 python tools/build_from_spec.py <spec.json> --out <dir>   # declarative spec -> project (first choice for ordinary screens)
 python tools/build_from_spec.py --example                 # print an annotated spec skeleton
-python tools/build_squareline_apple.py                    # 240×240 round (custom geometry)
-python tools/build_squareline_project.py                  # 410×502 rectangular (custom geometry)
 
 # Assets and mockup
-node tools/generate_assets_apple.mjs --out <dir>          # SVG -> PNG
+node tools/generate_assets_from_manifest.mjs <manifest.json>  # manifest-driven: lucide + downloaded SVG + inline
+node tools/svg_to_png.mjs <x.svg> --size 44 --name img_x      # one-off downloaded SVG -> PNG
 node tools/inline_mockup.mjs <in.html> <out.html>         # squash into a standalone single file
+
+# Design-time preview (no build; the fast loop for coordinate/colour/copy tweaks)
+python tools/spec_preview.py <spec.json> [--scale S] [--strict]
 
 # Validate and preview
 python tools/validate_squareline_project.py <project>
@@ -353,11 +355,11 @@ Before any SquareLine / LVGL UI task, **read
 
 1. **Stage 0** write `examples/<Name>/<Name>设计规格文档.md` first (template in
    `templates/`), then confirm geometry and wording with the user before going on.
-2. **Stage A** `node tools/generate_assets*.mjs` to produce PNGs.
+2. **Stage A** `node tools/generate_assets_from_manifest.mjs` (or `svg_to_png.mjs`) to produce PNGs.
 3. **Stage B** produce `mockup.html` and let the user confirm the visuals.
 4. **Stage C** ordinary screens go through
    `python tools/build_from_spec.py <spec.json> --out <dir>`; only radial/arc-width
-   custom geometry needs `tools/screens/<name>.py`.
+   rare custom geometry goes in a project-local Python module (SKILL.md C-2).
 5. **Validate** `python tools/validate_squareline_project.py <project>` +
    `python tools/preview_from_project.py <project>`; it is not done until both are green.
 
@@ -454,7 +456,7 @@ Hard rules:
 - The Codex CLI sandbox blocks network by default; this skill is entirely offline so
   that is fine. File writes must stay inside the workspace, so copy the skill package
   into the project directory before running. With Cline / Roo Code, restrict it to
-  editing `tools/screens/*.py` and spec JSON.
+  editing the spec JSON and the asset manifest.
 
 ### D. 豆包 / general chat agents
 
@@ -489,7 +491,8 @@ draft wording and geometry.
 ### E. Freebuff / Codebuff
 
 > **A good way to start**: there is a free daily quota, so it does not consume your
-> own tokens; both worked examples (AIWatch / AIWatchApple) were built with it, and
+> own tokens; the worked example NovaWatchS12 (456×456 round full-feature watch)
+> was built with it, and
 > compatibility is best.
 > Entry: <https://freebuff.com/?ref=ref-046c65ee-f8d6-4d68-87cd-324439d48da1>
 > **Pick the `GLM-5.3-flash` model** — measured as the most stable on multi-turn tool
@@ -544,21 +547,22 @@ squareline-design-skills/
 ├── README.en.md          # English translation of the same guide
 ├── skills/squareline-ui-pipeline/
 │   ├── SKILL.md          # skill definition (workflow + every pitfall) — the agent entry point
+│   ├── ICON_SOURCES.md   # icon/asset site directory (Lucide/Iconify/SVG Repo…) + licences + download→PNG workflow
 │   └── REFERENCE.md      # deep reference: .spj format / event schema / font subsetting / assets
 ├── templates/
+│   ├── UI需求清单模板.md            # the user's requirement entry: concept image + this = the agent's input
 │   └── 设计规格文档模板.md          # Stage 0 input contract: copy and fill it = the source of truth
 ├── tools/                # the whole toolchain (node + python; node_modules vendored, offline-capable)
 │   ├── engine/squareline_engine.py  # engine layer: serialisation/events/animation/fonts/rebase (project agnostic)
-│   ├── screens/*.py                 # content layer: screen definitions for custom geometry
 │   ├── lib/resvg.mjs                # unified SVG->PNG entry (native binding + WASM fallback)
 │   ├── schema_snapshot.json         # official strtype snapshot (validate without a local Studio)
 │   └── LABEL_SIZING.md              # LABEL line-height lookup (generated)
 ├── fonts/                # source fonts (Noto Sans SC 400/500/700 TTF)
 ├── eval/                 # regression suite: rebuild archived projects and byte-compare
 └── examples/
-    ├── AIWatchApple/     # 240×240 round: spec + mockup + full project + process screenshots
-    ├── AIWatch/          # 410×502 rectangular: spec + mockup + generated project
-    └── SpecWidget/       # 320×320 minimal: declarative spec, no bitmap assets
+    └── NovaWatchS12/     # 456×456 round full-feature watch: requirement file +
+                          # design spec + asset manifest + spec + full project
+                          # (the regression baseline)
 ```
 
 `tools/node_modules` (~64 MB) is vendored with the package, so every node tool runs
@@ -574,7 +578,9 @@ fallback, so **Stage A runs in a Linux container with nothing installed**.
 | File | Purpose |
 |---|---|
 | `build_from_spec.py` | Declarative spec JSON → project (first choice for ordinary screens) |
-| `build_squareline_apple.py` / `build_squareline_project.py` | Custom-geometry entry points (round / rectangular) |
+| `spec_preview.py` | spec JSON → HTML design-time preview (no build; audits missing assets / line heights) |
+| `generate_assets_from_manifest.mjs` | Manifest-driven asset generation (lucide / downloaded SVG / inline SVG) |
+| `svg_to_png.mjs` | Any downloaded SVG → PNG (the generic entry for icon-site material) |
 | `engine/squareline_engine.py` | Engine layer: property plumbing / nid·guid / events & animation / rebase / font subsetting |
 | `layout.py` | Layout helpers: grid tiling / card rows / icon+text / safe text height |
 | `label_sizing.py` | Generates the `LABEL_SIZING.md` table (line heights derived from real font `.c` files) |
@@ -601,7 +607,7 @@ fallback, so **Stage A runs in a Linux container with nothing installed**.
    automatically, so no tool changes are needed.
 2. Round screens: follow the "Round-screen design laws" in SKILL.md (chord-width
    formula, radial layout, pre-baked hands, safe area inside the circle). Note that
-   values marked `[instance]` are AIWatchApple's measured numbers — **recompute them
+   values marked `[instance]` are per-project measurements — **recompute them
    for a different panel**.
 3. Fonts: put source TTFs in `fonts/`, and list subsets per purpose in the
    descriptor's `fonts` table; the charset is taken from the design spec
@@ -619,12 +625,12 @@ python tools/preflight.py --full          # + the regression suite
 python eval/run_regression.py             # rebuild archived projects + Stage A cases, byte-compare
 ```
 
-After changing `tools/engine/` or any `tools/screens/*.py` you **must** run the
-second step — it asserts the archived projects are **byte-identical** to the
-reference answers, which is the only hard evidence that nothing broke.
+After changing `tools/engine/` you **must** run the second step — it asserts the
+archived projects are **byte-identical** to the reference answers, which is the
+only hard evidence that nothing broke.
 
-Current state (measured on this machine): `preflight.py` **18 checks: 17 pass /
-0 fail / 1 skipped**; `eval/run_regression.py` **all green**.
+Current state (measured on this machine): `preflight.py` **19 checks: 19 pass /
+0 fail / 0 skipped**; `eval/run_regression.py` **all green**.
 
 ## Offline / container environments
 

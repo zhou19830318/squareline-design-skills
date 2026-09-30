@@ -1,0 +1,19 @@
+{
+  "codename": "Small16",
+  "ttf_path": "/assets/fonts/noto-sans-sc-v40-chinese-simplified-regular.ttf",
+  "bin_path": "/assets/fonts\\ui_font_Small16.bin",
+  "c_path": "/assets/fonts\\ui_font_Small16.c",
+  "cfg_path": "/assets/fonts\\ui_font_Small16.fcfg",
+  "size": 16,
+  "bpp": 4,
+  "letters": 0,
+  "ranges": [
+    "0x20-0x7E",
+    "0x00B0",
+    "0x3001",
+    "0x3002"
+  ],
+  "symbols": " #%()*+,-./0123456789:=>@ABCDEFGHIJKLMNOPRSTUVWY[\\]_`abcdefghijklmnopqrstuvwxy|°·×–…›−、。「」一三上下不与两个中为主么义事二云互交产人什今从以件位体何余作你值偏停健元克全关其内冲准几出击切列初到刻力动助势区千单卡压原双反发取叠句可右号各同名向否听启吸周呼器四回图圆圈在坐基填声壳备外多大天失套好始字安完定容宽寝寸对小就尺层居屏工左已布常幕年序应底度康建开式张录形径徽心必念态成户手报拟按换据排接提播收放数整文斥无日时明星是显晴暂月有期未本机束来板构染标格框案档模正步段每气氧波活消深清温渲湿源滑点烘焙版牙状率环现生用由电画留白的盘目相真眠睡确示离秒程符等答签类素红约级线练组经结绘绝绿缩缺网置能脉自色落蓝血行表见规角触计训许设话语说读象资起跑距跟路身转轮载输返进连适逐途速避部醒里重量针钟钮键间闹随隐集雨静面音页顶项顺预题风验麦齐（），：；",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}

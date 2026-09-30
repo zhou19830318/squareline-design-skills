@@ -1,7 +1,8 @@
 # REFERENCE.md — SquareLine/LVGL UI 管道技术参考
 
 > 供 agent 深改工具链时查阅。SKILL.md 是工作流与教训，本文是底层机制。
-> 经验来自 AIWatch（410×502 方形）与 AIWatchApple（240×240 圆形）两个完整项目。
+> 经验来自 NovaWatchS12（456×456 圆形，现行基准）与历史 AIWatch / AIWatchApple
+> 项目。
 
 ---
 
@@ -131,6 +132,17 @@ node tools/node_modules/lv_font_conv/lv_font_conv.js \
 
 ## 3. 资产生成（resvg + lucide-static）
 
+- **通用入口（新工程一律用这两个）**：
+  - `generate_assets_from_manifest.mjs <manifest.json>`——清单驱动的三源
+    生成器：`source: "lucide" | "svg" | "builtin"`，输出统一 PNG；
+    `"out"` 与 `"file"` 均为仓库相对路径；每枚图标渲染到目标 rect 的
+    原生尺寸（根元素重写 width/height，保留 viewBox）。
+  - `svg_to_png.mjs <x.svg> [--size N] [--name X] [--color CSS]`——任意站外
+    下载 SVG 的单枚转换器；源无 viewBox 时按 width/height 属性推断；
+    `currentColor` 统一换成 `--color`（默认白）。
+  - 图标站目录与许可证纪律：`ICON_SOURCES.md`（Lucide 默认离线可用；
+    Iconify / SVG Repo / Tabler / Bootstrap / Feather / Material Symbols /
+    Phosphor 按许可证下载，CC BY 类必须署名）。
 - 图标：读 lucide-static 的 SVG → 换 stroke 色 → resvg 指定尺寸渲染 PNG。
 - 自绘 SVG：满宽字形（表盘刻度、电池、Gemini 星、心电波形）必须自写 path，
   24×24 的 renderExact 会 letterbox。
@@ -232,8 +244,13 @@ python tools/build_from_spec.py --example     # 打印带注释的骨架
 spec 顶层：`$schema/name/width/height/shape/palette/fonts/ranges_*/symbols/
 skip/screens/animations`；对象类型工厂 `PANEL/LABEL/IMAGE/ARC`；颜色支持
 `#rrggbb[aa]` / 数组 / 调色板名；动作支持 `CHANGE_SCREEN/HIDE/SHOW/
-SET_OPACITY/PLAY_ANIMATION`。`examples/SpecWidget/` 是完整最小示例
-（320×320、无位图资产）。**spec 出错必须报友好消息并非零退出，不能吐栈。**
+SET_OPACITY/PLAY_ANIMATION/CALL_FUNCTION`。`examples/NovaWatchS12/` 是完整参照
+工程（456×456 圆形、10 屏、清单资产）。**spec 出错必须报友好消息并非零退出，不能吐栈。**
+
+**设计期预览（build 之前）**：`python tools/spec_preview.py <spec.json>
+[--scale S] [--strict]` —— 按 builder 同一套颜色/坐标规则把每屏画成 HTML，
+不碰引擎、不需要 node；内置两项审计（资产缺失、LABEL 高度 < 行高下界），
+`--strict` 时非零退出可做门禁。多轮优化的快速回路就用它。
 
 ## 10. 可选：离线深校验与发布工具
 

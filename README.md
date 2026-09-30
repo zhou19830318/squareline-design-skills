@@ -1,6 +1,8 @@
 # squareline-design-skills
 
-把一张 UI 参考图，变成一个**能用 SquareLine Studio 打开、且编辑器不报错**的完整 LVGL 工程。
+把**一张 UI 参考图 + 一份需求文件**，变成一个**能用 SquareLine Studio 打开、
+且编辑器不报错**的完整 LVGL 工程——尺寸、形状、包含哪些屏及切换逻辑、动画
+效果写成需求清单，图标资产从多个图标站收集整理，再按需多轮优化。
 
 这个包里没有绑定任何一家 agent 的代码，`skills/` + `tools/` 就是全部接口。
 拷贝到任意位置，任何能读写文件、能跑命令的 agent 工具都能驱动它（各家 agent 的
@@ -12,8 +14,10 @@
 
 ## 使用方法
 
-一分钟版：**把 `skills/` + `tools/` 拷到 agent 能读到的地方 → 给它参考图和需求 → 它按五个阶段走 →
-每阶段跑校验 → 拿到的 `squareline/<Name>/<Name>.spj` 用 SquareLine Studio 打开。**
+一分钟版：**把 `skills/` + `tools/` 拷到 agent 能读到的地方 → 给它概念图和
+需求清单（模板在 `templates/UI需求清单模板.md`，缺什么 agent 会追问）→
+它按五个阶段走 → 每阶段跑校验 → 拿到的 `squareline/<Name>/<Name>.spj`
+用 SquareLine Studio 打开。需要改就提意见，走多轮优化回路。**
 
 真要动手，按下面的顺序走就行。
 
@@ -27,35 +31,36 @@
 
 ### 2. 跑通第一个工程
 
-仓库里已经有三个现成工程，**先拿它们跑通一遍最省事**，不需要准备参考图：
+仓库里已经有一个现成的完整工程 `examples/NovaWatchS12`（456×456 圆形屏、
+10 屏全功能手表 UI），**先拿它跑通一遍最省事**，不需要准备参考图：
 
 ```bash
 # 校验工程（应该打印 OK - project validated, no problems found）
-python tools/validate_squareline_project.py examples/SpecWidget/squareline/SpecWidget
+python tools/validate_squareline_project.py examples/NovaWatchS12/squareline/NovaWatchS12
 
-# 不开编辑器看效果（生成 preview_from_project.html，浏览器直接打开）
-python tools/preview_from_project.py examples/SpecWidget/squareline/SpecWidget
+# 不开编辑器看效果（生成单文件 preview_from_project.html，浏览器直接打开）
+python tools/preview_from_project.py examples/NovaWatchS12/squareline/NovaWatchS12
 ```
 
 这两条命令就是这个包的核心回环——**validator 管「工程有没有问题」，
 反渲染管「长得对不对」**。后面做自己的工程，也是反复跑这两条。
 
-想从零编译一个工程（`SpecWidget` 是最小示例，320×320、无位图资产）：
+想从零重建它（spec 自带资产包路径，裸命令即可）：
 
 ```bash
-python tools/build_from_spec.py examples/SpecWidget/SpecWidget.spec.json \
-       --out examples/SpecWidget/squareline/SpecWidget
+node tools/generate_assets_from_manifest.mjs examples/NovaWatchS12/assets.manifest.json
+python tools/build_from_spec.py examples/NovaWatchS12/NovaWatchS12.spec.json
 ```
 
 跑完会打印工程信息，末尾无 `ERROR` 即为成功：
 
 ```
-screens   : 2
-objects   : 18
-images    : 0  missing: []
-fonts     : [('Big48', 48, 13), ('Title20', 20, 293), ('Body16', 16, 293)]
-charset   : ui-text 46, doc-headroom 291 (+246 usable)
-lineheight: {'Big48': 60, 'Title20': 23, 'Body16': 20}
+screens   : 10
+objects   : 103
+images    : 22  missing: []
+fonts     : [('Big72', 72, 13), ('Title28', 28, 429), ('Body20', 20, 429), ('Small16', 16, 429)]
+charset   : ui-text 89, doc-headroom 414 (+324 usable)
+lineheight: {'Big72': 86, 'Title28': 34, 'Body20': 24, 'Small16': 20}
 OK - project validated, no problems found
 ```
 
@@ -65,10 +70,10 @@ OK - project validated, no problems found
 
 | 阶段 | 干什么 | 产出 | 怎么算过 |
 |---|---|---|---|
-| **Stage 0**<br>写规格文档 | 复制 `templates/设计规格文档模板.md`，逐节填成 `<Name>设计规格文档.md` | 设计规格文档——**后续每个阶段都拿它当基准** | 三条人工检查：`rect` 全用屏幕绝对坐标；文案字符集写全；控件高 ≥ 字体行高 |
-| **Stage A**<br>生成资产 | `node tools/generate_assets*.mjs` 把图标/自绘 SVG 渲成 PNG（2px ≈ 1dp） | `assets/images_*/` | 读 PNG 头核对真实尺寸；与 mockup 引用比对 missing / unused |
+| **Stage 0**<br>需求 → 规格 | 从 `templates/UI需求清单模板.md` 收需求（尺寸/形状/屏幕/切换/动画/资产偏好），再复制 `templates/设计规格文档模板.md` 逐节填成 `<Name>设计规格文档.md` | 设计规格文档——**后续每个阶段都拿它当基准** | 三条人工检查：`rect` 全用屏幕绝对坐标；文案字符集写全；控件高 ≥ 字体行高 |
+| **Stage A**<br>收集+生成资产 | 清单驱动 `node tools/generate_assets_from_manifest.mjs`（Lucide 离线 + 下载 SVG + 自绘 SVG 三源）；单枚转换用 `node tools/svg_to_png.mjs`；图标站目录与许可证见 `ICON_SOURCES.md` | `assets/images_*/` | 读 PNG 头核对真实尺寸；与 mockup 引用比对 missing / unused |
 | **Stage B**<br>出 mockup | 出 `mockup.html`，`inline_mockup.mjs` 压成单文件 | `mockup.html` / `*_standalone.html` | 未缩放重叠审计 |
-| **Stage C**<br>编译工程 | 常规屏走 spec JSON → `build_from_spec.py`；径向等定制几何 → `tools/screens/<name>.py` | `squareline/<Name>/` 完整工程 | `validate_squareline_project.py` + `preview_from_project.py` |
+| **Stage C**<br>编译工程 | 先 `spec_preview.py` 免构建预览迭代，常规屏走 spec JSON → `build_from_spec.py`；极少数几何用项目内 Python 模块（见 SKILL.md C-2） | `squareline/<Name>/` 完整工程 | `validate_squareline_project.py` + `preview_from_project.py` |
 
 > **为什么一定要先写 Stage 0**：规格文档是唯一的「源真相」。引擎构建时会收录
 > 文档里出现的每个字符进字体子集，所以**想改文案，必须先把新词写进文档**，
@@ -77,14 +82,18 @@ OK - project validated, no problems found
 最小可用的操作顺序：
 
 ```bash
-# 1) 复制模板，填成你的设计规格（= source of truth）
+# 0) 用户按模板写 UI 需求清单（尺寸/形状/屏幕/切换/动画/资产偏好）
+cp templates/UI需求清单模板.md examples/<Name>/UI需求清单.md
+
+# 1) agent 据此复制规格模板，填成你的设计规格（= source of truth）
 cp templates/设计规格文档模板.md examples/<Name>/<Name>设计规格文档.md
 
-# 2) 生成资产 + mockup
-node tools/generate_assets_apple.mjs --out examples/<Name>/assets/images_apple
+# 2) 生成资产 + mockup（图标站目录与许可证见 ICON_SOURCES.md）
+node tools/generate_assets_from_manifest.mjs examples/<Name>/assets.manifest.json
 node tools/inline_mockup.mjs examples/<Name>/mockup.html examples/<Name>/mockup_standalone.html
 
-# 3) 编译工程（常规屏走声明式规格，推荐）
+# 3) 设计期预览（免构建迭代）→ 编译工程（常规屏走声明式规格）
+python tools/spec_preview.py     examples/<Name>/<Name>.spec.json --scale 1
 python tools/build_from_spec.py  examples/<Name>/<Name>.spec.json --out examples/<Name>/squareline/<Name>
 python tools/build_from_spec.py  --example     # 打印带注释的 spec 骨架
 
@@ -97,7 +106,8 @@ python tools/preview_from_project.py        examples/<Name>/squareline/<Name>
 预览逐屏与 mockup 一致；SquareLine Studio 1.6.2 打开 `.spj` 无报错。
 
 **到这儿就完了**——接下来用 SquareLine Studio 打开 `.spj` 开始用，
-或者让 agent 继续加屏幕。
+或者让 agent 继续加屏幕。要改，把意见告诉 agent（记进需求清单的迭代表）：
+它改规格/清单 → `spec_preview.py` 确认 → 重建 → 校验全绿，一轮一验收。
 
 ### 4. 交付物长什么样
 
@@ -116,74 +126,64 @@ examples/<Name>/
 
 ---
 
-## 全程走查：一张参考图 → 一个能打开的工程
+## 全程走查：NovaWatchS12（仿 Apple Watch S12 全功能表）
 
-上面的步骤说明完了。这一节用仓库里的 `examples/AIWatchApple`（240×240 圆形屏）
-把每一步摊开，**全程截图**，你可以照着对一遍。
+上面的步骤说明完了。这一节用仓库里的 `examples/NovaWatchS12`（456×456 圆形屏）
+把每一步摊开——它就是一个真实的「仿 Apple Watch S12 全功能 UI」工程，
+**10 屏**：表盘（预烘焙模拟指针）、应用网格、健身三环、天气、闹钟、体能训练、
+秒表、正念呼吸、AI 语音三态、设置。
 
-需求原文只有一句：**「这是手表首页的参考图，做一个 SquareLine 工程，240×240 圆形屏。」**
+### ① 输入：需求清单
 
-### ① 输入：参考图 + 一句话需求
-
-![输入参考图：7 屏 Apple Watch 圆形表盘概念图](examples/AIWatchApple/docs/steps/01-input-concept.png)
-
-参考图是 7 屏圆形表盘概念图，**尺寸、坐标、色值一律没给**——这些全部要由 Stage 0 反推。
+需求文件在 `examples/NovaWatchS12/UI需求清单.md`（按
+`templates/UI需求清单模板.md` 填写）：456×456 CIRCLE、10 屏清单与切换逻辑、
+逐屏元素粗排、交互动画、资产偏好。**本项目无外部概念图，需求以文字描述给出；
+你的工程可以配概念图一起给 agent。**
 
 ### ② Stage 0：设计规格文档
 
-![AIWatchApple 设计规格文档](examples/AIWatchApple/docs/steps/02-spec-doc.png)
+产物 `examples/NovaWatchS12/NovaWatchS12设计规格文档.md`。画布
+`456×456 / shape CIRCLE`（r=228，可见元素四角距圆心 ≤216）、10 屏逐屏的
+**屏幕绝对坐标**、交互表与 3 个动画、4 档字体、**文案字符集**（含预留词，
+构建时收录 414 字进字体子集保证日后改文案不缺字）。
 
-产物 `examples/AIWatchApple/AIWatchApple设计规格文档.md`（91 行）。这一步定死了后面
-所有阶段：画布 `240×240 / shape CIRCLE`、8 组强调色、7 屏逐屏的**屏幕绝对坐标**、
-以及交互汇总表（全部只用 SquareLine 内置动作）。
-
-圆形屏的约束写在文档头：内容区 `r≤112`，`112<r≤120` 只放贴边刻度。
-
-### ③ Stage A：生成资产
+### ③ Stage A：资产生成（清单驱动）
 
 ```
-node tools/generate_assets_apple.mjs --out examples/AIWatchApple/assets/images_apple
+node tools/generate_assets_from_manifest.mjs examples/NovaWatchS12/assets.manifest.json
 ```
 
-产出 **74 张 PNG**（图标、指针、心率波形 5 帧、Gemini 星、各态麦克风……），
-统一 2px ≈ 1dp。渲染走 `tools/lib/resvg.mjs`（原生绑定优先，WASM 兜底），
-所以 Linux 容器里不装东西也能跑。
+产出 **22 张 PNG**：456px **预烘焙模拟表盘**（表圈+刻度+三针 10:09:30 姿态，
+builtin 自绘 SVG）、8 个应用图标 + 3 个 complication 图标 + 5 个天气图标
+（Lucide 离线源）、语音波形三态（builtin）。渲染走 `tools/lib/resvg.mjs`
+（原生绑定优先，WASM 兜底），Linux 容器不装东西也能跑。
 
-### ④ Stage B：出 HTML mockup
-
-![Stage B mockup：7 屏像素级网格](examples/AIWatchApple/docs/steps/03-mockup.png)
-
-`mockup_apple.html`（含 standalone 单文件版，图片已 base64 内联）。
-7 屏圆形全部落在内切圆内。**布局对不齐就在这一步改，别等到工程里再改。**
-
-### ⑤ Stage C：编译工程 + 校验
+### ④ 设计期预览 + Stage C：编译工程
 
 ```
-python tools/build_squareline_apple.py     # 定制几何（径向布局/指针对齐）
-python tools/validate_squareline_project.py examples/AIWatchApple/squareline/AIWatchApple
-python tools/preview_from_project.py        examples/AIWatchApple/squareline/AIWatchApple
+python tools/spec_preview.py examples/NovaWatchS12/NovaWatchS12.spec.json --scale 0.9
+python tools/build_from_spec.py examples/NovaWatchS12/NovaWatchS12.spec.json
+python tools/validate_squareline_project.py squareline/NovaWatchS12
+python tools/preview_from_project.py        squareline/NovaWatchS12
 ```
 
-![生成的工程树与 validator 真实输出](examples/AIWatchApple/docs/steps/04-squareline-project.png)
-
-左：生成的工程树（**88 个文件**，含 `.spj` 1.26MB、`.sll/.slp/Themes.slt/project.info`，
-以及 `assets/` 里的 74 张 PNG + 5 套字体三件套）。右：validator 的真实输出：
+validator 真实输出：
 
 | 校验项 | 结果 |
 |---|---|
-| `screen size / shape` | 240x240 / CIRCLE |
-| `nids` | 5699 unique: 5699 duplicates: **0** |
-| `screens` / `objects` | 7 / 216 |
-| `event handlers` / `actions` | 45 / 86 |
+| `screen size / shape` | 456x456 / CIRCLE |
+| `nids` | 3058 unique: 3058 duplicates: **0** |
+| `screens` / `objects` | 10 / 119 |
+| `event handlers` / `actions` | 22 / 35 |
+| `images` | 22, missing: **[]** |
 | `occlusion suspects` | **0** |
 | 结论 | **`OK - project validated, no problems found`** |
 
-### ⑥ 反渲染：把生成的 `.spj` 再渲回图
+### ⑤ 反渲染：把生成的 `.spj` 再渲回图
 
-![反渲染预览：直接解析 .spj 还原各屏](examples/AIWatchApple/docs/steps/05-reverse-preview.png)
-
-`preview_from_project.py` 直接解析 `.spj` 反渲染（工程无关，尺寸/形状自动识别）。
-把它和 ① 的参考图并排看，7 屏的几何与文案逐屏一致。
+`preview_from_project.py` 直接解析 `.spj` 反渲染（工程无关，尺寸/形状自动识别，
+图片自动内联为单文件）。侧车（`<Name>.preview.json`）提供中文标题与
+4 个交互态卡片（闹钟关闭态、训练进行中、语音聆听/播报态）。
 
 ---
 
@@ -220,8 +220,9 @@ height >= ceil(size * 1.35)        # 单行中文的安全下界（实测比例 
 
 | 字体 | size | 字形数 | line_height | 工程 |
 |---|---|---|---|---|
-| `Body16` | 16 | 820 | **21** | `examples/AIWatch` |
-| `Body16` | 16 | 293 | **20** | `examples/SpecWidget` |
+| `Big72` | 72 | 13 | **86** | `examples/NovaWatchS12` |
+| `Title28` | 28 | 429 | **34** | `examples/NovaWatchS12` |
+| `Body20` | 20 | 429 | **24** | `examples/NovaWatchS12` |
 
 想精确核对，跑一次构建看 `lineheight:` 那一行（列出本工程真实行高）。
 速查表见 [`tools/LABEL_SIZING.md`](tools/LABEL_SIZING.md)（由 `label_sizing.py`
@@ -261,12 +262,14 @@ python tools/preview_from_project.py <工程>          # 不开编辑器看效�
 # 构建
 python tools/build_from_spec.py <spec.json> --out <dir>   # 声明式规格 → 工程（常规屏首选）
 python tools/build_from_spec.py --example                 # 打印带注释的 spec 骨架
-python tools/build_squareline_apple.py                    # 240×240 圆形（定制几何）
-python tools/build_squareline_project.py                  # 410×502 方形（定制几何）
 
 # 资产与 mockup
-node tools/generate_assets_apple.mjs --out <dir>          # SVG → PNG
+node tools/generate_assets_from_manifest.mjs <manifest.json>  # 清单驱动：lucide + 下载SVG + 自绘
+node tools/svg_to_png.mjs <x.svg> --size 44 --name img_x      # 单枚下载 SVG → PNG
 node tools/inline_mockup.mjs <in.html> <out.html>         # 压成单文件 standalone
+
+# 设计期预览（免构建迭代，改坐标/换色/调文案的快速回路）
+python tools/spec_preview.py <spec.json> [--scale S] [--strict]
 
 # 验证与预览
 python tools/validate_squareline_project.py <工程>
@@ -323,10 +326,10 @@ L1/L2 会把「改完立刻验证」这个最重要的环节丢掉。
 
 1. **Stage 0** 先写 `examples/<Name>/<Name>设计规格文档.md`（模板在 `templates/`），
    写完向用户确认几何与文案，再往下走。
-2. **Stage A** `node tools/generate_assets*.mjs` 产出 PNG。
+2. **Stage A** `node tools/generate_assets_from_manifest.mjs`（或 `svg_to_png.mjs`）产出 PNG。
 3. **Stage B** 出 `mockup.html`，让用户确认视觉。
 4. **Stage C** 常规屏走 `python tools/build_from_spec.py <spec.json> --out <dir>`；
-   径向/弦宽等定制几何才写 `tools/screens/<name>.py`。
+   极少数几何在项目内写 Python 模块调引擎（SKILL.md C-2 逃生舱）。
 5. **验证** `python tools/validate_squareline_project.py <工程>` +
    `python tools/preview_from_project.py <工程>`，全绿才算完成。
 
@@ -390,7 +393,7 @@ cp -r squareline-design-skills/tools squareline-design-skills/fonts \
 按其阶段执行：
 
 设计规格文档（Stage 0，模板见 `templates/设计规格文档模板.md`）→ 资产 → HTML mockup →
-`python tools/build_from_spec.py`（或 `build_squareline_*.py`）→
+`python tools/build_from_spec.py` →
 `validate_squareline_project.py` + `preview_from_project.py`。
 
 技术细节查 `skills/squareline-ui-pipeline/REFERENCE.md`。
@@ -409,7 +412,7 @@ cp -r squareline-design-skills/tools squareline-design-skills/fonts \
 - 这一档**最需要 Stage 0 的纪律**：没有钩子帮你把流程，模型容易跳步直接生成工程，
   结果就是字体缺字、坐标漂移。**务必让它先把规格文档写出来跟你确认。**
 - Codex CLI 沙箱默认禁网，本技能全离线不受影响；但文件写入需在 workspace 内，
-  把技能包拷进项目目录再跑。Cline / Roo Code 建议只让它改 `tools/screens/*.py` 和 spec JSON。
+  把技能包拷进项目目录再跑。Cline / Roo Code 建议只让它改 spec JSON 与资产清单。
 
 ### D. 豆包 / 通用对话式 agent
 
@@ -438,8 +441,8 @@ cp -r squareline-design-skills/tools squareline-design-skills/fonts \
 
 ### E. Freebuff / Codebuff
 
-> **推荐用它上手**：每天有免费额度，不消耗你自己的 token；两个实战工程
-> （AIWatch / AIWatchApple）就是它跑出来的，兼容性最好。
+> **推荐用它上手**：每天有免费额度，不消耗你自己的 token；实战工程
+> NovaWatchS12（456×456 圆形全功能手表）就是它跑出来的，兼容性最好。
 > 入口：<https://freebuff.com/?ref=ref-046c65ee-f8d6-4d68-87cd-324439d48da1>
 > **模型选 `GLM-5.3-flash`** —— 实测在「读 SKILL.md 后按阶段执行 + 反复跑校验命令」
 > 这类多轮工具调用上最稳。
@@ -490,21 +493,21 @@ squareline-design-skills/
 ├── README.en.md          # 同一份指南的英文版
 ├── skills/squareline-ui-pipeline/
 │   ├── SKILL.md          # 技能定义（工作流 + 全部踩坑教训）—— agent 接入入口
+│   ├── ICON_SOURCES.md   # 图标/素材网站目录（Lucide/Iconify/SVG Repo…）+ 许可证 + 下载→PNG 工作流
 │   └── REFERENCE.md      # .spj 格式 / 事件 schema / 字体子集 / 资产 深度技术参考
 ├── templates/
+│   ├── UI需求清单模板.md            # 用户需求入口：概念图 + 它 = agent 的输入
 │   └── 设计规格文档模板.md          # Stage 0 输入契约：复制它填，就是「源真相」
 ├── tools/                # 全套工具链（node + python；node_modules 已内联，离线可用）
 │   ├── engine/squareline_engine.py  # 引擎层：序列化/事件/动画/字体/rebase（项目无关）
-│   ├── screens/*.py                 # 内容层：定制几何的屏幕定义
 │   ├── lib/resvg.mjs                # SVG→PNG 统一入口（原生绑定 + WASM 兜底）
 │   ├── schema_snapshot.json         # 官方 strtype 快照（无本地 Studio 也能校验）
 │   └── LABEL_SIZING.md              # LABEL 行高速查表（自动生成）
 ├── fonts/                # 源字体（Noto Sans SC 400/500/700 TTF）
 ├── eval/                 # 回归套件：重建归档工程并逐字节比对标准答案
 └── examples/
-    ├── AIWatchApple/     # 240×240 圆形屏：规格文档 + mockup + 完整工程 + 过程截图
-    ├── AIWatch/          # 410×502 方形屏：规格文档 + mockup + 生成工程
-    └── SpecWidget/       # 320×320 最小示例：声明式规格，无位图资产
+    └── NovaWatchS12/     # 456×456 圆形全功能手表：需求清单 + 规格文档 +
+                          # 资产清单 + spec + 完整工程（回归基准答案）
 ```
 
 `tools/node_modules`（约 64MB）随包内联，拷贝后**无需 npm install** 即可运行全部
@@ -519,11 +522,12 @@ Linux(x64/arm64, gnu/musl)、macOS(arm64/x64)、Windows(x64) 绑定，外加 WAS
 | 文件 | 作用 |
 |---|---|
 | `build_from_spec.py` | 声明式规格 JSON → 工程（常规屏首选） |
-| `build_squareline_apple.py` / `build_squareline_project.py` | 定制几何的工程入口（圆形 / 方形） |
+| `spec_preview.py` | spec JSON → HTML 设计期预览（免构建，含缺失资产/行高审计） |
+| `generate_assets_from_manifest.mjs` | 清单驱动资产生成（lucide / 下载 SVG / 自绘三源） |
+| `svg_to_png.mjs` | 任意站外下载 SVG → PNG（图标站素材的通用转换入口） |
 | `engine/squareline_engine.py` | 引擎层：属性 plumbing / nid·guid / 事件动画 / rebase / 字体子集 |
 | `layout.py` | 排版辅助函数库：网格铺砖 / 卡片行 / 图标+文字 / 安全文字高度 |
 | `label_sizing.py` | 生成 `LABEL_SIZING.md` 速查表（从真实字体 `.c` 反推行高） |
-| `generate_assets*.mjs` | Lucide / 自绘 SVG → PNG（resvg） |
 | `generate_fonts.mjs` | TTF → LVGL 子集字体三件套 |
 | `inline_mockup.mjs` | HTML mockup 图片/字体 base64 内联 → standalone |
 | `validate_squareline_project.py` | 10 项校验（schema / nid / 资源 / 事件图 / 遮挡 / 语法） |
@@ -540,15 +544,28 @@ Linux(x64/arm64, gnu/musl)、macOS(arm64/x64)、Windows(x64) 绑定，外加 WAS
 
 ## 移植到新面板尺寸/形状
 
-1. 面板几何写在描述符里（`width` / `height` / `shape`：`RECT` | `RECTANGLE` | `CIRCLE`）；
+1. 面板几何写在需求清单（用户给或 agent 反推）与描述符里
+   （`width` / `height` / `shape`：`RECT` | `RECTANGLE` | `CIRCLE`）；
    validator / preview 自动从 `spj["info"]` 读取，无需改工具。
 2. 圆形屏：遵守 SKILL.md 的「Round-screen design laws」（弦宽公式、径向布局、
-   指针预烘焙、圆内安全区）。注意标 `[实例]` 的数值是 AIWatchApple 的实测值，
-   **换面板要重算**。
+   指针预烘焙、圆内安全区）。注意标 `[实例]` 的数值是具体工程的实测值，
+   **换面板要重算**。`examples/NovaWatchS12`（456×456，r=228）是现成的
+   圆形屏参照。
 3. 字体：`fonts/` 放源 TTF，描述符的 `fonts` 表按用途列子集；
    字符集自动取自设计规格文档（也可用 `--spec <file>` 指定）。
 4. 资产包：描述符里写 `"assets": "examples/<Name>/assets"`（仓库相对），
    裸命令即可重建；否则用 `--assets <dir>` 或 `SQUARELINE_ASSETS`。
+5. 图标：先查 `skills/squareline-ui-pipeline/ICON_SOURCES.md`——Lucide 离线
+   可用；Iconify / SVG Repo / Tabler 等按许可证下载后走 `svg_to_png.mjs`
+   或清单生成器。
+
+## 多轮优化怎么走
+
+把修改意见记进需求清单 §9 迭代表，agent 按固定回路走：改设计规格文档
+（源真相）→ 变更落到清单/spec/screens → `spec_preview.py` 免构建确认 →
+`build_from_spec.py` 重建 → validate + preview 全绿 → 迭代表登记。
+**每轮全量重建，绝不手改 .spj；文案变更先补字符集**——细节见
+SKILL.md 的「多轮优化回路」。
 
 ## 自检：改完包之后跑这个
 
@@ -559,10 +576,10 @@ python tools/preflight.py --full          # 追加回归套件
 python eval/run_regression.py             # 重建归档工程 + Stage A 用例，逐字节比对
 ```
 
-改过 `tools/engine/` 或任一 `tools/screens/*.py` 之后**必须跑**第二步——
+改过 `tools/engine/` 之后**必须跑**第二步——
 它会断言归档工程与标准答案**逐字节一致**，是「没有改坏」的唯一硬证据。
 
-当前状态（本机实测）：`preflight.py` **19 项：18 通过 / 0 失败 / 1 提示**；
+当前状态（本机实测）：`preflight.py` **19 项：19 通过 / 0 失败 / 0 提示**；
 `eval/run_regression.py` **全绿**。
 
 ## 离线 / 容器环境

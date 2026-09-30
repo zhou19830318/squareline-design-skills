@@ -16,14 +16,11 @@
 | # | 阶段 | 用例 | 输入 | 期望 |
 | - | ---- | ---- | ---- | ---- |
 | E0 | 前置 | 归档产物换行符 | 扫 `examples/*/squareline/*` 下全部文本产物 | **纯 LF**，无 CRLF（见 §2.1） |
-| A1 | Stage A | AIWatchApple 资产（原生绑定） | `tools/generate_assets_apple.mjs` | 输出 PNG 与 `examples/AIWatchApple/assets/images_apple` **逐字节**一致 |
-| A2 | Stage A | AIWatchApple 资产（WASM 兜底） | 同上 + `RESVG_FORCE_WASM=1` | 与 A1 的 golden 逐字节一致 → 证明**无原生绑定的平台**（Linux 容器）也能出同样的图 |
-| A3 | Stage A | AIWatch 资产（原生绑定） | `tools/generate_assets.mjs` | 与 `examples/AIWatch/assets/images` 逐字节一致 |
-| C1 | Stage C | AIWatchApple 工程（240×240 CIRCLE，定制几何） | `tools/build_squareline_apple.py` | 与 `examples/AIWatchApple/squareline/AIWatchApple` 逐字节一致 |
-| C2 | Stage C | AIWatch 工程（410×502 RECT，定制几何） | `tools/build_squareline_project.py` | 与 `examples/AIWatch/squareline/AIWatch` 逐字节一致 |
-| C3 | Stage C | SpecWidget 工程（320×320 RECT，**声明式规格**） | `examples/SpecWidget/SpecWidget.spec.json` | 与 `examples/SpecWidget/squareline/SpecWidget` 逐字节一致 |
-| D1–D3 | Stage D | 校验 | 上一步**新构建**的工程目录 | `validate_squareline_project.py` 退出码 0 且打印 `OK - project validated` |
-| D4–D6 | Stage D | 反渲染 | 同上 | `preview_from_project.py` 退出码 0 且写出 `preview_from_project.html` |
+| A1 | Stage A | NovaWatchS12 资产（原生绑定） | `tools/generate_assets_from_manifest.mjs --manifest examples/NovaWatchS12/assets.manifest.json` | 输出 PNG 与 `examples/NovaWatchS12/assets/images` **逐字节**一致 |
+| A2 | Stage A | NovaWatchS12 资产（WASM 兜底） | 同上 + `RESVG_FORCE_WASM=1` | 与 A1 的 golden 逐字节一致 → 证明**无原生绑定的平台**（Linux 容器）也能出同样的图 |
+| C1 | Stage C | NovaWatchS12 工程（456×456 CIRCLE，**声明式规格**） | `examples/NovaWatchS12/NovaWatchS12.spec.json` | 与 `examples/NovaWatchS12/squareline/NovaWatchS12` 逐字节一致 |
+| D1 | Stage D | 校验 | 上一步**新构建**的工程目录 | `validate_squareline_project.py` 退出码 0 且打印 `OK - project validated` |
+| D2 | Stage D | 反渲染 | 同上 | `preview_from_project.py` 退出码 0 且写出 `preview_from_project.html` |
 | S1 | 契约 | 非法规格必须**明确报错** | 引用了未声明字体的 spec | 退出码 ≠ 0，输出含 `spec error`，**不得抛 Python traceback** |
 | S2 | 契约 | `--example` 可用 | `build_from_spec.py --example` | 退出码 0 且输出含 `"$schema"` |
 
@@ -74,9 +71,9 @@ Linux 重建 → LF，于是下面这几个文件在**流水线主攻的 Linux �
 ## 3. 失败时怎么读输出
 
 ```
-[FAIL] Stage C: AIWatchApple == golden (96 files)
-       missing  : assets/fonts/ui_font_Body15.bin
-       changed  : AIWatchApple.spj
+[FAIL] Stage C: NovaWatchS12 == golden (42 files)
+       missing  : assets/fonts/ui_font_Body20.bin
+       changed  : NovaWatchS12.spj
 ```
 
 - `missing` = golden 有、这次没生成 → 少写了文件（或输出目录不对）
@@ -108,8 +105,8 @@ Linux 重建 → LF，于是下面这几个文件在**流水线主攻的 Linux �
 
 | # | prompt | 期望 agent 做到 |
 | - | ------ | --------------- |
-| T1 | 「参考 `examples/AIWatchApple/AIWatchApple设计规格文档.md` 的格式，给一块 320×385 的方形屏写一份设计规格文档，做三屏：表盘 / 天气 / 设置」 | 先复制模板填空；`rect` 全用屏幕绝对坐标；§6.1 文案字符集写了预留词；控件高度满足行高约束 |
-| T2 | 「按你刚写的规格文档，生成 SquareLine 工程并验证」 | 走 `build_from_spec.py`（**不是**复制 `screens/aiwatch.py`）；跑 validator 至 `OK`；跑 preview |
+| T1 | 「参考 `examples/NovaWatchS12/NovaWatchS12设计规格文档.md` 的格式，给一块 320×385 的方形屏写一份设计规格文档，做三屏：表盘 / 天气 / 设置」 | 先复制模板填空；`rect` 全用屏幕绝对坐标；§6.1 文案字符集写了预留词；控件高度满足行高约束 |
+| T2 | 「按你刚写的规格文档，生成 SquareLine 工程并验证」 | 走 `build_from_spec.py`（**不是**复制历史 screens 模块）；跑 validator 至 `OK`；跑 preview |
 | T3 | 「把设置页第三行的值改成『已同步』，然后重新出工程」 | 只改 spec/规格文档的数据，**不手改 .spj**；重建后无缺字形告警；主动重跑回归 |
 | T4 | 「这块圆形屏是 240×240，顶部要放一行状态文字，能不能直接放在 y=6？」 | 用弦宽公式算安全区，指出 y=6 处圆只有约 108 px 宽、放不下整行；给出可行的 y 或收窄方案 |
 | T5 | 「为什么我构建出来的工程里一张图都没有，validator 报 missing image files？」 | 定位到资产包路径（描述符缺 `"assets"` / 没用 `--assets`），而不是去改坐标或改引擎 |
@@ -121,9 +118,7 @@ T4/T5 看**是否用对了法则**（弦宽公式、资产路径优先级），�
 
 | 工程 | 构建命令 |
 | ---- | -------- |
-| AIWatchApple | `python tools/build_squareline_apple.py --out examples/AIWatchApple/squareline/AIWatchApple` |
-| AIWatch | `python tools/build_squareline_project.py --out examples/AIWatch/squareline/AIWatch` |
-| SpecWidget | `python tools/build_from_spec.py examples/SpecWidget/SpecWidget.spec.json --out examples/SpecWidget/squareline/SpecWidget` |
+| NovaWatchS12 | `node tools/generate_assets_from_manifest.mjs examples/NovaWatchS12/assets.manifest.json` + `python tools/build_from_spec.py examples/NovaWatchS12/NovaWatchS12.spec.json` |
 
 新增工程时，在 `eval/run_regression.py` 的 `PROJECT_CASES` 里加一行即可；
 若它还带来新的资产生成器，同时加一行到 `ASSET_CASES`。

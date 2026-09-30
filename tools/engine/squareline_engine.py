@@ -145,14 +145,18 @@ def configure(project):
 
     # Where the assets come from / where the project goes.  Precedence:
     #   --assets  >  $SQUARELINE_ASSETS  >  PROJECT["assets"]  >  <repo>/assets
-    # `PROJECT["assets"]` lets an example carry its own asset pack, so the bare
-    # command (`python tools/build_squareline_apple.py`) rebuilds the archived
-    # project without the caller having to remember a flag.  Relative paths are
-    # resolved against the repo root, not the cwd.
-    ASSETS_ROOT = _flag("--assets") or os.environ.get("SQUARELINE_ASSETS") \
-        or PROJECT.get("assets") or os.path.join(ROOT, "assets")
-    if not os.path.isabs(ASSETS_ROOT):
-        ASSETS_ROOT = os.path.join(ROOT, ASSETS_ROOT)
+    # Explicit CLI/env paths are resolved against the caller's current directory;
+    # descriptor paths remain repo-relative so archived examples rebuild bare.
+    assets_flag = _flag("--assets")
+    assets_env = os.environ.get("SQUARELINE_ASSETS")
+    if assets_flag:
+        ASSETS_ROOT = os.path.abspath(assets_flag)
+    elif assets_env:
+        ASSETS_ROOT = os.path.abspath(assets_env)
+    elif PROJECT.get("assets"):
+        ASSETS_ROOT = os.path.join(ROOT, PROJECT["assets"])
+    else:
+        ASSETS_ROOT = os.path.join(ROOT, "assets")
     SRC_IMAGES = PROJECT.get("src_images") or os.path.join(
         ASSETS_ROOT, PROJECT.get("assets_subdir", "images"))
     # Source TTFs: prefer the project's own asset pack, fall back to the shared
@@ -160,8 +164,14 @@ def configure(project):
     # in the README is about; a spec with no image assets needs no asset pack).
     _apack_fonts = os.path.join(ASSETS_ROOT, "fonts")
     SRC_FONTS = _apack_fonts if os.path.isdir(_apack_fonts) else os.path.join(ROOT, "fonts")
-    out_root = _flag("--out") or os.environ.get("SQUARELINE_OUT") \
-        or os.path.join(ROOT, "squareline", PROJECT_NAME)
+    out_flag = _flag("--out")
+    out_env = os.environ.get("SQUARELINE_OUT")
+    if out_flag:
+        out_root = os.path.abspath(out_flag)
+    elif out_env:
+        out_root = os.path.abspath(out_env)
+    else:
+        out_root = os.path.join(ROOT, "squareline", PROJECT_NAME)
     OUT = os.path.abspath(out_root)
     OUT_ASSETS = os.path.join(OUT, "assets")
     OUT_FONTS = os.path.join(OUT_ASSETS, "fonts")
@@ -535,6 +545,19 @@ def act_anim(anim_name, target, delay=None):
          p_int(0, "PLAY ANIMATION/Delay", delay, 6)],
         "<{FunctionName}>(<{Target}>, <{Delay}>)",
         "<{FunctionName}>(<{Target}>, <{Delay}>);",
+    )
+
+
+def act_call(function_name, dont_export=False):
+    if not function_name:
+        raise ValueError("CALL FUNCTION requires function_name")
+    return _act(
+        "CALL FUNCTION",
+        [p_str(0, "CALL FUNCTION/Function_name", function_name, 10),
+         p_str(0, "CALL FUNCTION/Dont_export_function",
+               "True" if dont_export else "False", 2)],
+        "%s()" % function_name,
+        "%s();" % function_name,
     )
 
 

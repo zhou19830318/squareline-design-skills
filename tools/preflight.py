@@ -214,20 +214,43 @@ def check_source_health():
 
 
 def check_no_personal_paths():
-    """No developer-specific absolute paths may ship in tools/, skills/, eval/."""
+    """No developer-specific absolute paths may ship.
+
+    Scope note: this used to cover only `tools/`, `skills/` and `eval/`, which
+    is where *hand-written* code lives.  That missed the place these paths
+    actually come from — **generated** artifacts.  `lv_font_conv` writes its
+    whole command line into the `Opts:` comment of the font `.c` it emits,
+    including `--font C:\\Users\\<name>\\...\\foo.ttf` and the `-o` output path.
+    Half a dozen such files sat in `examples/AIWatch/assets/fonts/lvgl/` and are
+    in git history, so a shipped example could tell the world the author's home
+    directory layout.  Scanning `examples/` (and font-ish extensions) closes it.
+    """
     # Two halves of the token are joined at runtime so this file's own source
     # does not contain the literal it hunts for (it would flag itself).
+    #
+    # The username part is `[A-Za-z0-9._-]+`, deliberately NOT `[^\\/"']+`: a
+    # real Windows username is always in that alphabet, while a documentation
+    # placeholder is not (`C:\Users\<you>\...`).  The loose version flagged this
+    # file's own honest explanation of the leak in tools/RELEASE.md, and a guard
+    # that fires on placeholders trains people to ignore it.
     user = "Administr" + "ator"
-    pat = re.compile(r"(C:\\+Users\\+[^\\/\"']+|/home/[A-Za-z0-9._-]+|" + user + ")")
+    pat = re.compile(r"(C:\\+Users\\+[A-Za-z0-9._-]+|/home/[A-Za-z0-9._-]+|"
+                     + user + ")")
     self_path = os.path.abspath(__file__)
     hits = []
-    for base, exts in (("tools", (".py", ".mjs")), ("skills", (".md",)),
-                       ("eval", (".py", ".sh", ".md"))):
+    for base, exts in (("tools", (".py", ".mjs", ".md")),
+                       ("skills", (".md",)),
+                       ("eval", (".py", ".sh", ".md")),
+                       ("examples", (".py", ".mjs", ".md", ".c", ".h", ".fcfg",
+                                     ".json", ".html", ".info", ".sll", ".slp",
+                                     ".slt")),
+                       ("templates", (".md",))):
         d = os.path.join(ROOT, base)
         if not os.path.isdir(d):
             continue
         for dirpath, dirnames, filenames in os.walk(d):
-            dirnames[:] = [x for x in dirnames if x not in ("node_modules", "__pycache__")]
+            dirnames[:] = [x for x in dirnames
+                           if x not in ("node_modules", "__pycache__")]
             for f in filenames:
                 if not f.endswith(exts):
                     continue
@@ -299,10 +322,10 @@ ZIP_REQUIRED = [
     "tools/node_modules/@resvg/resvg-js-linux-x64-gnu/",
     "tools/node_modules/@resvg/resvg-js-darwin-arm64/",
     "tools/node_modules/@resvg/resvg-js-win32-x64-msvc/",
-    "examples/AIWatchApple/squareline/AIWatchApple/AIWatchApple.spj",
-    "examples/AIWatch/squareline/AIWatch/AIWatch.spj",
-    "examples/SpecWidget/squareline/SpecWidget/SpecWidget.spj",
-    "examples/SpecWidget/SpecWidget.spec.json",
+    "examples/NovaWatchS12/squareline/NovaWatchS12/NovaWatchS12.spj",
+    "examples/NovaWatchS12/NovaWatchS12.spec.json",
+    "examples/NovaWatchS12/assets.manifest.json",
+    "examples/NovaWatchS12/UI需求清单.md",
     "fonts/",
 ]
 
@@ -326,10 +349,11 @@ def check_zip_contents():
     # how .workbuddy/ notes and a nested dist/*.zip got shipped once.
     folder_shaped = os.path.basename(zp)[:-4] + "/"
     leaked = [n for n in names
-              if n.startswith(("dist/", ".workbuddy/", folder_shaped))
-              or ".workbuddy/" in n or "/__pycache__/" in n
-              or n.endswith((".zip", ".log", ".pyc", ".pyo"))
-              or n.endswith("preview_from_project.html")]
+              if n.startswith(("dist/", ".workbuddy/", ".freebuff/", folder_shaped))
+              or ".workbuddy/" in n or "/.freebuff/" in n or "/__pycache__/" in n
+              or n.endswith((".zip", ".log", ".pyc", ".pyo",
+                             "preview_from_project.html", ".spec_preview.html"))
+              or os.path.basename(n).startswith("_")]
     problems = (["missing: " + m for m in missing]
                 + ["should not ship: " + l for l in leaked[:6]])
     return record("release zip: required payload present", not problems,

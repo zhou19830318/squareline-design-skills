@@ -1,0 +1,1836 @@
+{
+  "$schema": "squareline-spec/1",
+  "name": "NovaWatchS12",
+  "width": 456,
+  "height": 456,
+  "shape": "CIRCLE",
+  "description": "NovaWatchS12 - 456x456 round smartwatch, full-feature UI (original assets)",
+  "assets": "examples/NovaWatchS12/assets",
+  "assets_subdir": "images",
+  "spec_docs": [
+    "NovaWatchS12设计规格文档.md"
+  ],
+  "theme_dark": true,
+  "palette": {
+    "BG": "#000000",
+    "CARD": "#1C1C1E",
+    "CARD2": "#2C2C2E",
+    "TRACK": "#39393D",
+    "DIM": "#98989F",
+    "WHITE": "#FFFFFF",
+    "GREEN": "#30D158",
+    "BLUE": "#0A84FF",
+    "ORANGE": "#FF9F0A",
+    "PINK": "#FF2D55",
+    "RED": "#FF453A"
+  },
+  "fonts": [
+    {
+      "codename": "Big72",
+      "ttf": "noto-sans-sc-v40-chinese-simplified-700.ttf",
+      "size": 72,
+      "kind": "number"
+    },
+    {
+      "codename": "Title28",
+      "ttf": "noto-sans-sc-v40-chinese-simplified-500.ttf",
+      "size": 28,
+      "kind": "text"
+    },
+    {
+      "codename": "Body20",
+      "ttf": "noto-sans-sc-v40-chinese-simplified-regular.ttf",
+      "size": 20,
+      "kind": "text"
+    },
+    {
+      "codename": "Small16",
+      "ttf": "noto-sans-sc-v40-chinese-simplified-regular.ttf",
+      "size": 16,
+      "kind": "text"
+    }
+  ],
+  "ranges_text": [
+    "0x20-0x7E",
+    "0x00B0",
+    "0x3001",
+    "0x3002"
+  ],
+  "ranges_num": [
+    "0x20-0x7E",
+    "0x00B0"
+  ],
+  "symbols": {
+    "time": "0123456789:.",
+    "number": "0123456789:.%",
+    "text": ""
+  },
+  "skip": "℃≈├📍⚠💡⏸→←🔋▶─️",
+  "screens": [
+    {
+      "name": "watchface",
+      "bg": "BG",
+      "children": [
+        {
+          "type": "IMAGE",
+          "name": "face_dial",
+          "rect": [
+            0,
+            0,
+            456,
+            456
+          ],
+          "asset": "assets/img_face_dial.png"
+        },
+        {
+          "type": "LABEL",
+          "name": "time_digital",
+          "rect": [
+            128,
+            66,
+            200,
+            98
+          ],
+          "text": "10:09",
+          "font": "Big72",
+          "color": "WHITE",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "date_line",
+          "rect": [
+            118,
+            160,
+            220,
+            38
+          ],
+          "text": "周二 9月28日",
+          "font": "Title28",
+          "color": "DIM",
+          "align": "CENTER"
+        },
+        {
+          "type": "IMAGE",
+          "name": "comp_hr",
+          "rect": [
+            90,
+            314,
+            32,
+            32
+          ],
+          "asset": "assets/img_comp_hr.png"
+        },
+        {
+          "type": "LABEL",
+          "name": "hr_value",
+          "rect": [
+            62,
+            350,
+            88,
+            22
+          ],
+          "text": "72",
+          "font": "Small16",
+          "color": "PINK",
+          "align": "CENTER"
+        },
+        {
+          "type": "IMAGE",
+          "name": "comp_temp",
+          "rect": [
+            212,
+            314,
+            32,
+            32
+          ],
+          "asset": "assets/img_comp_temp.png"
+        },
+        {
+          "type": "LABEL",
+          "name": "temp_value",
+          "rect": [
+            184,
+            350,
+            88,
+            22
+          ],
+          "text": "24°",
+          "font": "Small16",
+          "color": "ORANGE",
+          "align": "CENTER"
+        },
+        {
+          "type": "IMAGE",
+          "name": "comp_batt",
+          "rect": [
+            334,
+            314,
+            32,
+            32
+          ],
+          "asset": "assets/img_comp_batt.png"
+        },
+        {
+          "type": "LABEL",
+          "name": "batt_value",
+          "rect": [
+            318,
+            350,
+            64,
+            22
+          ],
+          "text": "82%",
+          "font": "Small16",
+          "color": "GREEN",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "swipe_hint",
+          "rect": [
+            188,
+            396,
+            80,
+            27
+          ],
+          "text": "左滑 ›",
+          "font": "Body20",
+          "color": "DIM",
+          "align": "CENTER"
+        }
+      ]
+    },
+    {
+      "name": "apps",
+      "bg": "BG",
+      "children": [
+        {
+          "type": "IMAGE",
+          "name": "nova_core",
+          "rect": [
+            180,
+            180,
+            96,
+            96
+          ],
+          "asset": "assets/img_nova_core.png"
+        },
+        {
+          "type": "IMAGE",
+          "name": "app_health",
+          "rect": [
+            196,
+            46,
+            64,
+            64
+          ],
+          "asset": "assets/img_app_health.png",
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "CHANGE_SCREEN",
+                  "target": "health"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "IMAGE",
+          "name": "app_weather",
+          "rect": [
+            298,
+            84,
+            64,
+            64
+          ],
+          "asset": "assets/img_app_weather.png",
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "CHANGE_SCREEN",
+                  "target": "weather"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "IMAGE",
+          "name": "app_alarms",
+          "rect": [
+            346,
+            196,
+            64,
+            64
+          ],
+          "asset": "assets/img_app_alarms.png",
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "CHANGE_SCREEN",
+                  "target": "alarms"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "IMAGE",
+          "name": "app_workout",
+          "rect": [
+            298,
+            308,
+            64,
+            64
+          ],
+          "asset": "assets/img_app_workout.png",
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "CHANGE_SCREEN",
+                  "target": "workout"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "IMAGE",
+          "name": "app_stopwatch",
+          "rect": [
+            196,
+            346,
+            64,
+            64
+          ],
+          "asset": "assets/img_app_stopwatch.png",
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "CHANGE_SCREEN",
+                  "target": "stopwatch"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "IMAGE",
+          "name": "app_breathe",
+          "rect": [
+            94,
+            308,
+            64,
+            64
+          ],
+          "asset": "assets/img_app_breathe.png",
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "CHANGE_SCREEN",
+                  "target": "breathe"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "IMAGE",
+          "name": "app_voice",
+          "rect": [
+            46,
+            196,
+            64,
+            64
+          ],
+          "asset": "assets/img_app_voice.png",
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "CHANGE_SCREEN",
+                  "target": "voice"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "IMAGE",
+          "name": "app_settings",
+          "rect": [
+            94,
+            84,
+            64,
+            64
+          ],
+          "asset": "assets/img_app_settings.png",
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "CHANGE_SCREEN",
+                  "target": "settings"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "health",
+      "bg": "BG",
+      "children": [
+        {
+          "type": "ARC",
+          "name": "ring_move",
+          "rect": [
+            148,
+            60,
+            160,
+            160
+          ],
+          "value": 68,
+          "max": 100,
+          "indicator": "PINK",
+          "track": "TRACK",
+          "width": 14
+        },
+        {
+          "type": "ARC",
+          "name": "ring_exercise",
+          "rect": [
+            166,
+            78,
+            124,
+            124
+          ],
+          "value": 45,
+          "max": 100,
+          "indicator": "GREEN",
+          "track": "TRACK",
+          "width": 14
+        },
+        {
+          "type": "ARC",
+          "name": "ring_stand",
+          "rect": [
+            184,
+            96,
+            88,
+            88
+          ],
+          "value": 80,
+          "max": 100,
+          "indicator": "BLUE",
+          "track": "TRACK",
+          "width": 14
+        },
+        {
+          "type": "LABEL",
+          "name": "steps_value",
+          "rect": [
+            128,
+            232,
+            200,
+            92
+          ],
+          "text": "8642",
+          "font": "Big72",
+          "color": "WHITE",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "steps_unit",
+          "rect": [
+            178,
+            326,
+            100,
+            27
+          ],
+          "text": "步数",
+          "font": "Body20",
+          "color": "DIM",
+          "align": "CENTER"
+        },
+        {
+          "type": "PANEL",
+          "name": "card_hr",
+          "rect": [
+            88,
+            360,
+            130,
+            60
+          ],
+          "bg": "CARD",
+          "radius": 16,
+          "children": [
+            {
+              "type": "LABEL",
+              "name": "hr_label",
+              "rect": [
+                104,
+                366,
+                98,
+                27
+              ],
+              "text": "心率",
+              "font": "Body20",
+              "color": "DIM",
+              "align": "LEFT"
+            },
+            {
+              "type": "LABEL",
+              "name": "hr_data",
+              "rect": [
+                104,
+                392,
+                98,
+                24
+              ],
+              "text": "128",
+              "font": "Body20",
+              "color": "PINK",
+              "align": "LEFT"
+            }
+          ]
+        },
+        {
+          "type": "PANEL",
+          "name": "card_kcal",
+          "rect": [
+            238,
+            360,
+            130,
+            60
+          ],
+          "bg": "CARD",
+          "radius": 16,
+          "children": [
+            {
+              "type": "LABEL",
+              "name": "kcal_label",
+              "rect": [
+                254,
+                366,
+                98,
+                27
+              ],
+              "text": "卡路里",
+              "font": "Body20",
+              "color": "DIM",
+              "align": "LEFT"
+            },
+            {
+              "type": "LABEL",
+              "name": "kcal_data",
+              "rect": [
+                254,
+                392,
+                98,
+                24
+              ],
+              "text": "486",
+              "font": "Body20",
+              "color": "ORANGE",
+              "align": "LEFT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "weather",
+      "bg": "BG",
+      "children": [
+        {
+          "type": "IMAGE",
+          "name": "weather_hero",
+          "rect": [
+            180,
+            56,
+            96,
+            96
+          ],
+          "asset": "assets/img_weather_now.png"
+        },
+        {
+          "type": "LABEL",
+          "name": "temp_big",
+          "rect": [
+            148,
+            152,
+            160,
+            92
+          ],
+          "text": "24°",
+          "font": "Big72",
+          "color": "WHITE",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "cond_line",
+          "rect": [
+            158,
+            250,
+            140,
+            38
+          ],
+          "text": "晴",
+          "font": "Title28",
+          "color": "DIM",
+          "align": "CENTER"
+        },
+        {
+          "type": "IMAGE",
+          "name": "w1_icon",
+          "rect": [
+            84,
+            300,
+            48,
+            48
+          ],
+          "asset": "assets/img_weather_h1.png"
+        },
+        {
+          "type": "LABEL",
+          "name": "w1_time",
+          "rect": [
+            76,
+            352,
+            64,
+            22
+          ],
+          "text": "现在",
+          "font": "Small16",
+          "color": "DIM",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "w1_temp",
+          "rect": [
+            76,
+            376,
+            64,
+            22
+          ],
+          "text": "24°",
+          "font": "Small16",
+          "color": "WHITE",
+          "align": "CENTER"
+        },
+        {
+          "type": "IMAGE",
+          "name": "w2_icon",
+          "rect": [
+            164,
+            300,
+            48,
+            48
+          ],
+          "asset": "assets/img_weather_h2.png"
+        },
+        {
+          "type": "LABEL",
+          "name": "w2_time",
+          "rect": [
+            156,
+            352,
+            64,
+            22
+          ],
+          "text": "15时",
+          "font": "Small16",
+          "color": "DIM",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "w2_temp",
+          "rect": [
+            156,
+            376,
+            64,
+            22
+          ],
+          "text": "26°",
+          "font": "Small16",
+          "color": "WHITE",
+          "align": "CENTER"
+        },
+        {
+          "type": "IMAGE",
+          "name": "w3_icon",
+          "rect": [
+            244,
+            300,
+            48,
+            48
+          ],
+          "asset": "assets/img_weather_h3.png"
+        },
+        {
+          "type": "LABEL",
+          "name": "w3_time",
+          "rect": [
+            236,
+            352,
+            64,
+            22
+          ],
+          "text": "16时",
+          "font": "Small16",
+          "color": "DIM",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "w3_temp",
+          "rect": [
+            236,
+            376,
+            64,
+            22
+          ],
+          "text": "23°",
+          "font": "Small16",
+          "color": "WHITE",
+          "align": "CENTER"
+        },
+        {
+          "type": "IMAGE",
+          "name": "w4_icon",
+          "rect": [
+            324,
+            300,
+            48,
+            48
+          ],
+          "asset": "assets/img_weather_h4.png"
+        },
+        {
+          "type": "LABEL",
+          "name": "w4_time",
+          "rect": [
+            316,
+            352,
+            64,
+            22
+          ],
+          "text": "20时",
+          "font": "Small16",
+          "color": "DIM",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "w4_temp",
+          "rect": [
+            316,
+            376,
+            64,
+            22
+          ],
+          "text": "19°",
+          "font": "Small16",
+          "color": "WHITE",
+          "align": "CENTER"
+        }
+      ]
+    },
+    {
+      "name": "alarms",
+      "bg": "BG",
+      "children": [
+        {
+          "type": "LABEL",
+          "name": "al_title",
+          "rect": [
+            108,
+            48,
+            240,
+            38
+          ],
+          "text": "闹钟",
+          "font": "Title28",
+          "color": "WHITE",
+          "align": "CENTER"
+        },
+        {
+          "type": "PANEL",
+          "name": "alarm_row1",
+          "rect": [
+            68,
+            96,
+            320,
+            88
+          ],
+          "bg": "CARD",
+          "radius": 18,
+          "clickable": true,
+          "children": [
+            {
+              "type": "LABEL",
+              "name": "al1_time",
+              "rect": [
+                100,
+                112,
+                120,
+                38
+              ],
+              "text": "06:30",
+              "font": "Title28",
+              "color": "WHITE",
+              "align": "LEFT"
+            },
+            {
+              "type": "LABEL",
+              "name": "al1_rep",
+              "rect": [
+                100,
+                148,
+                160,
+                22
+              ],
+              "text": "工作日",
+              "font": "Small16",
+              "color": "DIM",
+              "align": "LEFT"
+            },
+            {
+              "type": "PANEL",
+              "name": "al1_on",
+              "rect": [
+                296,
+                118,
+                40,
+                22
+              ],
+              "bg": "CARD2",
+              "radius": 11,
+              "hidden": true,
+              "children": [
+                {
+                  "type": "PANEL",
+                  "name": "al1_knob_on",
+                  "rect": [
+                    318,
+                    120,
+                    18,
+                    18
+                  ],
+                  "bg": "DIM",
+                  "radius": 9
+                }
+              ]
+            },
+            {
+              "type": "PANEL",
+              "name": "al1_off",
+              "rect": [
+                296,
+                118,
+                40,
+                22
+              ],
+              "bg": "CARD2",
+              "radius": 11,
+              "children": [
+                {
+                  "type": "PANEL",
+                  "name": "al1_knob_off",
+                  "rect": [
+                    298,
+                    120,
+                    18,
+                    18
+                  ],
+                  "bg": "DIM",
+                  "radius": 9
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "HIDE",
+                  "object": "al1_on"
+                },
+                {
+                  "type": "SHOW",
+                  "object": "al1_off"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "PANEL",
+          "name": "alarm_row2",
+          "rect": [
+            68,
+            196,
+            320,
+            88
+          ],
+          "bg": "CARD",
+          "radius": 18,
+          "clickable": true,
+          "children": [
+            {
+              "type": "LABEL",
+              "name": "al2_time",
+              "rect": [
+                100,
+                212,
+                120,
+                38
+              ],
+              "text": "07:30",
+              "font": "Title28",
+              "color": "WHITE",
+              "align": "LEFT"
+            },
+            {
+              "type": "LABEL",
+              "name": "al2_rep",
+              "rect": [
+                100,
+                248,
+                160,
+                22
+              ],
+              "text": "每天",
+              "font": "Small16",
+              "color": "DIM",
+              "align": "LEFT"
+            },
+            {
+              "type": "PANEL",
+              "name": "al2_on",
+              "rect": [
+                296,
+                218,
+                40,
+                22
+              ],
+              "bg": "CARD2",
+              "radius": 11,
+              "hidden": true,
+              "children": [
+                {
+                  "type": "PANEL",
+                  "name": "al2_knob_on",
+                  "rect": [
+                    318,
+                    220,
+                    18,
+                    18
+                  ],
+                  "bg": "DIM",
+                  "radius": 9
+                }
+              ]
+            },
+            {
+              "type": "PANEL",
+              "name": "al2_off",
+              "rect": [
+                296,
+                218,
+                40,
+                22
+              ],
+              "bg": "CARD2",
+              "radius": 11,
+              "children": [
+                {
+                  "type": "PANEL",
+                  "name": "al2_knob_off",
+                  "rect": [
+                    298,
+                    220,
+                    18,
+                    18
+                  ],
+                  "bg": "DIM",
+                  "radius": 9
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "HIDE",
+                  "object": "al2_on"
+                },
+                {
+                  "type": "SHOW",
+                  "object": "al2_off"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "PANEL",
+          "name": "alarm_row3",
+          "rect": [
+            68,
+            296,
+            320,
+            88
+          ],
+          "bg": "CARD",
+          "radius": 18,
+          "clickable": true,
+          "children": [
+            {
+              "type": "LABEL",
+              "name": "al3_time",
+              "rect": [
+                100,
+                312,
+                120,
+                38
+              ],
+              "text": "22:30",
+              "font": "Title28",
+              "color": "WHITE",
+              "align": "LEFT"
+            },
+            {
+              "type": "LABEL",
+              "name": "al3_rep",
+              "rect": [
+                100,
+                348,
+                160,
+                22
+              ],
+              "text": "就寝",
+              "font": "Small16",
+              "color": "DIM",
+              "align": "LEFT"
+            },
+            {
+              "type": "PANEL",
+              "name": "al3_on",
+              "rect": [
+                296,
+                318,
+                40,
+                22
+              ],
+              "bg": "CARD2",
+              "radius": 11,
+              "hidden": true,
+              "children": [
+                {
+                  "type": "PANEL",
+                  "name": "al3_knob_on",
+                  "rect": [
+                    318,
+                    320,
+                    18,
+                    18
+                  ],
+                  "bg": "DIM",
+                  "radius": 9
+                }
+              ]
+            },
+            {
+              "type": "PANEL",
+              "name": "al3_off",
+              "rect": [
+                296,
+                318,
+                40,
+                22
+              ],
+              "bg": "CARD2",
+              "radius": 11,
+              "children": [
+                {
+                  "type": "PANEL",
+                  "name": "al3_knob_off",
+                  "rect": [
+                    298,
+                    320,
+                    18,
+                    18
+                  ],
+                  "bg": "DIM",
+                  "radius": 9
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "HIDE",
+                  "object": "al3_on"
+                },
+                {
+                  "type": "SHOW",
+                  "object": "al3_off"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "workout",
+      "bg": "BG",
+      "children": [
+        {
+          "type": "IMAGE",
+          "name": "wk_icon",
+          "rect": [
+            168,
+            84,
+            120,
+            120
+          ],
+          "asset": "assets/img_workout_run.png"
+        },
+        {
+          "type": "LABEL",
+          "name": "wk_kind",
+          "rect": [
+            128,
+            216,
+            200,
+            38
+          ],
+          "text": "户外跑步",
+          "font": "Title28",
+          "color": "WHITE",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "wk_sub",
+          "rect": [
+            158,
+            252,
+            140,
+            27
+          ],
+          "text": "体能训练",
+          "font": "Body20",
+          "color": "DIM",
+          "align": "CENTER"
+        },
+        {
+          "type": "PANEL",
+          "name": "wk_start",
+          "rect": [
+            148,
+            300,
+            160,
+            64
+          ],
+          "bg": "GREEN",
+          "radius": 32,
+          "clickable": true,
+          "children": [
+            {
+              "type": "LABEL",
+              "name": "wk_start_label",
+              "rect": [
+                148,
+                318,
+                160,
+                38
+              ],
+              "text": "开始",
+              "font": "Title28",
+              "color": "BG",
+              "align": "CENTER"
+            }
+          ],
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "HIDE",
+                  "object": "wk_start"
+                },
+                {
+                  "type": "SHOW",
+                  "object": "wk_active"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "PANEL",
+          "name": "wk_active",
+          "rect": [
+            148,
+            300,
+            160,
+            64
+          ],
+          "bg": "CARD",
+          "radius": 32,
+          "hidden": true,
+          "children": [
+            {
+              "type": "LABEL",
+              "name": "wk_active_label",
+              "rect": [
+                148,
+                318,
+                160,
+                38
+              ],
+              "text": "进行中",
+              "font": "Title28",
+              "color": "GREEN",
+              "align": "CENTER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "stopwatch",
+      "bg": "BG",
+      "children": [
+        {
+          "type": "LABEL",
+          "name": "sw_title",
+          "rect": [
+            178,
+            110,
+            100,
+            38
+          ],
+          "text": "秒表",
+          "font": "Title28",
+          "color": "DIM",
+          "align": "CENTER"
+        },
+        {
+          "type": "ARC",
+          "name": "sw_ring",
+          "rect": [
+            78,
+            90,
+            300,
+            300
+          ],
+          "value": 100,
+          "max": 100,
+          "indicator": "TRACK",
+          "track": "TRACK",
+          "width": 3
+        },
+        {
+          "type": "LABEL",
+          "name": "time_big",
+          "rect": [
+            78,
+            196,
+            300,
+            92
+          ],
+          "text": "00:00.00",
+          "font": "Big72",
+          "color": "WHITE",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "time_lap",
+          "rect": [
+            118,
+            294,
+            220,
+            27
+          ],
+          "text": "00:05.24",
+          "font": "Body20",
+          "color": "DIM",
+          "align": "CENTER"
+        },
+        {
+          "type": "PANEL",
+          "name": "sw_start",
+          "rect": [
+            88,
+            328,
+            130,
+            60
+          ],
+          "bg": "GREEN",
+          "radius": 32,
+          "children": [
+            {
+              "type": "LABEL",
+              "name": "sw_start_label",
+              "rect": [
+                88,
+                339,
+                130,
+                38
+              ],
+              "text": "开始",
+              "font": "Title28",
+              "color": "BG",
+              "align": "CENTER"
+            }
+          ]
+        },
+        {
+          "type": "PANEL",
+          "name": "sw_reset",
+          "rect": [
+            238,
+            328,
+            130,
+            60
+          ],
+          "bg": "CARD2",
+          "radius": 32,
+          "children": [
+            {
+              "type": "LABEL",
+              "name": "sw_reset_label",
+              "rect": [
+                238,
+                339,
+                130,
+                38
+              ],
+              "text": "重置",
+              "font": "Title28",
+              "color": "WHITE",
+              "align": "CENTER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "breathe",
+      "bg": "BG",
+      "children": [
+        {
+          "type": "ARC",
+          "name": "ring",
+          "rect": [
+            108,
+            78,
+            240,
+            240
+          ],
+          "value": 100,
+          "max": 100,
+          "indicator": "BLUE",
+          "track": "TRACK",
+          "width": 16
+        },
+        {
+          "type": "LABEL",
+          "name": "br_title",
+          "rect": [
+            188,
+            160,
+            80,
+            38
+          ],
+          "text": "呼吸",
+          "font": "Title28",
+          "color": "WHITE",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "br_hint",
+          "rect": [
+            148,
+            204,
+            160,
+            48
+          ],
+          "text": "跟随圆环\n吸气 呼气",
+          "font": "Body20",
+          "color": "DIM",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "br_phase",
+          "rect": [
+            188,
+            368,
+            80,
+            27
+          ],
+          "text": "吸气",
+          "font": "Body20",
+          "color": "BLUE",
+          "align": "CENTER"
+        }
+      ]
+    },
+    {
+      "name": "voice",
+      "bg": "BG",
+      "children": [
+        {
+          "type": "PANEL",
+          "name": "mic_plate",
+          "rect": [
+            184,
+            70,
+            88,
+            88
+          ],
+          "bg": "CARD",
+          "radius": 44,
+          "children": [
+            {
+              "type": "IMAGE",
+              "name": "mic_glyph",
+              "rect": [
+                204,
+                90,
+                48,
+                48
+              ],
+              "asset": "assets/img_app_voice.png"
+            }
+          ],
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "HIDE",
+                  "object": "wave_idle"
+                },
+                {
+                  "type": "HIDE",
+                  "object": "voice_idle"
+                },
+                {
+                  "type": "SHOW",
+                  "object": "wave_listening"
+                },
+                {
+                  "type": "SHOW",
+                  "object": "voice_listening"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "IMAGE",
+          "name": "wave_idle",
+          "rect": [
+            180,
+            184,
+            96,
+            96
+          ],
+          "asset": "assets/img_wave_idle.png",
+          "hidden": false
+        },
+        {
+          "type": "IMAGE",
+          "name": "wave_listening",
+          "rect": [
+            180,
+            184,
+            96,
+            96
+          ],
+          "asset": "assets/img_wave_listening.png",
+          "hidden": true
+        },
+        {
+          "type": "IMAGE",
+          "name": "wave_speaking",
+          "rect": [
+            180,
+            184,
+            96,
+            96
+          ],
+          "asset": "assets/img_wave_speaking.png",
+          "hidden": true
+        },
+        {
+          "type": "LABEL",
+          "name": "voice_idle",
+          "rect": [
+            128,
+            356,
+            200,
+            27
+          ],
+          "text": "点击说话",
+          "font": "Body20",
+          "color": "DIM",
+          "align": "CENTER"
+        },
+        {
+          "type": "LABEL",
+          "name": "voice_listening",
+          "rect": [
+            128,
+            356,
+            200,
+            27
+          ],
+          "text": "在听…",
+          "font": "Body20",
+          "color": "GREEN",
+          "align": "CENTER",
+          "hidden": true,
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "HIDE",
+                  "object": "wave_listening"
+                },
+                {
+                  "type": "HIDE",
+                  "object": "voice_listening"
+                },
+                {
+                  "type": "SHOW",
+                  "object": "wave_speaking"
+                },
+                {
+                  "type": "SHOW",
+                  "object": "voice_speaking"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "LABEL",
+          "name": "voice_speaking",
+          "rect": [
+            128,
+            356,
+            200,
+            27
+          ],
+          "text": "正在播报",
+          "font": "Body20",
+          "color": "BLUE",
+          "align": "CENTER",
+          "hidden": true,
+          "events": [
+            {
+              "on": "CLICKED",
+              "actions": [
+                {
+                  "type": "HIDE",
+                  "object": "wave_speaking"
+                },
+                {
+                  "type": "HIDE",
+                  "object": "voice_speaking"
+                },
+                {
+                  "type": "SHOW",
+                  "object": "wave_idle"
+                },
+                {
+                  "type": "SHOW",
+                  "object": "voice_idle"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "settings",
+      "bg": "BG",
+      "children": [
+        {
+          "type": "LABEL",
+          "name": "st_title",
+          "rect": [
+            88,
+            56,
+            280,
+            38
+          ],
+          "text": "设置",
+          "font": "Title28",
+          "color": "WHITE",
+          "align": "CENTER"
+        },
+        {
+          "type": "PANEL",
+          "name": "st_row1",
+          "rect": [
+            78,
+            104,
+            300,
+            72
+          ],
+          "bg": "CARD",
+          "radius": 18,
+          "children": [
+            {
+              "type": "LABEL",
+              "name": "st1_label",
+              "rect": [
+                104,
+                144,
+                136,
+                27
+              ],
+              "text": "蓝牙",
+              "font": "Body20",
+              "color": "WHITE",
+              "align": "LEFT"
+            },
+            {
+              "type": "LABEL",
+              "name": "st1_value",
+              "rect": [
+                248,
+                144,
+                104,
+                27
+              ],
+              "text": "已连接",
+              "font": "Body20",
+              "color": "BLUE",
+              "align": "RIGHT"
+            }
+          ]
+        },
+        {
+          "type": "PANEL",
+          "name": "st_row2",
+          "rect": [
+            78,
+            188,
+            300,
+            72
+          ],
+          "bg": "CARD",
+          "radius": 18,
+          "children": [
+            {
+              "type": "LABEL",
+              "name": "st2_label",
+              "rect": [
+                104,
+                228,
+                136,
+                27
+              ],
+              "text": "电量",
+              "font": "Body20",
+              "color": "WHITE",
+              "align": "LEFT"
+            },
+            {
+              "type": "LABEL",
+              "name": "st2_value",
+              "rect": [
+                248,
+                228,
+                104,
+                27
+              ],
+              "text": "82%",
+              "font": "Body20",
+              "color": "GREEN",
+              "align": "RIGHT"
+            }
+          ]
+        },
+        {
+          "type": "LABEL",
+          "name": "st_back",
+          "rect": [
+            158,
+            300,
+            140,
+            27
+          ],
+          "text": "右滑返回应用",
+          "font": "Body20",
+          "color": "DIM",
+          "align": "CENTER"
+        }
+      ]
+    }
+  ],
+  "order": [
+    "watchface",
+    "apps"
+  ],
+  "initial_screen": "watchface",
+  "animations": [
+    {
+      "name": "health pulse",
+      "target": "health/ring_move",
+      "tracks": [
+        {
+          "property": "opacity",
+          "frames": [
+            [
+              120,
+              0
+            ],
+            [
+              255,
+              420
+            ],
+            [
+              160,
+              840
+            ]
+          ],
+          "duration": 840
+        }
+      ],
+      "duration": 840,
+      "path": "ease_out"
+    },
+    {
+      "name": "breathe cycle",
+      "target": "breathe/ring",
+      "tracks": [
+        {
+          "property": "opacity",
+          "frames": [
+            [
+              90,
+              0
+            ],
+            [
+              255,
+              1600
+            ],
+            [
+              90,
+              3200
+            ]
+          ],
+          "duration": 3200
+        }
+      ],
+      "duration": 3200,
+      "path": "ease_out",
+      "loop_infinite": true
+    },
+    {
+      "name": "sw pulse",
+      "target": "stopwatch/time_big",
+      "tracks": [
+        {
+          "property": "opacity",
+          "frames": [
+            [
+              140,
+              0
+            ],
+            [
+              255,
+              300
+            ]
+          ],
+          "duration": 300
+        }
+      ],
+      "duration": 300,
+      "path": "ease_out"
+    }
+  ],
+  "screen_events": {
+    "health": [
+      {
+        "on": "SCREEN_LOAD_START",
+        "name": "health_enter",
+        "actions": [
+          {
+            "type": "PLAY_ANIMATION",
+            "animation": "health pulse",
+            "object": "health/ring_move"
+          }
+        ]
+      }
+    ],
+    "breathe": [
+      {
+        "on": "SCREEN_LOAD_START",
+        "name": "breathe_enter",
+        "actions": [
+          {
+            "type": "PLAY_ANIMATION",
+            "animation": "breathe cycle",
+            "object": "breathe/ring"
+          }
+        ]
+      }
+    ],
+    "stopwatch": [
+      {
+        "on": "SCREEN_LOAD_START",
+        "name": "sw_enter",
+        "actions": [
+          {
+            "type": "PLAY_ANIMATION",
+            "animation": "sw pulse",
+            "object": "stopwatch/time_big"
+          }
+        ]
+      }
+    ]
+  }
+}

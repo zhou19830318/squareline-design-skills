@@ -20,10 +20,10 @@
 
 | 字体 | size | 字形数 | line_height | 工程 |
 |---|---|---|---|---|
-| `Body16` | 16 | 820 | **21** | `examples/AIWatch` |
-| `Body16` | 16 | 293 | **20** | `examples/SpecWidget` |
-| `Title20` | 20 | 346 | **24** | `examples/AIWatchApple` |
-| `Title20` | 20 | 293 | **23** | `examples/SpecWidget` |
+| `Big72` | 72 | 13 | **86** | `examples/NovaWatchS12` |
+| `Title28` | 28 | 429 | **34** | `examples/NovaWatchS12` |
+| `Body20` | 20 | 429 | **24** | `examples/NovaWatchS12` |
+| `Small16` | 16 | 429 | **20** | `examples/NovaWatchS12` |
 
 结论：**下表只能当起始估计，不能当权威值。**
 权威值永远是你自己那次构建输出里的 `lineheight:` 一行。
@@ -44,17 +44,10 @@ hinting/取整对小字号影响更重）。取 **1.35** 可覆盖上表所有�
 
 | font | size | line_height | 安全 height (≥) | 比例 | base_line | 来源工程 |
 |---|---|---|---|---|---|---|
-| `Big48` ⚠️ | 48 | 60 | 60 | 1.25 | 14 | `squareline/SpecWidget/assets/fonts/ui_font_Big48.c` |
-| `Body15` | 15 | 19 | 19 | 1.27 | 4 | `examples/AIWatchApple/squareline/AIWatchApple/assets/fonts/ui_font_Body15.c` |
-| `Body16` ⚠️ | 16 | 21 | 21 | 1.31 | 5 | `examples/AIWatch/squareline/AIWatch/assets/fonts/ui_font_Body16.c` |
-| `Caption12` | 12 | 15 | 15 | 1.25 | 3 | `examples/AIWatch/squareline/AIWatch/assets/fonts/ui_font_Caption12.c` |
-| `Caption13` | 13 | 17 | 17 | 1.31 | 4 | `examples/AIWatchApple/squareline/AIWatchApple/assets/fonts/ui_font_Caption13.c` |
-| `Number36` | 36 | 44 | 44 | 1.22 | 10 | `examples/AIWatchApple/squareline/AIWatchApple/assets/fonts/ui_font_Number36.c` |
-| `NumberBold48` | 48 | 60 | 60 | 1.25 | 14 | `examples/AIWatch/squareline/AIWatch/assets/fonts/ui_font_NumberBold48.c` |
-| `TimeBig44` | 44 | 53 | 53 | 1.20 | 12 | `examples/AIWatchApple/squareline/AIWatchApple/assets/fonts/ui_font_TimeBig44.c` |
-| `TimeDisplay72` | 72 | 86 | 86 | 1.19 | 20 | `examples/AIWatch/squareline/AIWatch/assets/fonts/ui_font_TimeDisplay72.c` |
-| `Title20` ⚠️ | 20 | 24 | 24 | 1.20 | 5 | `examples/AIWatchApple/squareline/AIWatchApple/assets/fonts/ui_font_Title20.c` |
-| `Title22` | 22 | 27 | 27 | 1.23 | 6 | `examples/AIWatch/squareline/AIWatch/assets/fonts/ui_font_Title22.c` |
+| `Big72` ⚠️ | 72 | 86 | 86 | 1.19 | 20 | `squareline/NovaWatchS12/assets/fonts/ui_font_Big72.c` |
+| `Body20` ⚠️ | 20 | 24 | 24 | 1.20 | 6 | `squareline/NovaWatchS12/assets/fonts/ui_font_Body20.c` |
+| `Small16` ⚠️ | 16 | 20 | 20 | 1.25 | 5 | `squareline/NovaWatchS12/assets/fonts/ui_font_Small16.c` |
+| `Title28` ⚠️ | 28 | 34 | 34 | 1.21 | 8 | `squareline/NovaWatchS12/assets/fonts/ui_font_Title28.c` |
 
 ⚠️ = 同一个字体+字号在不同工程里行高不一致（见上一节），此时取的是最大值。
 
