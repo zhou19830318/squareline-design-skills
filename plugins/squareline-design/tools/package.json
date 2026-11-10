@@ -1,0 +1,23 @@
+{
+  "name": "squareline-design-tools",
+  "version": "1.2.0",
+  "private": true,
+  "description": "Node dependencies of the squareline-design toolkit: SVG->PNG (resvg + lucide icons) and LVGL font conversion (lv_font_conv). Installed per machine by `python3 tools/slx.py setup` (npm ci).",
+  "type": "module",
+  "dependencies": {
+    "lucide-static": "1.42.0",
+    "lv_font_conv": "1.5.3"
+  },
+  "optionalDependencies": {
+    "@resvg/resvg-js": "2.6.2",
+    "@resvg/resvg-wasm": "2.6.2",
+    "@resvg/resvg-js-win32-x64-msvc": "2.6.2",
+    "@resvg/resvg-js-darwin-x64": "2.6.2",
+    "@resvg/resvg-js-darwin-arm64": "2.6.2",
+    "@resvg/resvg-js-linux-x64-gnu": "2.6.2",
+    "@resvg/resvg-js-linux-x64-musl": "2.6.2",
+    "@resvg/resvg-js-linux-arm64-gnu": "2.6.2",
+    "@resvg/resvg-js-linux-arm64-musl": "2.6.2"
+  },
+  "//": "Do NOT commit or copy node_modules between machines: @resvg ships one native binding per platform and npm installs only the one for the CURRENT machine (resvg-wasm is the portable fallback). Run `python3 tools/slx.py setup`."
+}

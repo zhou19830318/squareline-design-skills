@@ -1,0 +1,7488 @@
+{
+ "$schema": "squareline-spec/1",
+ "name": "PandaPendant",
+ "width": 360,
+ "height": 360,
+ "shape": "CIRCLE",
+ "description": "Panda AI Pendant V2.0 - 360x360 round, face-only UI (Hybrid: SD-card frames + LVGL overlays)",
+ "assets_subdir": "images",
+ "spec_docs": [
+  "PandaPendant设计规格文档.md"
+ ],
+ "theme_dark": true,
+ "palette": {
+  "BG": "#000000",
+  "SHELL": "#F7F5F9",
+  "CARD": "#0F1729",
+  "CARD2": "#1B2538",
+  "TRACK": "#24304A",
+  "WHITE": "#FFFFFF",
+  "DIM": "#8E9AB5",
+  "CYAN": "#40CAFB",
+  "WAVE": "#15C7FD",
+  "BLUE2": "#1F7AE0",
+  "GREEN": "#31DA38",
+  "AMBER": "#FFB020",
+  "RED": "#F85C7A",
+  "PILL": "#000000B3"
+ },
+ "fonts": [
+  {
+   "codename": "Big60",
+   "ttf": "noto-sans-sc-v40-chinese-simplified-700.ttf",
+   "size": 60,
+   "kind": "number"
+  },
+  {
+   "codename": "Title22",
+   "ttf": "noto-sans-sc-v40-chinese-simplified-500.ttf",
+   "size": 22,
+   "kind": "text"
+  },
+  {
+   "codename": "Body18",
+   "ttf": "noto-sans-sc-v40-chinese-simplified-regular.ttf",
+   "size": 18,
+   "kind": "text"
+  },
+  {
+   "codename": "Small16",
+   "ttf": "noto-sans-sc-v40-chinese-simplified-regular.ttf",
+   "size": 16,
+   "kind": "text"
+  }
+ ],
+ "ranges_text": [
+  "0x20-0x7E",
+  "0x00B0",
+  "0x2026"
+ ],
+ "ranges_num": [
+  "0x30-0x3A"
+ ],
+ "symbols": {
+  "number": "0123456789:"
+ },
+ "screens": [
+  {
+   "name": "home",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_01_idle.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "home_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "listening"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "home_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "home_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "badge",
+     "rect": [
+      257,
+      47,
+      26,
+      26
+     ],
+     "bg": "RED",
+     "radius": 13,
+     "hidden": true,
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "badge_n",
+       "rect": [
+        257,
+        51,
+        26,
+        22
+       ],
+       "text": "1",
+       "font": "Small16",
+       "color": "WHITE",
+       "align": "CENTER"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "wakeup",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_01_idle.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "wakeup_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "listening"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "wakeup_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "wakeup_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "listening",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_07_listen.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "listening_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "thinking"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "listening_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "listening_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "wave_1",
+     "rect": [
+      133,
+      317,
+      6,
+      10
+     ],
+     "bg": "WAVE",
+     "radius": 3
+    },
+    {
+     "type": "PANEL",
+     "name": "wave_2",
+     "rect": [
+      144,
+      313,
+      6,
+      18
+     ],
+     "bg": "WAVE",
+     "radius": 3
+    },
+    {
+     "type": "PANEL",
+     "name": "wave_3",
+     "rect": [
+      155,
+      308,
+      6,
+      28
+     ],
+     "bg": "WAVE",
+     "radius": 3
+    },
+    {
+     "type": "PANEL",
+     "name": "wave_4",
+     "rect": [
+      166,
+      314,
+      6,
+      16
+     ],
+     "bg": "WAVE",
+     "radius": 3
+    },
+    {
+     "type": "PANEL",
+     "name": "wave_5",
+     "rect": [
+      177,
+      305,
+      6,
+      34
+     ],
+     "bg": "WAVE",
+     "radius": 3
+    },
+    {
+     "type": "PANEL",
+     "name": "wave_6",
+     "rect": [
+      188,
+      312,
+      6,
+      20
+     ],
+     "bg": "WAVE",
+     "radius": 3
+    },
+    {
+     "type": "PANEL",
+     "name": "wave_7",
+     "rect": [
+      199,
+      307,
+      6,
+      30
+     ],
+     "bg": "WAVE",
+     "radius": 3
+    },
+    {
+     "type": "PANEL",
+     "name": "wave_8",
+     "rect": [
+      210,
+      315,
+      6,
+      14
+     ],
+     "bg": "WAVE",
+     "radius": 3
+    },
+    {
+     "type": "PANEL",
+     "name": "wave_9",
+     "rect": [
+      221,
+      318,
+      6,
+      8
+     ],
+     "bg": "WAVE",
+     "radius": 3
+    }
+   ]
+  },
+  {
+   "name": "thinking",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_03_curious.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "thinking_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "speaking"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "thinking_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "thinking_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "dot_1",
+     "rect": [
+      144,
+      34,
+      12,
+      12
+     ],
+     "bg": "CYAN",
+     "radius": 6
+    },
+    {
+     "type": "PANEL",
+     "name": "dot_2",
+     "rect": [
+      174,
+      34,
+      12,
+      12
+     ],
+     "bg": "CYAN",
+     "radius": 6
+    },
+    {
+     "type": "PANEL",
+     "name": "dot_3",
+     "rect": [
+      204,
+      34,
+      12,
+      12
+     ],
+     "bg": "CYAN",
+     "radius": 6
+    }
+   ]
+  },
+  {
+   "name": "speaking",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_08_speak.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "speaking_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "speaking_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "speaking_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "asr_failed",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_12_confused.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "asr_failed_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "listening"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "asr_failed_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "asr_failed_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "tip",
+     "rect": [
+      95,
+      298,
+      170,
+      34
+     ],
+     "bg": "PILL",
+     "radius": 17,
+     "children": [
+      {
+       "type": "IMAGE",
+       "name": "tip_icon",
+       "rect": [
+        109,
+        307,
+        16,
+        16
+       ],
+       "asset": "assets/icon_mic_off.png"
+      },
+      {
+       "type": "LABEL",
+       "name": "tip_text",
+       "rect": [
+        130,
+        306,
+        120,
+        22
+       ],
+       "text": "没听清",
+       "font": "Small16",
+       "color": "WHITE",
+       "align": "CENTER"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "llm_error",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_12_confused.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "llm_error_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "thinking"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "llm_error_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "llm_error_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "tip",
+     "rect": [
+      95,
+      298,
+      170,
+      34
+     ],
+     "bg": "PILL",
+     "radius": 17,
+     "children": [
+      {
+       "type": "IMAGE",
+       "name": "tip_icon",
+       "rect": [
+        109,
+        307,
+        16,
+        16
+       ],
+       "asset": "assets/icon_cloud_off.png"
+      },
+      {
+       "type": "LABEL",
+       "name": "tip_text",
+       "rect": [
+        130,
+        306,
+        120,
+        22
+       ],
+       "text": "暂时无法回答",
+       "font": "Small16",
+       "color": "WHITE",
+       "align": "CENTER"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "tts_error",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_11_sad.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "tts_error_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "tts_error_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "tts_error_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "tip",
+     "rect": [
+      95,
+      298,
+      170,
+      34
+     ],
+     "bg": "PILL",
+     "radius": 17,
+     "children": [
+      {
+       "type": "IMAGE",
+       "name": "tip_icon",
+       "rect": [
+        109,
+        307,
+        16,
+        16
+       ],
+       "asset": "assets/icon_volume_x.png"
+      },
+      {
+       "type": "LABEL",
+       "name": "tip_text",
+       "rect": [
+        130,
+        306,
+        120,
+        22
+       ],
+       "text": "播放失败",
+       "font": "Small16",
+       "color": "WHITE",
+       "align": "CENTER"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "network_lost",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_19_abnormal.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "network_lost_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "reconnecting"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "network_lost_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "network_lost_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "tip",
+     "rect": [
+      95,
+      298,
+      170,
+      34
+     ],
+     "bg": "PILL",
+     "radius": 17,
+     "children": [
+      {
+       "type": "IMAGE",
+       "name": "tip_icon",
+       "rect": [
+        109,
+        307,
+        16,
+        16
+       ],
+       "asset": "assets/icon_wifi_off.png"
+      },
+      {
+       "type": "LABEL",
+       "name": "tip_text",
+       "rect": [
+        130,
+        306,
+        120,
+        22
+       ],
+       "text": "网络已断开",
+       "font": "Small16",
+       "color": "WHITE",
+       "align": "CENTER"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "reconnecting",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_03_curious.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "reconnecting_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "reconnecting_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "reconnecting_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "tip",
+     "rect": [
+      95,
+      298,
+      170,
+      34
+     ],
+     "bg": "PILL",
+     "radius": 17,
+     "children": [
+      {
+       "type": "IMAGE",
+       "name": "tip_icon",
+       "rect": [
+        109,
+        307,
+        16,
+        16
+       ],
+       "asset": "assets/icon_refresh_cw.png"
+      },
+      {
+       "type": "LABEL",
+       "name": "tip_text",
+       "rect": [
+        130,
+        306,
+        120,
+        22
+       ],
+       "text": "重新连接中",
+       "font": "Small16",
+       "color": "WHITE",
+       "align": "CENTER"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "battery_low",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_18_tired.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "battery_low_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "battery_low_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "battery_low_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "tip",
+     "rect": [
+      95,
+      298,
+      170,
+      34
+     ],
+     "bg": "PILL",
+     "radius": 17,
+     "children": [
+      {
+       "type": "IMAGE",
+       "name": "tip_icon",
+       "rect": [
+        109,
+        307,
+        16,
+        16
+       ],
+       "asset": "assets/icon_battery_low.png"
+      },
+      {
+       "type": "LABEL",
+       "name": "tip_text",
+       "rect": [
+        130,
+        306,
+        120,
+        22
+       ],
+       "text": "电量低 15%",
+       "font": "Small16",
+       "color": "WHITE",
+       "align": "CENTER"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_happy",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_02_happy_wink.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_happy_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_happy_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_happy_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_laugh",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_05_laugh.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_laugh_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_laugh_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_laugh_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_excited",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_20_celebrate.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_excited_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_excited_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_excited_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_curious",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_03_curious.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_curious_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_curious_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_curious_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_surprised",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_04_surprised.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_surprised_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_surprised_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_surprised_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_shy",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_14_shy.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_shy_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_shy_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_shy_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_sad",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_11_sad.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_sad_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_sad_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_sad_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_confused",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_12_confused.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_confused_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_confused_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_confused_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_angry",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_13_angry.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_angry_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_angry_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_angry_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_love",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_17_love.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_love_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_love_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_love_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_sleepy",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_09_sleepy.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_sleepy_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_sleepy_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_sleepy_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_sleep",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_10_sleep.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_sleep_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_sleep_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_sleep_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_confident",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_15_confident.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_confident_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_confident_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_confident_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "face_cried",
+   "bg": "SHELL",
+   "children": [
+    {
+     "type": "IMAGE",
+     "name": "face",
+     "rect": [
+      0,
+      0,
+      360,
+      360
+     ],
+     "asset": "assets/face_16_cried.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "face_cried_face_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "face_cried_face_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "face_cried_face_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "face",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "time_weather",
+   "bg": "BG",
+   "children": [
+    {
+     "type": "LABEL",
+     "name": "clock",
+     "rect": [
+      95,
+      46,
+      170,
+      81
+     ],
+     "text": "14:30",
+     "font": "Big60",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "date",
+     "rect": [
+      80,
+      109,
+      200,
+      25
+     ],
+     "text": "11月7日 周五",
+     "font": "Body18",
+     "color": "DIM",
+     "align": "CENTER"
+    },
+    {
+     "type": "IMAGE",
+     "name": "face_mini",
+     "rect": [
+      95,
+      137,
+      170,
+      170
+     ],
+     "asset": "assets/face_mini_idle.png"
+    },
+    {
+     "type": "IMAGE",
+     "name": "wx_icon",
+     "rect": [
+      143,
+      312,
+      24,
+      24
+     ],
+     "asset": "assets/icon_cloud_sun.png"
+    },
+    {
+     "type": "LABEL",
+     "name": "wx_temp",
+     "rect": [
+      173,
+      314,
+      60,
+      25
+     ],
+     "text": "26°C",
+     "font": "Body18",
+     "color": "WHITE",
+     "align": "LEFT"
+    }
+   ]
+  },
+  {
+   "name": "notification",
+   "bg": "BG",
+   "children": [
+    {
+     "type": "LABEL",
+     "name": "title",
+     "rect": [
+      100,
+      23,
+      160,
+      30
+     ],
+     "text": "通知",
+     "font": "Title22",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "n1",
+     "rect": [
+      58,
+      62,
+      244,
+      82
+     ],
+     "bg": "CARD",
+     "radius": 18,
+     "children": [
+      {
+       "type": "IMAGE",
+       "name": "n1_ic",
+       "rect": [
+        72,
+        74,
+        20,
+        20
+       ],
+       "asset": "assets/icon_message_circle.png"
+      },
+      {
+       "type": "LABEL",
+       "name": "n1_src",
+       "rect": [
+        98,
+        75,
+        90,
+        22
+       ],
+       "text": "消息",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "n1_time",
+       "rect": [
+        232,
+        75,
+        60,
+        22
+       ],
+       "text": "14:28",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "RIGHT"
+      },
+      {
+       "type": "LABEL",
+       "name": "n1_title",
+       "rect": [
+        72,
+        99,
+        216,
+        25
+       ],
+       "text": "小李",
+       "font": "Body18",
+       "color": "WHITE",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "n1_body",
+       "rect": [
+        72,
+        121,
+        216,
+        22
+       ],
+       "text": "晚上一起吃饭吗？",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "LEFT"
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "n2",
+     "rect": [
+      58,
+      152,
+      244,
+      82
+     ],
+     "bg": "CARD",
+     "radius": 18,
+     "children": [
+      {
+       "type": "IMAGE",
+       "name": "n2_ic",
+       "rect": [
+        72,
+        164,
+        20,
+        20
+       ],
+       "asset": "assets/icon_calendar.png"
+      },
+      {
+       "type": "LABEL",
+       "name": "n2_src",
+       "rect": [
+        98,
+        165,
+        90,
+        22
+       ],
+       "text": "日程",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "n2_time",
+       "rect": [
+        232,
+        165,
+        60,
+        22
+       ],
+       "text": "14:00",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "RIGHT"
+      },
+      {
+       "type": "LABEL",
+       "name": "n2_title",
+       "rect": [
+        72,
+        189,
+        216,
+        25
+       ],
+       "text": "团队周会",
+       "font": "Body18",
+       "color": "WHITE",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "n2_body",
+       "rect": [
+        72,
+        211,
+        216,
+        22
+       ],
+       "text": "15:00 · 会议室 B",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "LEFT"
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "n3",
+     "rect": [
+      58,
+      242,
+      244,
+      56
+     ],
+     "bg": "CARD",
+     "radius": 18,
+     "children": [
+      {
+       "type": "IMAGE",
+       "name": "n3_ic",
+       "rect": [
+        72,
+        254,
+        20,
+        20
+       ],
+       "asset": "assets/icon_bell.png"
+      },
+      {
+       "type": "LABEL",
+       "name": "n3_src",
+       "rect": [
+        98,
+        255,
+        90,
+        22
+       ],
+       "text": "提醒",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "n3_time",
+       "rect": [
+        232,
+        255,
+        60,
+        22
+       ],
+       "text": "13:45",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "RIGHT"
+      },
+      {
+       "type": "LABEL",
+       "name": "n3_title",
+       "rect": [
+        72,
+        279,
+        216,
+        25
+       ],
+       "text": "记得喝水",
+       "font": "Body18",
+       "color": "WHITE",
+       "align": "LEFT"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "quick_settings",
+   "bg": "BG",
+   "children": [
+    {
+     "type": "LABEL",
+     "name": "title",
+     "rect": [
+      100,
+      25,
+      160,
+      30
+     ],
+     "text": "快捷设置",
+     "font": "Title22",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "wifi_off",
+     "rect": [
+      56,
+      82,
+      76,
+      76
+     ],
+     "bg": "CARD2",
+     "radius": 38,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "quick_settings_wifi_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "wifi_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "quick_settings_wifi_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "wifi_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "quick_settings_wifi_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "wifi_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "wifi_on",
+     "rect": [
+      56,
+      82,
+      76,
+      76
+     ],
+     "bg": "BLUE2",
+     "radius": 38,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "quick_settings_wifi_on_clicked",
+       "actions": [
+        {
+         "type": "HIDE",
+         "object": "wifi_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "quick_settings_wifi_on_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "wifi_on",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "quick_settings_wifi_on_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "wifi_on",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "wifi_ic",
+     "rect": [
+      79,
+      105,
+      30,
+      30
+     ],
+     "asset": "assets/icon_wifi.png"
+    },
+    {
+     "type": "LABEL",
+     "name": "wifi_lbl",
+     "rect": [
+      54,
+      164,
+      80,
+      22
+     ],
+     "text": "Wi-Fi",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "bt_off",
+     "rect": [
+      142,
+      82,
+      76,
+      76
+     ],
+     "bg": "CARD2",
+     "radius": 38,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "quick_settings_bt_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "bt_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "quick_settings_bt_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "bt_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "quick_settings_bt_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "bt_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "bt_on",
+     "rect": [
+      142,
+      82,
+      76,
+      76
+     ],
+     "bg": "BLUE2",
+     "radius": 38,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "quick_settings_bt_on_clicked",
+       "actions": [
+        {
+         "type": "HIDE",
+         "object": "bt_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "quick_settings_bt_on_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "bt_on",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "quick_settings_bt_on_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "bt_on",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "bt_ic",
+     "rect": [
+      165,
+      105,
+      30,
+      30
+     ],
+     "asset": "assets/icon_bluetooth.png"
+    },
+    {
+     "type": "LABEL",
+     "name": "bt_lbl",
+     "rect": [
+      140,
+      165,
+      80,
+      22
+     ],
+     "text": "蓝牙",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "bright_btn",
+     "rect": [
+      228,
+      82,
+      76,
+      76
+     ],
+     "bg": "CARD2",
+     "radius": 38,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "quick_settings_bright_btn_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "system_settings"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "quick_settings_bright_btn_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "bright_btn",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "quick_settings_bright_btn_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "bright_btn",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "bright_ic",
+     "rect": [
+      251,
+      105,
+      30,
+      30
+     ],
+     "asset": "assets/icon_sun.png"
+    },
+    {
+     "type": "LABEL",
+     "name": "bright_lbl",
+     "rect": [
+      226,
+      165,
+      80,
+      22
+     ],
+     "text": "亮度",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "vol_btn",
+     "rect": [
+      56,
+      198,
+      76,
+      76
+     ],
+     "bg": "CARD2",
+     "radius": 38,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "quick_settings_vol_btn_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "system_settings"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "quick_settings_vol_btn_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "vol_btn",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "quick_settings_vol_btn_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "vol_btn",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "vol_ic",
+     "rect": [
+      79,
+      221,
+      30,
+      30
+     ],
+     "asset": "assets/icon_volume_2.png"
+    },
+    {
+     "type": "LABEL",
+     "name": "vol_lbl",
+     "rect": [
+      54,
+      281,
+      80,
+      22
+     ],
+     "text": "音量",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "dnd_off",
+     "rect": [
+      142,
+      198,
+      76,
+      76
+     ],
+     "bg": "CARD2",
+     "radius": 38,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "quick_settings_dnd_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "dnd_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "quick_settings_dnd_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "dnd_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "quick_settings_dnd_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "dnd_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "dnd_on",
+     "rect": [
+      142,
+      198,
+      76,
+      76
+     ],
+     "bg": "BLUE2",
+     "radius": 38,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "quick_settings_dnd_on_clicked",
+       "actions": [
+        {
+         "type": "HIDE",
+         "object": "dnd_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "quick_settings_dnd_on_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "dnd_on",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "quick_settings_dnd_on_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "dnd_on",
+         "value": 255
+        }
+       ]
+      }
+     ],
+     "hidden": true
+    },
+    {
+     "type": "IMAGE",
+     "name": "dnd_ic",
+     "rect": [
+      165,
+      221,
+      30,
+      30
+     ],
+     "asset": "assets/icon_bell_off.png"
+    },
+    {
+     "type": "LABEL",
+     "name": "dnd_lbl",
+     "rect": [
+      140,
+      281,
+      80,
+      22
+     ],
+     "text": "勿扰",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "sleep_btn",
+     "rect": [
+      228,
+      198,
+      76,
+      76
+     ],
+     "bg": "CARD2",
+     "radius": 38,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "quick_settings_sleep_btn_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_sleep"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "quick_settings_sleep_btn_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "sleep_btn",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "quick_settings_sleep_btn_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "sleep_btn",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "sleep_ic",
+     "rect": [
+      251,
+      221,
+      30,
+      30
+     ],
+     "asset": "assets/icon_moon.png"
+    },
+    {
+     "type": "LABEL",
+     "name": "sleep_lbl",
+     "rect": [
+      226,
+      281,
+      80,
+      22
+     ],
+     "text": "睡眠",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    }
+   ]
+  },
+  {
+   "name": "personality",
+   "bg": "BG",
+   "children": [
+    {
+     "type": "LABEL",
+     "name": "title",
+     "rect": [
+      100,
+      23,
+      160,
+      30
+     ],
+     "text": "个性化",
+     "font": "Title22",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "pers_lbl",
+     "rect": [
+      56,
+      73,
+      200,
+      22
+     ],
+     "text": "性格",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "LEFT"
+    },
+    {
+     "type": "PANEL",
+     "name": "pers_0_off",
+     "rect": [
+      52,
+      96,
+      80,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "personality_pers_0_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "pers_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "pers_1_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "pers_2_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "personality_pers_0_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "pers_0_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "personality_pers_0_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "pers_0_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "pers_1_off",
+     "rect": [
+      140,
+      96,
+      80,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "personality_pers_1_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "pers_1_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "pers_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "pers_2_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "personality_pers_1_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "pers_1_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "personality_pers_1_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "pers_1_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "pers_2_off",
+     "rect": [
+      228,
+      96,
+      80,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "personality_pers_2_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "pers_2_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "pers_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "pers_1_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "personality_pers_2_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "pers_2_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "personality_pers_2_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "pers_2_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "pers_0_on",
+     "rect": [
+      52,
+      96,
+      80,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17,
+     "hidden": true
+    },
+    {
+     "type": "PANEL",
+     "name": "pers_1_on",
+     "rect": [
+      140,
+      96,
+      80,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17
+    },
+    {
+     "type": "PANEL",
+     "name": "pers_2_on",
+     "rect": [
+      228,
+      96,
+      80,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17,
+     "hidden": true
+    },
+    {
+     "type": "LABEL",
+     "name": "pers_0_t",
+     "rect": [
+      52,
+      104,
+      80,
+      22
+     ],
+     "text": "活泼",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "pers_1_t",
+     "rect": [
+      140,
+      104,
+      80,
+      22
+     ],
+     "text": "温柔",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "pers_2_t",
+     "rect": [
+      228,
+      104,
+      80,
+      22
+     ],
+     "text": "安静",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "fb_lbl",
+     "rect": [
+      56,
+      145,
+      200,
+      22
+     ],
+     "text": "反馈强度",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "LEFT"
+    },
+    {
+     "type": "PANEL",
+     "name": "fb_0_off",
+     "rect": [
+      52,
+      168,
+      80,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "personality_fb_0_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "fb_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "fb_1_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "fb_2_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "personality_fb_0_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "fb_0_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "personality_fb_0_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "fb_0_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "fb_1_off",
+     "rect": [
+      140,
+      168,
+      80,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "personality_fb_1_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "fb_1_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "fb_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "fb_2_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "personality_fb_1_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "fb_1_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "personality_fb_1_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "fb_1_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "fb_2_off",
+     "rect": [
+      228,
+      168,
+      80,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "personality_fb_2_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "fb_2_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "fb_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "fb_1_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "personality_fb_2_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "fb_2_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "personality_fb_2_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "fb_2_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "fb_0_on",
+     "rect": [
+      52,
+      168,
+      80,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17,
+     "hidden": true
+    },
+    {
+     "type": "PANEL",
+     "name": "fb_1_on",
+     "rect": [
+      140,
+      168,
+      80,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17
+    },
+    {
+     "type": "PANEL",
+     "name": "fb_2_on",
+     "rect": [
+      228,
+      168,
+      80,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17,
+     "hidden": true
+    },
+    {
+     "type": "LABEL",
+     "name": "fb_0_t",
+     "rect": [
+      52,
+      176,
+      80,
+      22
+     ],
+     "text": "弱",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "fb_1_t",
+     "rect": [
+      140,
+      176,
+      80,
+      22
+     ],
+     "text": "中",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "fb_2_t",
+     "rect": [
+      228,
+      176,
+      80,
+      22
+     ],
+     "text": "强",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "act_lbl",
+     "rect": [
+      56,
+      217,
+      200,
+      22
+     ],
+     "text": "动画活跃度",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "LEFT"
+    },
+    {
+     "type": "PANEL",
+     "name": "act_0_off",
+     "rect": [
+      52,
+      240,
+      80,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "personality_act_0_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "act_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "act_1_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "act_2_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "personality_act_0_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "act_0_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "personality_act_0_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "act_0_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "act_1_off",
+     "rect": [
+      140,
+      240,
+      80,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "personality_act_1_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "act_1_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "act_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "act_2_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "personality_act_1_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "act_1_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "personality_act_1_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "act_1_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "act_2_off",
+     "rect": [
+      228,
+      240,
+      80,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "personality_act_2_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "act_2_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "act_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "act_1_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "personality_act_2_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "act_2_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "personality_act_2_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "act_2_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "act_0_on",
+     "rect": [
+      52,
+      240,
+      80,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17,
+     "hidden": true
+    },
+    {
+     "type": "PANEL",
+     "name": "act_1_on",
+     "rect": [
+      140,
+      240,
+      80,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17
+    },
+    {
+     "type": "PANEL",
+     "name": "act_2_on",
+     "rect": [
+      228,
+      240,
+      80,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17,
+     "hidden": true
+    },
+    {
+     "type": "LABEL",
+     "name": "act_0_t",
+     "rect": [
+      52,
+      248,
+      80,
+      22
+     ],
+     "text": "低",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "act_1_t",
+     "rect": [
+      140,
+      248,
+      80,
+      22
+     ],
+     "text": "中",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "act_2_t",
+     "rect": [
+      228,
+      248,
+      80,
+      22
+     ],
+     "text": "高",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "link_sleep",
+     "rect": [
+      110,
+      292,
+      140,
+      32
+     ],
+     "bg": "CARD2",
+     "radius": 16,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "personality_link_sleep_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "sleep_settings"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "personality_link_sleep_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "link_sleep",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "personality_link_sleep_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "link_sleep",
+         "value": 255
+        }
+       ]
+      }
+     ],
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "link_sleep_t",
+       "rect": [
+        124,
+        299,
+        96,
+        22
+       ],
+       "text": "睡眠设置",
+       "font": "Small16",
+       "color": "WHITE",
+       "align": "CENTER"
+      },
+      {
+       "type": "IMAGE",
+       "name": "link_sleep_i",
+       "rect": [
+        222,
+        300,
+        16,
+        16
+       ],
+       "asset": "assets/icon_chevron_right.png"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sleep_settings",
+   "bg": "BG",
+   "children": [
+    {
+     "type": "LABEL",
+     "name": "title",
+     "rect": [
+      100,
+      23,
+      160,
+      30
+     ],
+     "text": "睡眠设置",
+     "font": "Title22",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "auto_lbl",
+     "rect": [
+      51,
+      73,
+      200,
+      22
+     ],
+     "text": "自动休眠",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "LEFT"
+    },
+    {
+     "type": "PANEL",
+     "name": "auto_0_off",
+     "rect": [
+      47,
+      96,
+      62,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "sleep_settings_auto_0_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "auto_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "auto_1_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "auto_2_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "auto_3_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "sleep_settings_auto_0_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "auto_0_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "sleep_settings_auto_0_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "auto_0_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "auto_1_off",
+     "rect": [
+      115,
+      96,
+      62,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "sleep_settings_auto_1_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "auto_1_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "auto_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "auto_2_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "auto_3_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "sleep_settings_auto_1_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "auto_1_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "sleep_settings_auto_1_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "auto_1_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "auto_2_off",
+     "rect": [
+      183,
+      96,
+      62,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "sleep_settings_auto_2_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "auto_2_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "auto_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "auto_1_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "auto_3_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "sleep_settings_auto_2_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "auto_2_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "sleep_settings_auto_2_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "auto_2_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "auto_3_off",
+     "rect": [
+      251,
+      96,
+      62,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "sleep_settings_auto_3_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "auto_3_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "auto_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "auto_1_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "auto_2_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "sleep_settings_auto_3_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "auto_3_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "sleep_settings_auto_3_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "auto_3_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "auto_0_on",
+     "rect": [
+      47,
+      96,
+      62,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17,
+     "hidden": true
+    },
+    {
+     "type": "PANEL",
+     "name": "auto_1_on",
+     "rect": [
+      115,
+      96,
+      62,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17
+    },
+    {
+     "type": "PANEL",
+     "name": "auto_2_on",
+     "rect": [
+      183,
+      96,
+      62,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17,
+     "hidden": true
+    },
+    {
+     "type": "PANEL",
+     "name": "auto_3_on",
+     "rect": [
+      251,
+      96,
+      62,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17,
+     "hidden": true
+    },
+    {
+     "type": "LABEL",
+     "name": "auto_0_t",
+     "rect": [
+      47,
+      104,
+      62,
+      22
+     ],
+     "text": "1分钟",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "auto_1_t",
+     "rect": [
+      115,
+      104,
+      62,
+      22
+     ],
+     "text": "5分钟",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "auto_2_t",
+     "rect": [
+      183,
+      104,
+      62,
+      22
+     ],
+     "text": "10分钟",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "auto_3_t",
+     "rect": [
+      251,
+      104,
+      62,
+      22
+     ],
+     "text": "从不",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "wake_lbl",
+     "rect": [
+      56,
+      145,
+      200,
+      22
+     ],
+     "text": "唤醒方式",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "LEFT"
+    },
+    {
+     "type": "PANEL",
+     "name": "wake_0_off",
+     "rect": [
+      52,
+      168,
+      80,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "sleep_settings_wake_0_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "wake_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "wake_1_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "wake_2_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "sleep_settings_wake_0_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "wake_0_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "sleep_settings_wake_0_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "wake_0_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "wake_1_off",
+     "rect": [
+      140,
+      168,
+      80,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "sleep_settings_wake_1_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "wake_1_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "wake_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "wake_2_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "sleep_settings_wake_1_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "wake_1_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "sleep_settings_wake_1_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "wake_1_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "wake_2_off",
+     "rect": [
+      228,
+      168,
+      80,
+      34
+     ],
+     "bg": "CARD2",
+     "radius": 17,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "sleep_settings_wake_2_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "wake_2_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "wake_0_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "wake_1_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "sleep_settings_wake_2_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "wake_2_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "sleep_settings_wake_2_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "wake_2_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "wake_0_on",
+     "rect": [
+      52,
+      168,
+      80,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17,
+     "hidden": true
+    },
+    {
+     "type": "PANEL",
+     "name": "wake_1_on",
+     "rect": [
+      140,
+      168,
+      80,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17,
+     "hidden": true
+    },
+    {
+     "type": "PANEL",
+     "name": "wake_2_on",
+     "rect": [
+      228,
+      168,
+      80,
+      34
+     ],
+     "bg": "BLUE2",
+     "radius": 17
+    },
+    {
+     "type": "LABEL",
+     "name": "wake_0_t",
+     "rect": [
+      52,
+      176,
+      80,
+      22
+     ],
+     "text": "触摸",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "wake_1_t",
+     "rect": [
+      140,
+      176,
+      80,
+      22
+     ],
+     "text": "语音",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "wake_2_t",
+     "rect": [
+      228,
+      176,
+      80,
+      22
+     ],
+     "text": "都可以",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "anim_lbl",
+     "rect": [
+      64,
+      249,
+      120,
+      25
+     ],
+     "text": "睡眠动画",
+     "font": "Body18",
+     "color": "WHITE",
+     "align": "LEFT"
+    },
+    {
+     "type": "PANEL",
+     "name": "sw_anim_off",
+     "rect": [
+      226,
+      244,
+      52,
+      28
+     ],
+     "bg": "CARD2",
+     "radius": 14,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "sleep_settings_sw_anim_off_clicked",
+       "actions": [
+        {
+         "type": "SHOW",
+         "object": "sw_anim_on"
+        },
+        {
+         "type": "SHOW",
+         "object": "sw_anim_knob_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "sleep_settings_sw_anim_off_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "sw_anim_off",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "sleep_settings_sw_anim_off_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "sw_anim_off",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "sw_anim_knob_off",
+     "rect": [
+      229,
+      247,
+      22,
+      22
+     ],
+     "bg": "WHITE",
+     "radius": 11
+    },
+    {
+     "type": "PANEL",
+     "name": "sw_anim_on",
+     "rect": [
+      226,
+      244,
+      52,
+      28
+     ],
+     "bg": "BLUE2",
+     "radius": 14,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "sleep_settings_sw_anim_on_clicked",
+       "actions": [
+        {
+         "type": "HIDE",
+         "object": "sw_anim_on"
+        },
+        {
+         "type": "HIDE",
+         "object": "sw_anim_knob_on"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "sleep_settings_sw_anim_on_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "sw_anim_on",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "sleep_settings_sw_anim_on_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "sw_anim_on",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "sw_anim_knob_on",
+     "rect": [
+      253,
+      247,
+      22,
+      22
+     ],
+     "bg": "WHITE",
+     "radius": 11
+    }
+   ]
+  },
+  {
+   "name": "system_settings",
+   "bg": "BG",
+   "children": [
+    {
+     "type": "LABEL",
+     "name": "title",
+     "rect": [
+      100,
+      23,
+      160,
+      30
+     ],
+     "text": "系统设置",
+     "font": "Title22",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "bri_k",
+     "rect": [
+      62,
+      75,
+      110,
+      25
+     ],
+     "text": "亮度",
+     "font": "Body18",
+     "color": "WHITE",
+     "align": "LEFT"
+    },
+    {
+     "type": "LABEL",
+     "name": "bri_v",
+     "rect": [
+      168,
+      75,
+      130,
+      22
+     ],
+     "text": "80%",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "RIGHT"
+    },
+    {
+     "type": "PANEL",
+     "name": "bri_s_track",
+     "rect": [
+      62,
+      104,
+      236,
+      8
+     ],
+     "bg": "TRACK",
+     "radius": 4
+    },
+    {
+     "type": "PANEL",
+     "name": "bri_s_fill",
+     "rect": [
+      62,
+      104,
+      189,
+      8
+     ],
+     "bg": "CYAN",
+     "radius": 4
+    },
+    {
+     "type": "PANEL",
+     "name": "bri_s_knob",
+     "rect": [
+      242,
+      99,
+      18,
+      18
+     ],
+     "bg": "WHITE",
+     "radius": 9
+    },
+    {
+     "type": "LABEL",
+     "name": "volm_k",
+     "rect": [
+      62,
+      133,
+      110,
+      25
+     ],
+     "text": "音量",
+     "font": "Body18",
+     "color": "WHITE",
+     "align": "LEFT"
+    },
+    {
+     "type": "LABEL",
+     "name": "volm_v",
+     "rect": [
+      168,
+      133,
+      130,
+      22
+     ],
+     "text": "60%",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "RIGHT"
+    },
+    {
+     "type": "PANEL",
+     "name": "volm_s_track",
+     "rect": [
+      62,
+      162,
+      236,
+      8
+     ],
+     "bg": "TRACK",
+     "radius": 4
+    },
+    {
+     "type": "PANEL",
+     "name": "volm_s_fill",
+     "rect": [
+      62,
+      162,
+      142,
+      8
+     ],
+     "bg": "CYAN",
+     "radius": 4
+    },
+    {
+     "type": "PANEL",
+     "name": "volm_s_knob",
+     "rect": [
+      195,
+      157,
+      18,
+      18
+     ],
+     "bg": "WHITE",
+     "radius": 9
+    },
+    {
+     "type": "LABEL",
+     "name": "net_k",
+     "rect": [
+      62,
+      195,
+      110,
+      25
+     ],
+     "text": "网络",
+     "font": "Body18",
+     "color": "WHITE",
+     "align": "LEFT"
+    },
+    {
+     "type": "LABEL",
+     "name": "net_v",
+     "rect": [
+      168,
+      195,
+      130,
+      22
+     ],
+     "text": "Wi-Fi 已连接",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "RIGHT"
+    },
+    {
+     "type": "LABEL",
+     "name": "tsync_k",
+     "rect": [
+      62,
+      231,
+      110,
+      25
+     ],
+     "text": "时间同步",
+     "font": "Body18",
+     "color": "WHITE",
+     "align": "LEFT"
+    },
+    {
+     "type": "LABEL",
+     "name": "tsync_v",
+     "rect": [
+      168,
+      231,
+      130,
+      22
+     ],
+     "text": "自动",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "RIGHT"
+    },
+    {
+     "type": "PANEL",
+     "name": "link_info",
+     "rect": [
+      100,
+      280,
+      160,
+      32
+     ],
+     "bg": "CARD2",
+     "radius": 16,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "system_settings_link_info_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "system_info"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "system_settings_link_info_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "link_info",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "system_settings_link_info_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "link_info",
+         "value": 255
+        }
+       ]
+      }
+     ],
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "link_info_t",
+       "rect": [
+        114,
+        287,
+        116,
+        22
+       ],
+       "text": "存储与版本",
+       "font": "Small16",
+       "color": "WHITE",
+       "align": "CENTER"
+      },
+      {
+       "type": "IMAGE",
+       "name": "link_info_i",
+       "rect": [
+        232,
+        288,
+        16,
+        16
+       ],
+       "asset": "assets/icon_chevron_right.png"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "system_info",
+   "bg": "BG",
+   "children": [
+    {
+     "type": "LABEL",
+     "name": "title",
+     "rect": [
+      100,
+      23,
+      160,
+      30
+     ],
+     "text": "存储与版本",
+     "font": "Title22",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "sd_k",
+     "rect": [
+      62,
+      75,
+      110,
+      25
+     ],
+     "text": "SD 卡",
+     "font": "Body18",
+     "color": "WHITE",
+     "align": "LEFT"
+    },
+    {
+     "type": "LABEL",
+     "name": "sd_v",
+     "rect": [
+      148,
+      75,
+      150,
+      22
+     ],
+     "text": "12.3 / 29.8 GB",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "RIGHT"
+    },
+    {
+     "type": "PANEL",
+     "name": "sd_s_track",
+     "rect": [
+      62,
+      104,
+      236,
+      8
+     ],
+     "bg": "TRACK",
+     "radius": 4
+    },
+    {
+     "type": "PANEL",
+     "name": "sd_s_fill",
+     "rect": [
+      62,
+      104,
+      97,
+      8
+     ],
+     "bg": "CYAN",
+     "radius": 4
+    },
+    {
+     "type": "LABEL",
+     "name": "ver_k",
+     "rect": [
+      62,
+      133,
+      110,
+      25
+     ],
+     "text": "版本",
+     "font": "Body18",
+     "color": "WHITE",
+     "align": "LEFT"
+    },
+    {
+     "type": "LABEL",
+     "name": "ver_v",
+     "rect": [
+      168,
+      133,
+      130,
+      22
+     ],
+     "text": "v2.0.0",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "RIGHT"
+    },
+    {
+     "type": "PANEL",
+     "name": "link_prev",
+     "rect": [
+      86,
+      176,
+      188,
+      36
+     ],
+     "bg": "CARD2",
+     "radius": 18,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "system_info_link_prev_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "character_preview_1"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "system_info_link_prev_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "link_prev",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "system_info_link_prev_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "link_prev",
+         "value": 255
+        }
+       ]
+      }
+     ],
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "link_prev_t",
+       "rect": [
+        100,
+        185,
+        144,
+        22
+       ],
+       "text": "角色预览",
+       "font": "Small16",
+       "color": "WHITE",
+       "align": "CENTER"
+      },
+      {
+       "type": "IMAGE",
+       "name": "link_prev_i",
+       "rect": [
+        246,
+        186,
+        16,
+        16
+       ],
+       "asset": "assets/icon_chevron_right.png"
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "link_exp",
+     "rect": [
+      86,
+      218,
+      188,
+      36
+     ],
+     "bg": "CARD2",
+     "radius": 18,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "system_info_link_exp_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "expression_manager"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "system_info_link_exp_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "link_exp",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "system_info_link_exp_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "link_exp",
+         "value": 255
+        }
+       ]
+      }
+     ],
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "link_exp_t",
+       "rect": [
+        100,
+        227,
+        144,
+        22
+       ],
+       "text": "表情管理",
+       "font": "Small16",
+       "color": "WHITE",
+       "align": "CENTER"
+      },
+      {
+       "type": "IMAGE",
+       "name": "link_exp_i",
+       "rect": [
+        246,
+        228,
+        16,
+        16
+       ],
+       "asset": "assets/icon_chevron_right.png"
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "link_anim",
+     "rect": [
+      86,
+      260,
+      188,
+      36
+     ],
+     "bg": "CARD2",
+     "radius": 18,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "system_info_link_anim_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "animation_manager"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "system_info_link_anim_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "link_anim",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "system_info_link_anim_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "link_anim",
+         "value": 255
+        }
+       ]
+      }
+     ],
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "link_anim_t",
+       "rect": [
+        100,
+        269,
+        144,
+        22
+       ],
+       "text": "动画管理",
+       "font": "Small16",
+       "color": "WHITE",
+       "align": "CENTER"
+      },
+      {
+       "type": "IMAGE",
+       "name": "link_anim_i",
+       "rect": [
+        246,
+        270,
+        16,
+        16
+       ],
+       "asset": "assets/icon_chevron_right.png"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "character_preview_1",
+   "bg": "BG",
+   "children": [
+    {
+     "type": "LABEL",
+     "name": "title",
+     "rect": [
+      100,
+      25,
+      160,
+      30
+     ],
+     "text": "角色预览",
+     "font": "Title22",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_01",
+     "rect": [
+      82,
+      66,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_01_idle.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_1_th_01_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "home"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_1_th_01_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_01",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_1_th_01_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_01",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_02",
+     "rect": [
+      150,
+      66,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_02_happy_wink.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_1_th_02_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_happy"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_1_th_02_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_02",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_1_th_02_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_02",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_03",
+     "rect": [
+      218,
+      66,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_03_curious.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_1_th_03_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_curious"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_1_th_03_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_03",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_1_th_03_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_03",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_04",
+     "rect": [
+      48,
+      134,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_04_surprised.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_1_th_04_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_surprised"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_1_th_04_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_04",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_1_th_04_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_04",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_05",
+     "rect": [
+      116,
+      134,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_05_laugh.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_1_th_05_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_laugh"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_1_th_05_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_05",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_1_th_05_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_05",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_06",
+     "rect": [
+      184,
+      134,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_07_listen.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_1_th_06_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "listening"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_1_th_06_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_06",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_1_th_06_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_06",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_07",
+     "rect": [
+      252,
+      134,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_08_speak.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_1_th_07_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "speaking"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_1_th_07_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_07",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_1_th_07_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_07",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_08",
+     "rect": [
+      82,
+      202,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_09_sleepy.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_1_th_08_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_sleepy"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_1_th_08_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_08",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_1_th_08_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_08",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_09",
+     "rect": [
+      150,
+      202,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_10_sleep.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_1_th_09_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_sleep"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_1_th_09_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_09",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_1_th_09_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_09",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_10",
+     "rect": [
+      218,
+      202,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_11_sad.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_1_th_10_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_sad"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_1_th_10_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_10",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_1_th_10_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_10",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "LABEL",
+     "name": "page",
+     "rect": [
+      140,
+      287,
+      80,
+      22
+     ],
+     "text": "1 / 3",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "CENTER"
+    }
+   ]
+  },
+  {
+   "name": "character_preview_2",
+   "bg": "BG",
+   "children": [
+    {
+     "type": "LABEL",
+     "name": "title",
+     "rect": [
+      100,
+      25,
+      160,
+      30
+     ],
+     "text": "角色预览",
+     "font": "Title22",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_01",
+     "rect": [
+      82,
+      66,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_12_confused.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_2_th_01_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_confused"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_2_th_01_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_01",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_2_th_01_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_01",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_02",
+     "rect": [
+      150,
+      66,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_13_angry.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_2_th_02_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_angry"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_2_th_02_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_02",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_2_th_02_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_02",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_03",
+     "rect": [
+      218,
+      66,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_14_shy.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_2_th_03_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_shy"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_2_th_03_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_03",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_2_th_03_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_03",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_04",
+     "rect": [
+      48,
+      134,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_15_confident.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_2_th_04_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_confident"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_2_th_04_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_04",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_2_th_04_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_04",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_05",
+     "rect": [
+      116,
+      134,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_16_cried.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_2_th_05_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_cried"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_2_th_05_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_05",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_2_th_05_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_05",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_06",
+     "rect": [
+      184,
+      134,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_17_love.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_2_th_06_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_love"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_2_th_06_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_06",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_2_th_06_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_06",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_07",
+     "rect": [
+      252,
+      134,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_18_tired.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_2_th_07_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "battery_low"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_2_th_07_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_07",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_2_th_07_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_07",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_08",
+     "rect": [
+      82,
+      202,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_19_abnormal.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_2_th_08_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "network_lost"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_2_th_08_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_08",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_2_th_08_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_08",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "IMAGE",
+     "name": "th_09",
+     "rect": [
+      150,
+      202,
+      60,
+      60
+     ],
+     "asset": "assets/thumb_20_celebrate.png",
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "character_preview_2_th_09_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "face_excited"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "character_preview_2_th_09_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_09",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "character_preview_2_th_09_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "th_09",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "LABEL",
+     "name": "page",
+     "rect": [
+      140,
+      287,
+      80,
+      22
+     ],
+     "text": "2 / 3",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "CENTER"
+    }
+   ]
+  },
+  {
+   "name": "state_preview",
+   "bg": "BG",
+   "children": [
+    {
+     "type": "LABEL",
+     "name": "title",
+     "rect": [
+      100,
+      25,
+      160,
+      30
+     ],
+     "text": "状态预览",
+     "font": "Title22",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "st_1",
+     "rect": [
+      66,
+      70,
+      108,
+      32
+     ],
+     "bg": "CARD2",
+     "radius": 16,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "state_preview_st_1_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "wakeup"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "state_preview_st_1_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_1",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "state_preview_st_1_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_1",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "LABEL",
+     "name": "st_1_t",
+     "rect": [
+      66,
+      77,
+      108,
+      22
+     ],
+     "text": "唤醒",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "st_2",
+     "rect": [
+      186,
+      70,
+      108,
+      32
+     ],
+     "bg": "CARD2",
+     "radius": 16,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "state_preview_st_2_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "listening"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "state_preview_st_2_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_2",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "state_preview_st_2_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_2",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "LABEL",
+     "name": "st_2_t",
+     "rect": [
+      186,
+      77,
+      108,
+      22
+     ],
+     "text": "聆听",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "st_3",
+     "rect": [
+      66,
+      112,
+      108,
+      32
+     ],
+     "bg": "CARD2",
+     "radius": 16,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "state_preview_st_3_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "thinking"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "state_preview_st_3_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_3",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "state_preview_st_3_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_3",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "LABEL",
+     "name": "st_3_t",
+     "rect": [
+      66,
+      119,
+      108,
+      22
+     ],
+     "text": "思考",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "st_4",
+     "rect": [
+      186,
+      112,
+      108,
+      32
+     ],
+     "bg": "CARD2",
+     "radius": 16,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "state_preview_st_4_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "speaking"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "state_preview_st_4_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_4",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "state_preview_st_4_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_4",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "LABEL",
+     "name": "st_4_t",
+     "rect": [
+      186,
+      119,
+      108,
+      22
+     ],
+     "text": "说话",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "st_5",
+     "rect": [
+      66,
+      154,
+      108,
+      32
+     ],
+     "bg": "CARD2",
+     "radius": 16,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "state_preview_st_5_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "asr_failed"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "state_preview_st_5_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_5",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "state_preview_st_5_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_5",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "LABEL",
+     "name": "st_5_t",
+     "rect": [
+      66,
+      161,
+      108,
+      22
+     ],
+     "text": "没听清",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "st_6",
+     "rect": [
+      186,
+      154,
+      108,
+      32
+     ],
+     "bg": "CARD2",
+     "radius": 16,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "state_preview_st_6_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "llm_error"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "state_preview_st_6_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_6",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "state_preview_st_6_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_6",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "LABEL",
+     "name": "st_6_t",
+     "rect": [
+      186,
+      161,
+      108,
+      22
+     ],
+     "text": "无法回答",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "st_7",
+     "rect": [
+      66,
+      196,
+      108,
+      32
+     ],
+     "bg": "CARD2",
+     "radius": 16,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "state_preview_st_7_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "tts_error"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "state_preview_st_7_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_7",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "state_preview_st_7_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_7",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "LABEL",
+     "name": "st_7_t",
+     "rect": [
+      66,
+      203,
+      108,
+      22
+     ],
+     "text": "播放失败",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "st_8",
+     "rect": [
+      186,
+      196,
+      108,
+      32
+     ],
+     "bg": "CARD2",
+     "radius": 16,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "state_preview_st_8_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "network_lost"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "state_preview_st_8_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_8",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "state_preview_st_8_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_8",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "LABEL",
+     "name": "st_8_t",
+     "rect": [
+      186,
+      203,
+      108,
+      22
+     ],
+     "text": "网络断开",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "st_9",
+     "rect": [
+      66,
+      238,
+      108,
+      32
+     ],
+     "bg": "CARD2",
+     "radius": 16,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "state_preview_st_9_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "reconnecting"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "state_preview_st_9_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_9",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "state_preview_st_9_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_9",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "LABEL",
+     "name": "st_9_t",
+     "rect": [
+      66,
+      245,
+      108,
+      22
+     ],
+     "text": "重连中",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "st_10",
+     "rect": [
+      186,
+      238,
+      108,
+      32
+     ],
+     "bg": "CARD2",
+     "radius": 16,
+     "events": [
+      {
+       "on": "CLICKED",
+       "name": "state_preview_st_10_clicked",
+       "actions": [
+        {
+         "type": "CHANGE_SCREEN",
+         "target": "battery_low"
+        }
+       ]
+      },
+      {
+       "on": "PRESSED",
+       "name": "state_preview_st_10_pressed",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_10",
+         "value": 190
+        }
+       ]
+      },
+      {
+       "on": "RELEASED",
+       "name": "state_preview_st_10_released",
+       "actions": [
+        {
+         "type": "SET_OPACITY",
+         "object": "st_10",
+         "value": 255
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "LABEL",
+     "name": "st_10_t",
+     "rect": [
+      186,
+      245,
+      108,
+      22
+     ],
+     "text": "低电量",
+     "font": "Small16",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "page",
+     "rect": [
+      140,
+      287,
+      80,
+      22
+     ],
+     "text": "3 / 3",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "CENTER"
+    }
+   ]
+  },
+  {
+   "name": "expression_manager",
+   "bg": "BG",
+   "children": [
+    {
+     "type": "LABEL",
+     "name": "title",
+     "rect": [
+      100,
+      21,
+      160,
+      30
+     ],
+     "text": "表情管理",
+     "font": "Title22",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "LABEL",
+     "name": "sum",
+     "rect": [
+      70,
+      57,
+      220,
+      22
+     ],
+     "text": "19 个表情 · 已就绪 18",
+     "font": "Small16",
+     "color": "DIM",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "r1",
+     "rect": [
+      58,
+      86,
+      244,
+      36
+     ],
+     "bg": "CARD",
+     "radius": 18,
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "r1_n",
+       "rect": [
+        76,
+        95,
+        120,
+        25
+       ],
+       "text": "首页陪伴",
+       "font": "Body18",
+       "color": "WHITE",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "r1_m",
+       "rect": [
+        190,
+        95,
+        70,
+        22
+       ],
+       "text": "24 帧",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "RIGHT"
+      },
+      {
+       "type": "IMAGE",
+       "name": "r1_s",
+       "rect": [
+        276,
+        94,
+        20,
+        20
+       ],
+       "asset": "assets/icon_circle_check.png"
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "r2",
+     "rect": [
+      58,
+      130,
+      244,
+      36
+     ],
+     "bg": "CARD",
+     "radius": 18,
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "r2_n",
+       "rect": [
+        76,
+        139,
+        120,
+        25
+       ],
+       "text": "开心",
+       "font": "Body18",
+       "color": "WHITE",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "r2_m",
+       "rect": [
+        190,
+        139,
+        70,
+        22
+       ],
+       "text": "20 帧",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "RIGHT"
+      },
+      {
+       "type": "IMAGE",
+       "name": "r2_s",
+       "rect": [
+        276,
+        138,
+        20,
+        20
+       ],
+       "asset": "assets/icon_circle_check.png"
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "r3",
+     "rect": [
+      58,
+      174,
+      244,
+      36
+     ],
+     "bg": "CARD",
+     "radius": 18,
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "r3_n",
+       "rect": [
+        76,
+        183,
+        120,
+        25
+       ],
+       "text": "好奇",
+       "font": "Body18",
+       "color": "WHITE",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "r3_m",
+       "rect": [
+        190,
+        183,
+        70,
+        22
+       ],
+       "text": "18 帧",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "RIGHT"
+      },
+      {
+       "type": "IMAGE",
+       "name": "r3_s",
+       "rect": [
+        276,
+        182,
+        20,
+        20
+       ],
+       "asset": "assets/icon_circle_check.png"
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "r4",
+     "rect": [
+      58,
+      218,
+      244,
+      36
+     ],
+     "bg": "CARD",
+     "radius": 18,
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "r4_n",
+       "rect": [
+        76,
+        227,
+        120,
+        25
+       ],
+       "text": "聆听",
+       "font": "Body18",
+       "color": "WHITE",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "r4_m",
+       "rect": [
+        190,
+        227,
+        70,
+        22
+       ],
+       "text": "22 帧",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "RIGHT"
+      },
+      {
+       "type": "IMAGE",
+       "name": "r4_s",
+       "rect": [
+        276,
+        226,
+        20,
+        20
+       ],
+       "asset": "assets/icon_circle_check.png"
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "r5",
+     "rect": [
+      58,
+      262,
+      244,
+      36
+     ],
+     "bg": "CARD",
+     "radius": 18,
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "r5_n",
+       "rect": [
+        76,
+        271,
+        120,
+        25
+       ],
+       "text": "疲惫",
+       "font": "Body18",
+       "color": "WHITE",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "r5_m",
+       "rect": [
+        190,
+        271,
+        70,
+        22
+       ],
+       "text": "缺失",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "RIGHT"
+      },
+      {
+       "type": "IMAGE",
+       "name": "r5_s",
+       "rect": [
+        276,
+        270,
+        20,
+        20
+       ],
+       "asset": "assets/icon_triangle_alert.png"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "animation_manager",
+   "bg": "BG",
+   "children": [
+    {
+     "type": "LABEL",
+     "name": "title",
+     "rect": [
+      100,
+      21,
+      160,
+      30
+     ],
+     "text": "动画管理",
+     "font": "Title22",
+     "color": "WHITE",
+     "align": "CENTER"
+    },
+    {
+     "type": "PANEL",
+     "name": "a1",
+     "rect": [
+      58,
+      62,
+      244,
+      50
+     ],
+     "bg": "CARD",
+     "radius": 18,
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "a1_n",
+       "rect": [
+        76,
+        66,
+        150,
+        25
+       ],
+       "text": "anim_idle",
+       "font": "Body18",
+       "color": "WHITE",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "a1_s",
+       "rect": [
+        222,
+        68,
+        70,
+        22
+       ],
+       "text": "已加载",
+       "font": "Small16",
+       "color": "GREEN",
+       "align": "RIGHT"
+      },
+      {
+       "type": "LABEL",
+       "name": "a1_m",
+       "rect": [
+        76,
+        89,
+        190,
+        22
+       ],
+       "text": "24 帧 · 12 FPS",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "LEFT"
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "a2",
+     "rect": [
+      58,
+      120,
+      244,
+      50
+     ],
+     "bg": "CARD",
+     "radius": 18,
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "a2_n",
+       "rect": [
+        76,
+        124,
+        150,
+        25
+       ],
+       "text": "anim_listening",
+       "font": "Body18",
+       "color": "WHITE",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "a2_s",
+       "rect": [
+        222,
+        126,
+        70,
+        22
+       ],
+       "text": "已加载",
+       "font": "Small16",
+       "color": "GREEN",
+       "align": "RIGHT"
+      },
+      {
+       "type": "LABEL",
+       "name": "a2_m",
+       "rect": [
+        76,
+        147,
+        190,
+        22
+       ],
+       "text": "22 帧 · 15 FPS",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "LEFT"
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "a3",
+     "rect": [
+      58,
+      178,
+      244,
+      50
+     ],
+     "bg": "CARD",
+     "radius": 18,
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "a3_n",
+       "rect": [
+        76,
+        182,
+        150,
+        25
+       ],
+       "text": "anim_speaking",
+       "font": "Body18",
+       "color": "WHITE",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "a3_s",
+       "rect": [
+        222,
+        184,
+        70,
+        22
+       ],
+       "text": "加载中",
+       "font": "Small16",
+       "color": "CYAN",
+       "align": "RIGHT"
+      },
+      {
+       "type": "LABEL",
+       "name": "a3_m",
+       "rect": [
+        76,
+        205,
+        190,
+        22
+       ],
+       "text": "20 帧 · 15 FPS",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "LEFT"
+      }
+     ]
+    },
+    {
+     "type": "PANEL",
+     "name": "a4",
+     "rect": [
+      58,
+      236,
+      244,
+      50
+     ],
+     "bg": "CARD",
+     "radius": 18,
+     "children": [
+      {
+       "type": "LABEL",
+       "name": "a4_n",
+       "rect": [
+        76,
+        240,
+        150,
+        25
+       ],
+       "text": "anim_sleep",
+       "font": "Body18",
+       "color": "WHITE",
+       "align": "LEFT"
+      },
+      {
+       "type": "LABEL",
+       "name": "a4_s",
+       "rect": [
+        222,
+        242,
+        70,
+        22
+       ],
+       "text": "待加载",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "RIGHT"
+      },
+      {
+       "type": "LABEL",
+       "name": "a4_m",
+       "rect": [
+        76,
+        263,
+        190,
+        22
+       ],
+       "text": "16 帧 · 12 FPS",
+       "font": "Small16",
+       "color": "DIM",
+       "align": "LEFT"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "order": [
+  "home"
+ ],
+ "initial_screen": "home",
+ "animations": [
+  {
+   "name": "think dot 1",
+   "target": "thinking/dot_1",
+   "duration": 900,
+   "path": "ease_out",
+   "loop_infinite": true,
+   "tracks": [
+    {
+     "property": "opacity",
+     "frames": [
+      [
+       255,
+       0
+      ],
+      [
+       90,
+       450
+      ],
+      [
+       255,
+       900
+      ]
+     ],
+     "duration": 900
+    }
+   ]
+  },
+  {
+   "name": "think dot 2",
+   "target": "thinking/dot_2",
+   "duration": 900,
+   "path": "ease_out",
+   "loop_infinite": true,
+   "tracks": [
+    {
+     "property": "opacity",
+     "frames": [
+      [
+       90,
+       0
+      ],
+      [
+       255,
+       450
+      ],
+      [
+       90,
+       900
+      ]
+     ],
+     "duration": 900
+    }
+   ]
+  },
+  {
+   "name": "think dot 3",
+   "target": "thinking/dot_3",
+   "duration": 1200,
+   "path": "ease_out",
+   "loop_infinite": true,
+   "tracks": [
+    {
+     "property": "opacity",
+     "frames": [
+      [
+       255,
+       0
+      ],
+      [
+       90,
+       600
+      ],
+      [
+       255,
+       1200
+      ]
+     ],
+     "duration": 1200
+    }
+   ]
+  }
+ ],
+ "screen_events": {
+  "home": [
+   {
+    "on": "GESTURE_DOWN",
+    "name": "home_scr_gesture_down",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "quick_settings"
+     }
+    ]
+   },
+   {
+    "on": "GESTURE_UP",
+    "name": "home_scr_gesture_up",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "notification"
+     }
+    ]
+   },
+   {
+    "on": "GESTURE_LEFT",
+    "name": "home_scr_gesture_left",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "time_weather"
+     }
+    ]
+   },
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "home_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "personality"
+     }
+    ]
+   }
+  ],
+  "listening": [
+   {
+    "on": "GESTURE_DOWN",
+    "name": "listening_scr_gesture_down",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "home"
+     }
+    ]
+   }
+  ],
+  "speaking": [
+   {
+    "on": "GESTURE_DOWN",
+    "name": "speaking_scr_gesture_down",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "home"
+     }
+    ]
+   }
+  ],
+  "face_happy": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_happy_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_laugh": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_laugh_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_excited": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_excited_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_curious": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_curious_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_surprised": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_surprised_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_shy": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_shy_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_sad": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_sad_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_confused": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_confused_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_angry": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_angry_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_love": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_love_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_sleepy": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_sleepy_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_sleep": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_sleep_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_confident": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_confident_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "face_cried": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "face_cried_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   }
+  ],
+  "time_weather": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "time_weather_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "home"
+     }
+    ]
+   }
+  ],
+  "notification": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "notification_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "home"
+     }
+    ]
+   }
+  ],
+  "quick_settings": [
+   {
+    "on": "GESTURE_UP",
+    "name": "quick_settings_scr_gesture_up",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "home"
+     }
+    ]
+   }
+  ],
+  "personality": [
+   {
+    "on": "GESTURE_LEFT",
+    "name": "personality_scr_gesture_left",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "home"
+     }
+    ]
+   }
+  ],
+  "sleep_settings": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "sleep_settings_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "personality"
+     }
+    ]
+   }
+  ],
+  "system_settings": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "system_settings_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "quick_settings"
+     }
+    ]
+   }
+  ],
+  "system_info": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "system_info_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "system_settings"
+     }
+    ]
+   }
+  ],
+  "character_preview_1": [
+   {
+    "on": "GESTURE_LEFT",
+    "name": "character_preview_1_scr_gesture_left",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_2"
+     }
+    ]
+   },
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "character_preview_1_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "system_info"
+     }
+    ]
+   }
+  ],
+  "character_preview_2": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "character_preview_2_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_1"
+     }
+    ]
+   },
+   {
+    "on": "GESTURE_LEFT",
+    "name": "character_preview_2_scr_gesture_left",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "state_preview"
+     }
+    ]
+   }
+  ],
+  "state_preview": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "state_preview_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "character_preview_2"
+     }
+    ]
+   }
+  ],
+  "expression_manager": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "expression_manager_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "system_info"
+     }
+    ]
+   }
+  ],
+  "animation_manager": [
+   {
+    "on": "GESTURE_RIGHT",
+    "name": "animation_manager_scr_gesture_right",
+    "actions": [
+     {
+      "type": "CHANGE_SCREEN",
+      "target": "system_info"
+     }
+    ]
+   }
+  ],
+  "thinking": [
+   {
+    "on": "SCREEN_LOAD_START",
+    "name": "thinking_scr_screen_load_start",
+    "actions": [
+     {
+      "type": "PLAY_ANIMATION",
+      "animation": "think dot 1",
+      "object": "thinking/dot_1"
+     },
+     {
+      "type": "PLAY_ANIMATION",
+      "animation": "think dot 2",
+      "object": "thinking/dot_2"
+     },
+     {
+      "type": "PLAY_ANIMATION",
+      "animation": "think dot 3",
+      "object": "thinking/dot_3"
+     }
+    ]
+   }
+  ]
+ }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "squareline-design",
+  "version": "0.2.0",
+  "description": "从概念图设计 SquareLine Studio / LVGL 工程及各项资产：需求追溯 → 概念图量测 → 规格与资产 → 构建前体检 → 构建/反渲染 → 真 LVGL 真值审计 → 多轮优化。含 `slx next` 工作流驱动，适配任何能跑 shell 的大模型。",
+  "keywords": [
+    "squareline",
+    "lvgl",
+    "ui",
+    "embedded",
+    "design",
+    "concept-to-code"
+  ],
+  "author": {
+    "name": "YOUR_NAME",
+    "url": "https://github.com/YOUR_GITHUB_USERNAME"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/YOUR_GITHUB_USERNAME/squareline-design-skills",
+  "repository": "https://github.com/YOUR_GITHUB_USERNAME/squareline-design-skills"
+}

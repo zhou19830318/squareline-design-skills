@@ -1,0 +1,142 @@
+{
+  "defaults": {
+    "size": 24,
+    "color": "#FFFFFF",
+    "stroke_width": 2
+  },
+  "icons": [
+    {
+      "name": "icon_wifi",
+      "source": "lucide",
+      "icon": "wifi",
+      "size": 30,
+      "color": "#FFFFFF"
+    },
+    {
+      "name": "icon_bluetooth",
+      "source": "lucide",
+      "icon": "bluetooth",
+      "size": 30,
+      "color": "#FFFFFF"
+    },
+    {
+      "name": "icon_sun",
+      "source": "lucide",
+      "icon": "sun",
+      "size": 30,
+      "color": "#FFFFFF"
+    },
+    {
+      "name": "icon_volume_2",
+      "source": "lucide",
+      "icon": "volume-2",
+      "size": 30,
+      "color": "#FFFFFF"
+    },
+    {
+      "name": "icon_bell_off",
+      "source": "lucide",
+      "icon": "bell-off",
+      "size": 30,
+      "color": "#FFFFFF"
+    },
+    {
+      "name": "icon_moon",
+      "source": "lucide",
+      "icon": "moon",
+      "size": 30,
+      "color": "#FFFFFF"
+    },
+    {
+      "name": "icon_mic_off",
+      "source": "lucide",
+      "icon": "mic-off",
+      "size": 16,
+      "color": "#FFB020"
+    },
+    {
+      "name": "icon_cloud_off",
+      "source": "lucide",
+      "icon": "cloud-off",
+      "size": 16,
+      "color": "#FFB020"
+    },
+    {
+      "name": "icon_volume_x",
+      "source": "lucide",
+      "icon": "volume-x",
+      "size": 16,
+      "color": "#FFB020"
+    },
+    {
+      "name": "icon_wifi_off",
+      "source": "lucide",
+      "icon": "wifi-off",
+      "size": 16,
+      "color": "#FFB020"
+    },
+    {
+      "name": "icon_refresh_cw",
+      "source": "lucide",
+      "icon": "refresh-cw",
+      "size": 16,
+      "color": "#40CAFB"
+    },
+    {
+      "name": "icon_battery_low",
+      "source": "lucide",
+      "icon": "battery-low",
+      "size": 16,
+      "color": "#FFB020"
+    },
+    {
+      "name": "icon_cloud_sun",
+      "source": "lucide",
+      "icon": "cloud-sun",
+      "size": 24,
+      "color": "#FFC857"
+    },
+    {
+      "name": "icon_message_circle",
+      "source": "lucide",
+      "icon": "message-circle",
+      "size": 20,
+      "color": "#7BDBFB"
+    },
+    {
+      "name": "icon_calendar",
+      "source": "lucide",
+      "icon": "calendar",
+      "size": 20,
+      "color": "#8E9AFC"
+    },
+    {
+      "name": "icon_bell",
+      "source": "lucide",
+      "icon": "bell",
+      "size": 20,
+      "color": "#FFB020"
+    },
+    {
+      "name": "icon_chevron_right",
+      "source": "lucide",
+      "icon": "chevron-right",
+      "size": 16,
+      "color": "#8E9AB5"
+    },
+    {
+      "name": "icon_circle_check",
+      "source": "lucide",
+      "icon": "circle-check",
+      "size": 20,
+      "color": "#31DA38"
+    },
+    {
+      "name": "icon_triangle_alert",
+      "source": "lucide",
+      "icon": "triangle-alert",
+      "size": 20,
+      "color": "#FFB020"
+    }
+  ]
+}

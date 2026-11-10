@@ -1,0 +1,224 @@
+[
+ {
+  "name": "home",
+  "kind": "face",
+  "desc": "Idle / default home. Hosts all home gestures. Hidden unread badge (UI_EVT_NOTIFICATION).",
+  "face": "idle"
+ },
+ {
+  "name": "wakeup",
+  "kind": "face",
+  "desc": "Wakeup: eyes open (runtime frame sequence). Hand-over to listening is event-driven (tap = demo).",
+  "face": "idle"
+ },
+ {
+  "name": "listening",
+  "kind": "face",
+  "desc": "Listening: focused face + volume waveform (bars resized/opacity by audio level).",
+  "face": "listen"
+ },
+ {
+  "name": "thinking",
+  "kind": "face",
+  "desc": "Thinking: face + 3 pulsing cyan dots on the forehead.",
+  "face": "curious"
+ },
+ {
+  "name": "speaking",
+  "kind": "face",
+  "desc": "Speaking: mouth frames follow TTS (runtime); tap = interrupt.",
+  "face": "speak"
+ },
+ {
+  "name": "asr_failed",
+  "kind": "face",
+  "desc": "ASR failed: confused face + 没听清; tap = retry.",
+  "face": "confused"
+ },
+ {
+  "name": "llm_error",
+  "kind": "face",
+  "desc": "LLM request failed: confused face + 暂时无法回答; tap = retry.",
+  "face": "confused"
+ },
+ {
+  "name": "tts_error",
+  "kind": "face",
+  "desc": "TTS playback failed: mouth stopped (sad frame) + 播放失败; tap = back to idle.",
+  "face": "sad"
+ },
+ {
+  "name": "network_lost",
+  "kind": "face",
+  "desc": "Network lost: worried face + 网络已断开.",
+  "face": "abnormal"
+ },
+ {
+  "name": "reconnecting",
+  "kind": "face",
+  "desc": "Reconnecting: expectant face + 重新连接中 prompt.",
+  "face": "curious"
+ },
+ {
+  "name": "battery_low",
+  "kind": "face",
+  "desc": "Low battery: tired face + 电量低 15% (reduce animation FPS in runtime).",
+  "face": "tired"
+ },
+ {
+  "name": "face_happy",
+  "kind": "emotion",
+  "desc": "Happy emotion frame. Tap = home; swipe right = character preview.",
+  "face": "happy"
+ },
+ {
+  "name": "face_laugh",
+  "kind": "emotion",
+  "desc": "Laugh emotion frame. Tap = home; swipe right = character preview.",
+  "face": "laugh"
+ },
+ {
+  "name": "face_excited",
+  "kind": "emotion",
+  "desc": "Excited emotion frame. Tap = home; swipe right = character preview.",
+  "face": "celebrate"
+ },
+ {
+  "name": "face_curious",
+  "kind": "emotion",
+  "desc": "Curious emotion frame. Tap = home; swipe right = character preview.",
+  "face": "curious"
+ },
+ {
+  "name": "face_surprised",
+  "kind": "emotion",
+  "desc": "Surprised emotion frame. Tap = home; swipe right = character preview.",
+  "face": "surprised"
+ },
+ {
+  "name": "face_shy",
+  "kind": "emotion",
+  "desc": "Shy emotion frame. Tap = home; swipe right = character preview.",
+  "face": "shy"
+ },
+ {
+  "name": "face_sad",
+  "kind": "emotion",
+  "desc": "Sad emotion frame. Tap = home; swipe right = character preview.",
+  "face": "sad"
+ },
+ {
+  "name": "face_confused",
+  "kind": "emotion",
+  "desc": "Confused emotion frame. Tap = home; swipe right = character preview.",
+  "face": "confused"
+ },
+ {
+  "name": "face_angry",
+  "kind": "emotion",
+  "desc": "Angry emotion frame. Tap = home; swipe right = character preview.",
+  "face": "angry"
+ },
+ {
+  "name": "face_love",
+  "kind": "emotion",
+  "desc": "Love emotion frame. Tap = home; swipe right = character preview.",
+  "face": "love"
+ },
+ {
+  "name": "face_sleepy",
+  "kind": "emotion",
+  "desc": "Sleepy emotion frame. Tap = home; swipe right = character preview.",
+  "face": "sleepy"
+ },
+ {
+  "name": "face_sleep",
+  "kind": "emotion",
+  "desc": "Sleep emotion frame. Tap = home; swipe right = character preview.",
+  "face": "sleep"
+ },
+ {
+  "name": "face_confident",
+  "kind": "emotion",
+  "desc": "Confident (board only) emotion frame. Tap = home; swipe right = character preview.",
+  "face": "confident"
+ },
+ {
+  "name": "face_cried",
+  "kind": "emotion",
+  "desc": "Cried (board only) emotion frame. Tap = home; swipe right = character preview.",
+  "face": "cried"
+ },
+ {
+  "name": "time_weather",
+  "kind": "aux",
+  "desc": "Time, date, weather. Face stays small and un-covered. Swipe right = home.",
+  "face": "idle"
+ },
+ {
+  "name": "notification",
+  "kind": "aux",
+  "desc": "Notification list: source, title, short body. Vertical scroll in runtime; swipe right = home.",
+  "face": null
+ },
+ {
+  "name": "quick_settings",
+  "kind": "aux",
+  "desc": "Quick settings: Wi-Fi/BT/DND toggles, brightness+volume -> system settings, sleep. Swipe up = home.",
+  "face": null
+ },
+ {
+  "name": "personality",
+  "kind": "aux",
+  "desc": "Personality: character, feedback strength, animation activity. Swipe left = home.",
+  "face": null
+ },
+ {
+  "name": "sleep_settings",
+  "kind": "aux",
+  "desc": "Sleep settings: auto-sleep timeout, wake method, sleep animation. Swipe right = personality.",
+  "face": null
+ },
+ {
+  "name": "system_settings",
+  "kind": "aux",
+  "desc": "System settings: brightness, volume, network, time sync. Swipe right = quick settings.",
+  "face": null
+ },
+ {
+  "name": "system_info",
+  "kind": "aux",
+  "desc": "Storage + version, entry points to dev/preview pages. Swipe right = system settings.",
+  "face": null
+ },
+ {
+  "name": "character_preview_1",
+  "kind": "aux",
+  "desc": "Character preview page 1/3: tap a thumbnail to open that expression. Swipe left/right = page.",
+  "face": null
+ },
+ {
+  "name": "character_preview_2",
+  "kind": "aux",
+  "desc": "Character preview page 2/3: tap a thumbnail to open that expression. Swipe left/right = page.",
+  "face": null
+ },
+ {
+  "name": "state_preview",
+  "kind": "aux",
+  "desc": "State preview page 3/3: jump to every voice/error state (they are event-driven on device). Swipe right = page 2.",
+  "face": null
+ },
+ {
+  "name": "expression_manager",
+  "kind": "aux",
+  "desc": "Expression resource list (name, frames, status). Missing resource shows the fallback state. Swipe right = system info.",
+  "face": null
+ },
+ {
+  "name": "animation_manager",
+  "kind": "aux",
+  "desc": "Animation resource list (frames, FPS, load state). Swipe right = system info.",
+  "face": null
+ }
+]

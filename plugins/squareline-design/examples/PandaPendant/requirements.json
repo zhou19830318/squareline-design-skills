@@ -1,0 +1,978 @@
+{
+ "version": 1,
+ "sources": [
+  "/mnt/user-data/outputs/work/PandaPendant/concept/Panda_AI_Pendant_UI_需求规格说明书_V2_0.md"
+ ],
+ "items": [
+  {
+   "text": "屏幕：微雪 1.85 英寸触摸屏，UI 画布按 360 × 360 px 规划",
+   "strength": "MUST",
+   "section": "UI 界面需求规格说明书",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:6",
+   "id": "R001",
+   "status": "done",
+   "evidence": "spec canvas 360x360 CIRCLE (LCD driver parameters decide the final mapping)",
+   "reason": "",
+   "verify": {
+    "type": "canvas",
+    "width": 360,
+    "height": 360,
+    "shape": "CIRCLE"
+   },
+   "auto": "pass",
+   "auto_msg": "canvas is 360x360 CIRCLE"
+  },
+  {
+   "text": "产品应呈现可爱、灵动、精致且具有科技感的角色体验，避免传统智能手表或仪表盘式 UI。",
+   "strength": "MUST",
+   "section": "1. 产品目标与设计定位",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:18",
+   "id": "R002",
+   "status": "info",
+   "evidence": "subjective; see preview/*.png",
+   "reason": "",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "显示画布 ｜ 360 × 360 px",
+   "strength": "MUST",
+   "section": "2. 硬件与显示约束",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:31",
+   "id": "R003",
+   "status": "done",
+   "evidence": "spec canvas 360x360 CIRCLE (LCD driver parameters decide the final mapping)",
+   "reason": "",
+   "verify": {
+    "type": "canvas",
+    "width": 360,
+    "height": 360,
+    "shape": "CIRCLE"
+   },
+   "auto": "pass",
+   "auto_msg": "canvas is 360x360 CIRCLE"
+  },
+  {
+   "text": "屏幕只显示熊猫脸部，不显示完整熊猫头部或身体。",
+   "strength": "MUST",
+   "section": "3.1 屏幕内容边界",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:47",
+   "id": "R004",
+   "status": "done",
+   "evidence": "every face screen = one full-screen face image + light overlays; time_weather is the only page with a small face (needs room for the time, layout from the concept board)",
+   "reason": "",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "不绘制熊猫耳朵：实体外壳已经有耳朵，屏幕中不得重复出现。",
+   "strength": "MUST_NOT",
+   "section": "3.1 屏幕内容边界",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:49",
+   "id": "R005",
+   "status": "done",
+   "evidence": "faces are cut INSIDE the head ellipse; everything outside (ears, outline) is replaced by fur white - see assets/images/face_*.png and preview/shell_merge_simulation.png",
+   "reason": "",
+   "verify": {
+    "type": "manual",
+    "how": "look at preview/shell_merge_simulation.png: no ears / no head outline"
+   },
+   "auto": "manual",
+   "auto_msg": "needs a human/vision check: look at preview/shell_merge_simulation.png: no ears / no head outline"
+  },
+  {
+   "text": "熊猫脸部应尽可能铺满屏幕，黑色背景与外壳自然融合。",
+   "strength": "MUST",
+   "section": "3.1 屏幕内容边界",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:53",
+   "id": "R006",
+   "status": "deviation",
+   "evidence": "",
+   "reason": "User instruction after the document: the SHELL IS WHITE and the white fur fills the whole 360x360 screen and merges with it. The document's 'black background merges with the shell' is superseded; face screens use background SHELL and frames fade to shell white at the rim (measured rim brightness min 237, median 249).",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "角色画面应采用 face-only crop（仅脸部裁切），构图稳定。",
+   "strength": "MUST",
+   "section": "3.1 屏幕内容边界",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:54",
+   "id": "R007",
+   "status": "done",
+   "evidence": "one crop size for all 19 frames (scripts/make_faces.py, per-cell centre measured from the head silhouette)",
+   "reason": "",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "表情变化应自然、细腻，避免五官漂移或脸部比例变化。",
+   "strength": "MUST",
+   "section": "3.2 熊猫脸部视觉",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:60",
+   "id": "R008",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Production frames come from the 3D master / render pipeline (fixed camera, light, scale). The project only carries design-time placeholders cut from the user's board with one common crop.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "可使用柔和的高光、微弱蓝色科技光效，但不得喧宾夺主。",
+   "strength": "MUST_NOT",
+   "section": "3.2 熊猫脸部视觉",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:62",
+   "id": "R009",
+   "status": "done",
+   "evidence": "no glow/high-light overlay in the project: the cyan edge glow was removed because it tints the white rim",
+   "reason": "",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "默认不显示状态栏。",
+   "strength": "MUST",
+   "section": "3.3 信息叠加原则",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:66",
+   "id": "R010",
+   "status": "done",
+   "evidence": "no status bar object on any face screen (home = face + hidden unread badge only)",
+   "reason": "",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "错误提示应简短、易读，并配合熊猫表情反馈。",
+   "strength": "MUST",
+   "section": "3.3 信息叠加原则",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:69",
+   "id": "R011",
+   "status": "done",
+   "evidence": "pill prompts: 没听清 / 暂时无法回答 / 播放失败 / 网络已断开 / 重新连接中 / 电量低 15%",
+   "reason": "",
+   "verify": {
+    "type": "text_present",
+    "text": "没听清",
+    "screen": "asr_failed"
+   },
+   "auto": "pass",
+   "auto_msg": "text '没听清' on asr_failed"
+  },
+  {
+   "text": "Idle（待机） ｜ 熊猫自然睁眼，轻微呼吸或眼神变化，作为默认首页",
+   "strength": "MUST",
+   "section": "4.1 首页与基础表情",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:77",
+   "id": "R012",
+   "status": "done",
+   "evidence": "screen home (face_01_idle); breathing/blink = runtime frame sequence",
+   "reason": "",
+   "verify": {
+    "type": "screen_exists",
+    "screen": "home"
+   },
+   "auto": "pass",
+   "auto_msg": "screen 'home'"
+  },
+  {
+   "text": "Excited（兴奋） ｜ 眼睛明亮，表情幅度略大，可配合短暂蓝色粒子/光效",
+   "strength": "SHOULD",
+   "section": "4.1 首页与基础表情",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:81",
+   "id": "R013",
+   "status": "done",
+   "evidence": "screen face_excited (board frame 20)",
+   "reason": "",
+   "verify": {
+    "type": "screen_exists",
+    "screen": "face_excited"
+   },
+   "auto": "pass",
+   "auto_msg": "screen 'face_excited'"
+  },
+  {
+   "text": "Shy（害羞） ｜ 眼神略向下或偏移，可加入轻微脸颊暖色变化",
+   "strength": "SHOULD",
+   "section": "4.1 首页与基础表情",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:84",
+   "id": "R014",
+   "status": "done",
+   "evidence": "screen face_shy (board frame 14)",
+   "reason": "",
+   "verify": {
+    "type": "screen_exists",
+    "screen": "face_shy"
+   },
+   "auto": "pass",
+   "auto_msg": "screen 'face_shy'"
+  },
+  {
+   "text": "Angry（生气） ｜ 眉毛略压低、眼神坚定，程度保持可爱而非凶狠",
+   "strength": "SHOULD",
+   "section": "4.1 首页与基础表情",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:87",
+   "id": "R015",
+   "status": "done",
+   "evidence": "screen face_angry (board frame 13)",
+   "reason": "",
+   "verify": {
+    "type": "screen_exists",
+    "screen": "face_angry"
+   },
+   "auto": "pass",
+   "auto_msg": "screen 'face_angry'"
+  },
+  {
+   "text": "Sleep（睡眠） ｜ 闭眼并进行缓慢呼吸动画，可按设置进入低功耗",
+   "strength": "SHOULD",
+   "section": "4.1 首页与基础表情",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:90",
+   "id": "R016",
+   "status": "done",
+   "evidence": "screen face_sleep (board frame 10); slow breathing + low power = runtime",
+   "reason": "",
+   "verify": {
+    "type": "screen_exists",
+    "screen": "face_sleep"
+   },
+   "auto": "pass",
+   "auto_msg": "screen 'face_sleep'"
+  },
+  {
+   "text": "Thinking ｜ 单击 ｜ 可选：取消当前请求（若后端支持）",
+   "strength": "SHOULD",
+   "section": "5.2 AI 交互手势",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:142",
+   "id": "R017",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Cancelling a backend request is C-layer. The project wires tap -> speaking only so a designer can click through.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "Error ｜ 单击 ｜ 重试（适用于可重试错误）",
+   "strength": "SHOULD",
+   "section": "5.2 AI 交互手势",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:145",
+   "id": "R018",
+   "status": "done",
+   "evidence": "asr_failed tap -> listening; llm_error tap -> thinking; tts_error tap -> home",
+   "reason": "",
+   "verify": {
+    "type": "event_wired",
+    "screen": "asr_failed",
+    "on": "CLICKED",
+    "target": "listening"
+   },
+   "auto": "pass",
+   "auto_msg": "asr_failed CLICKED -> listening"
+  },
+  {
+   "text": "所有触摸操作应有即时视觉反馈。",
+   "strength": "MUST",
+   "section": "5.3 交互原则",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:149",
+   "id": "R019",
+   "status": "done",
+   "evidence": "PRESSED -> SET_OPACITY 190 and RELEASED -> 255 on every clickable object (scripts/gen_spec.py touch_feedback=190)",
+   "reason": "The spec engine has no pressed-state style. Touch feedback (pressed opacity/scale) must be added in C with lv_obj_set_style_* on LV_STATE_PRESSED, or by wiring PRESSED/RELEASED + SET_OPACITY events in a later iteration.",
+   "verify": {
+    "type": "clickables_have",
+    "on": "PRESSED"
+   },
+   "auto": "pass",
+   "auto_msg": "0 clickable object(s) lack PRESSED"
+  },
+  {
+   "text": "页面切换优先采用轻量淡入/缩放，不做复杂转场。",
+   "strength": "SHOULD",
+   "section": "5.3 交互原则",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:150",
+   "id": "R020",
+   "status": "done",
+   "evidence": "CHANGE_SCREEN actions use FADE_ON 150 ms (builder default)",
+   "reason": "",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "语音状态切换必须由业务状态驱动，不依赖固定时长动画。",
+   "strength": "MUST",
+   "section": "5.3 交互原则",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:151",
+   "id": "R021",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "State changes are driven by UI_EVT_* business events in panda_ui. The project provides screens and stable object names; tap-to-advance is a design-time demo only.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "用户打断优先级高于当前播报和动画。",
+   "strength": "SHOULD",
+   "section": "5.3 交互原则",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:152",
+   "id": "R022",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Interrupt priority is runtime logic (speaking tap -> home is the demo wiring).",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "所有素材基于同一熊猫脸部 3D 母版。",
+   "strength": "MUST",
+   "section": "6.1 统一素材规范",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:159",
+   "id": "R023",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Production frames come from the 3D master / render pipeline (fixed camera, light, scale). The project only carries design-time placeholders cut from the user's board with one common crop.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "固定摄像机、焦距、灯光、脸部位置和缩放比例。",
+   "strength": "MUST",
+   "section": "6.1 统一素材规范",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:160",
+   "id": "R024",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Production frames come from the 3D master / render pipeline (fixed camera, light, scale). The project only carries design-time placeholders cut from the user's board with one common crop.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "导出时只保留脸部裁切区域，背景为纯黑或透明（按渲染管线决定）。",
+   "strength": "MUST",
+   "section": "6.1 统一素材规范",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:161",
+   "id": "R025",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Export format of the 3D pipeline (black or transparent). Project frames are RGB with fur-white rim by design (white shell).",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "不包含耳朵、头部外轮廓、身体、手、边框或文字。",
+   "strength": "MUST",
+   "section": "6.1 统一素材规范",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:162",
+   "id": "R026",
+   "status": "done",
+   "evidence": "faces are cut INSIDE the head ellipse; everything outside (ears, outline) is replaced by fur white - see assets/images/face_*.png and preview/shell_merge_simulation.png",
+   "reason": "",
+   "verify": {
+    "type": "manual",
+    "how": "look at preview/shell_merge_simulation.png: no ears / no head outline"
+   },
+   "auto": "manual",
+   "auto_msg": "needs a human/vision check: look at preview/shell_merge_simulation.png: no ears / no head outline"
+  },
+  {
+   "text": "表情变化只改变五官、眼神、局部光效和必要的细微位移。",
+   "strength": "MUST",
+   "section": "6.1 统一素材规范",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:163",
+   "id": "R027",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Production frames come from the 3D master / render pipeline (fixed camera, light, scale). The project only carries design-time placeholders cut from the user's board with one common crop.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "单帧尺寸 ｜ 220×220 或 256×256 ｜ 根据圆屏有效区域与裁切评估",
+   "strength": "MUST",
+   "section": "6.3 资源规格建议",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:188",
+   "id": "R028",
+   "status": "deviation",
+   "evidence": "",
+   "reason": "Design-time placeholders are 360x360 (upscaled ~1.9x from a ~220 px board render) so that SquareLine shows a full-screen face. Production frames: 220x220 or 256x256 RGB565 on the SD card, scaled by the runtime.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "动画帧率 ｜ 12–15 FPS ｜ 表情动画优先保证稳定",
+   "strength": "MUST",
+   "section": "6.3 资源规格建议",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:190",
+   "id": "R029",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Run-time performance targets (FPS, latency); verified on the device, not in the project file.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "普通 UI 帧率 ｜ 目标最高 30 FPS ｜ 依据实际负载调整",
+   "strength": "MUST",
+   "section": "6.3 资源规格建议",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:191",
+   "id": "R030",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Run-time performance targets (FPS, latency); verified on the device, not in the project file.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "建议目录结构：",
+   "strength": "SHOULD",
+   "section": "6.3 资源规格建议",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:196",
+   "id": "R031",
+   "status": "info",
+   "evidence": "",
+   "reason": "",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "建议将设备、语音、情绪、UI 和动画调度拆分，避免一个状态机承担全部逻辑。",
+   "strength": "SHOULD",
+   "section": "7. 状态机设计",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:222",
+   "id": "R032",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "Animation Scheduler：根据状态、优先级和资源可用性选择动画。",
+   "strength": "SHOULD",
+   "section": "7.2 其他状态机职责",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:262",
+   "id": "R033",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "建议采用模块化、低耦合结构：",
+   "strength": "SHOULD",
+   "section": "8. 软件架构建议（ESP-IDF + LVGL 9）",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:274",
+   "id": "R034",
+   "status": "info",
+   "evidence": "",
+   "reason": "",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "LVGL 对象只能由 UI Task 创建、修改和删除。",
+   "strength": "MUST",
+   "section": "8. 软件架构建议（ESP-IDF + LVGL 9）",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:290",
+   "id": "R035",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "音频、网络、AI、存储任务不得直接操作 LVGL 对象。",
+   "strength": "MUST_NOT",
+   "section": "8. 软件架构建议（ESP-IDF + LVGL 9）",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:291",
+   "id": "R036",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "SD 卡读取不得在 UI Task 中执行可能阻塞的长操作。",
+   "strength": "MUST_NOT",
+   "section": "8. 软件架构建议（ESP-IDF + LVGL 9）",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:293",
+   "id": "R037",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "建议统一定义 UI 事件，避免业务模块直接调用具体页面函数。",
+   "strength": "SHOULD",
+   "section": "9. 数据与事件接口建议",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:298",
+   "id": "R038",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "建议 UI 数据模型至少包含：",
+   "strength": "MUST",
+   "section": "9. 数据与事件接口建议",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:320",
+   "id": "R039",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "具体 API 应在硬件驱动和业务接口确认后固化；",
+   "strength": "MUST",
+   "section": "9. 数据与事件接口建议",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:336",
+   "id": "R040",
+   "status": "info",
+   "evidence": "",
+   "reason": "",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "触摸响应 ｜ 目标小于 100 ms",
+   "strength": "MUST",
+   "section": "10. 性能、功耗与稳定性要求",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:342",
+   "id": "R041",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Run-time performance targets (FPS, latency); verified on the device, not in the project file.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "页面切换 ｜ 目标小于 300 ms",
+   "strength": "MUST",
+   "section": "10. 性能、功耗与稳定性要求",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:343",
+   "id": "R042",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Run-time performance targets (FPS, latency); verified on the device, not in the project file.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "表情动画 ｜ 稳定 12–15 FPS",
+   "strength": "MUST",
+   "section": "10. 性能、功耗与稳定性要求",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:344",
+   "id": "R043",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Run-time performance targets (FPS, latency); verified on the device, not in the project file.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "普通 UI 动画 ｜ 目标最高 30 FPS，按负载调整",
+   "strength": "MUST",
+   "section": "10. 性能、功耗与稳定性要求",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:345",
+   "id": "R044",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Run-time performance targets (FPS, latency); verified on the device, not in the project file.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "异常恢复 ｜ 资源缺失时回退 Idle 默认表情",
+   "strength": "MUST",
+   "section": "10. 性能、功耗与稳定性要求",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:348",
+   "id": "R045",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Run-time fallback (missing frames -> idle). The project shows the intended behaviour in expression_manager ('缺失') and keeps face_01_idle as the fallback asset.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "屏幕中只出现熊猫脸部。",
+   "strength": "MUST",
+   "section": "11.1 视觉验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:355",
+   "id": "R046",
+   "status": "done",
+   "evidence": "every face screen = one full-screen face image + light overlays; time_weather is the only page with a small face (needs room for the time, layout from the concept board)",
+   "reason": "",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "屏幕中没有熊猫耳朵。",
+   "strength": "MUST",
+   "section": "11.1 视觉验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:356",
+   "id": "R047",
+   "status": "done",
+   "evidence": "faces are cut INSIDE the head ellipse; everything outside (ears, outline) is replaced by fur white - see assets/images/face_*.png and preview/shell_merge_simulation.png",
+   "reason": "",
+   "verify": {
+    "type": "manual",
+    "how": "look at preview/shell_merge_simulation.png: no ears / no head outline"
+   },
+   "auto": "manual",
+   "auto_msg": "needs a human/vision check: look at preview/shell_merge_simulation.png: no ears / no head outline"
+  },
+  {
+   "text": "屏幕中没有完整熊猫头部外轮廓或身体。",
+   "strength": "MUST",
+   "section": "11.1 视觉验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:357",
+   "id": "R048",
+   "status": "done",
+   "evidence": "no ears/outline/body/hands/bezel/frame objects exist; the paw frame (board #06) was excluded",
+   "reason": "",
+   "verify": {
+    "type": "asset_absent",
+    "name": "think_paw"
+   },
+   "auto": "pass",
+   "auto_msg": "no asset containing 'think_paw'"
+  },
+  {
+   "text": "没有表盘边框、圆形装饰框或屏幕外框。",
+   "strength": "MUST",
+   "section": "11.1 视觉验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:358",
+   "id": "R049",
+   "status": "done",
+   "evidence": "no ring/frame object in any screen; the edge glow was deleted",
+   "reason": "",
+   "verify": {
+    "type": "no_errors"
+   },
+   "auto": "pass",
+   "auto_msg": "lint has 0 error(s)"
+  },
+  {
+   "text": "黑色背景与产品外壳视觉融合。",
+   "strength": "MUST",
+   "section": "11.1 视觉验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:359",
+   "id": "R050",
+   "status": "deviation",
+   "evidence": "",
+   "reason": "User instruction after the document: the SHELL IS WHITE and the white fur fills the whole 360x360 screen and merges with it. The document's 'black background merges with the shell' is superseded; face screens use background SHELL and frames fade to shell white at the rim (measured rim brightness min 237, median 249).",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "所有表情的脸部比例、位置、材质和光照一致。",
+   "strength": "MUST",
+   "section": "11.1 视觉验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:360",
+   "id": "R051",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Production frames come from the 3D master / render pipeline (fixed camera, light, scale). The project only carries design-time placeholders cut from the user's board with one common crop.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "任何信息叠加均不遮挡关键五官。",
+   "strength": "MUST",
+   "section": "11.1 视觉验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:361",
+   "id": "R052",
+   "status": "done",
+   "evidence": "overlays only on the forehead (dots), chin (waveform, prompt pill) and top-right (badge); none over eyes/nose/mouth",
+   "reason": "",
+   "verify": {
+    "type": "manual",
+    "how": "look at preview/sheet_states.png"
+   },
+   "auto": "manual",
+   "auto_msg": "needs a human/vision check: look at preview/sheet_states.png"
+  },
+  {
+   "text": "单击、双击、长按和滑动手势符合定义。",
+   "strength": "MUST",
+   "section": "11.2 交互验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:364",
+   "id": "R053",
+   "status": "deviation",
+   "evidence": "",
+   "reason": "Single tap and the four swipes are wired. DOUBLE_CLICKED and LONG_PRESSED are not in the verified event set (they could make the project unopenable in SquareLine) - implement with LV_EVENT_DOUBLE_CLICKED / LV_EVENT_LONG_PRESSED in C on ui_home_face (see spec doc 4.1).",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "Listening、Thinking、Speaking 状态由真实业务事件驱动。",
+   "strength": "MUST",
+   "section": "11.2 交互验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:365",
+   "id": "R054",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "State changes are driven by UI_EVT_* business events in panda_ui. The project provides screens and stable object names; tap-to-advance is a design-time demo only.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "Speaking 状态可以被用户立即打断。",
+   "strength": "SHOULD",
+   "section": "11.2 交互验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:366",
+   "id": "R055",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Interrupt priority is runtime logic (speaking tap -> home is the demo wiring).",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "识别失败、AI 请求失败、TTS 失败和断网均有明确反馈。",
+   "strength": "MUST",
+   "section": "11.2 交互验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:367",
+   "id": "R056",
+   "status": "done",
+   "evidence": "asr_failed / llm_error / tts_error / network_lost screens, each with a short prompt",
+   "reason": "",
+   "verify": {
+    "type": "text_present",
+    "text": "网络已断开",
+    "screen": "network_lost"
+   },
+   "auto": "pass",
+   "auto_msg": "text '网络已断开' on network_lost"
+  },
+  {
+   "text": "页面切换和动画不会阻塞音频任务。",
+   "strength": "MUST",
+   "section": "11.2 交互验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:368",
+   "id": "R057",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "UI、状态机、音频、AI、存储和动画模块解耦。",
+   "strength": "MUST",
+   "section": "11.3 工程验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:371",
+   "id": "R058",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "LVGL 对象仅由 UI Task 操作。",
+   "strength": "MUST",
+   "section": "11.3 工程验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:372",
+   "id": "R059",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "动画资源按需加载，缓存有上限。",
+   "strength": "MUST",
+   "section": "11.3 工程验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:373",
+   "id": "R060",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "SD 卡异常或资源缺失时可以安全回退。",
+   "strength": "SHOULD",
+   "section": "11.3 工程验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:374",
+   "id": "R061",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Run-time fallback (missing frames -> idle). The project shows the intended behaviour in expression_manager ('缺失') and keeps face_01_idle as the fallback asset.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "低电量状态可降低动画与显示功耗。",
+   "strength": "SHOULD",
+   "section": "11.3 工程验收",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:375",
+   "id": "R062",
+   "status": "done",
+   "evidence": "battery_low screen (tired face + 电量低 15%)",
+   "reason": "",
+   "verify": {
+    "type": "screen_exists",
+    "screen": "battery_low"
+   },
+   "auto": "pass",
+   "auto_msg": "screen 'battery_low'"
+  },
+  {
+   "text": "实现 Panda AI Pendant UI 时，必须遵守以下规则：",
+   "strength": "MUST",
+   "section": "附录 A：交付给 AI 编程工具的强约束提示",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:390",
+   "id": "R063",
+   "status": "info",
+   "evidence": "",
+   "reason": "",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "使用 ESP-IDF + LVGL 9，不要混用 LVGL 8 API。",
+   "strength": "MUST_NOT",
+   "section": "附录 A：交付给 AI 编程工具的强约束提示",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:392",
+   "id": "R064",
+   "status": "done",
+   "evidence": "SquareLine project for LVGL 9.2.2 (spj info); no LVGL 8 API involved",
+   "reason": "",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "UI 资源画布按 360×360 px 设计，最终按实际 LCD 驱动参数适配。",
+   "strength": "MUST",
+   "section": "附录 A：交付给 AI 编程工具的强约束提示",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:393",
+   "id": "R065",
+   "status": "done",
+   "evidence": "spec canvas 360x360 CIRCLE (LCD driver parameters decide the final mapping)",
+   "reason": "",
+   "verify": {
+    "type": "canvas",
+    "width": 360,
+    "height": 360,
+    "shape": "CIRCLE"
+   },
+   "auto": "pass",
+   "auto_msg": "canvas is 360x360 CIRCLE"
+  },
+  {
+   "text": "屏幕只显示熊猫脸部；禁止绘制耳朵、完整头部轮廓、身体、手、表盘边框和装饰框。",
+   "strength": "MUST_NOT",
+   "section": "附录 A：交付给 AI 编程工具的强约束提示",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:394",
+   "id": "R066",
+   "status": "done",
+   "evidence": "no ears/outline/body/hands/bezel/frame objects exist; the paw frame (board #06) was excluded",
+   "reason": "",
+   "verify": {
+    "type": "asset_absent",
+    "name": "think_paw"
+   },
+   "auto": "pass",
+   "auto_msg": "no asset containing 'think_paw'"
+  },
+  {
+   "text": "黑色背景应尽可能与外壳融合；熊猫脸部采用统一母版，五官位置保持稳定。",
+   "strength": "MUST",
+   "section": "附录 A：交付给 AI 编程工具的强约束提示",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:395",
+   "id": "R067",
+   "status": "deviation",
+   "evidence": "",
+   "reason": "User instruction after the document: the SHELL IS WHITE and the white fur fills the whole 360x360 screen and merges with it. The document's 'black background merges with the shell' is superseded; face screens use background SHELL and frames fade to shell white at the rim (measured rim brightness min 237, median 249).",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "不要将每个业务页面制作成一张不可交互的全屏静态图；熊猫脸部动画、实时数据和交互控件应分层实现。",
+   "strength": "MUST_NOT",
+   "section": "附录 A：交付给 AI 编程工具的强约束提示",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:396",
+   "id": "R068",
+   "status": "done",
+   "evidence": "faces are one IMAGE object per screen; waveform bars, dots, prompt pill, badge, switches are real LVGL objects",
+   "reason": "",
+   "verify": {
+    "type": "object_exists",
+    "screen": "listening",
+    "object": "wave_1"
+   },
+   "auto": "pass",
+   "auto_msg": "listening/wave_1"
+  },
+  {
+   "text": "所有 LVGL 对象只能由 UI Task 操作；跨任务通过队列或事件机制通信。",
+   "strength": "MUST",
+   "section": "附录 A：交付给 AI 编程工具的强约束提示",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:397",
+   "id": "R069",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "动画从 SD 卡按需读取，采用预加载和有限缓存，不得一次性加载全部帧。",
+   "strength": "MUST_NOT",
+   "section": "附录 A：交付给 AI 编程工具的强约束提示",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:398",
+   "id": "R070",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "语音状态由真实业务事件驱动，支持打断、取消、超时和错误恢复。",
+   "strength": "MUST",
+   "section": "附录 A：交付给 AI 编程工具的强约束提示",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:399",
+   "id": "R071",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "State changes are driven by UI_EVT_* business events in panda_ui. The project provides screens and stable object names; tap-to-advance is a design-time demo only.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "模块应低耦合、可扩展，避免 UI 直接依赖具体 ASR/LLM/TTS 服务商 SDK。",
+   "strength": "MUST",
+   "section": "附录 A：交付给 AI 编程工具的强约束提示",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:400",
+   "id": "R072",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Firmware architecture (tasks, queues, scheduler, SD loading, data model). Documented for panda_ui in the spec doc section 9.1; not part of the SquareLine project.",
+   "verify": null,
+   "auto": null
+  },
+  {
+   "text": "对资源缺失、SD 卡错误、网络断开和低电量等情况提供明确且安全的回退行为。",
+   "strength": "MUST",
+   "section": "附录 A：交付给 AI 编程工具的强约束提示",
+   "source": "Panda_AI_Pendant_UI_需求规格说明书_V2_0.md:401",
+   "id": "R073",
+   "status": "out_of_scope",
+   "evidence": "",
+   "reason": "Run-time fallback (missing frames -> idle). The project shows the intended behaviour in expression_manager ('缺失') and keeps face_01_idle as the fallback asset.",
+   "verify": null,
+   "auto": null
+  }
+ ]
+}
