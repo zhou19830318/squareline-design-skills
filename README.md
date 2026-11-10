@@ -8,6 +8,42 @@ and provably follows the requirements. 把**概念图 + 需求文档**变成能�
 - pre-build lint with coded fixes, real-LVGL text audit (`truth`) / 构建前体检与真 LVGL 真值审计
 - a `slx next` workflow driver, so weaker LLMs can follow the pipeline too / 工作流驱动，适配各类大模型
 
+## What it looks like / 效果
+
+| Input: concept image / 输入：概念图 | Output: reverse-rendered `.spj` / 输出：生成工程反渲染 |
+|---|---|
+| ![concept image](docs/images/concept-input.png) | ![generated project](docs/images/generated-output.png) |
+
+The two screens above are built end-to-end from `tests/fixtures/focusring_concept.png` with
+`slx.py init → assets → check → build → verify`; the `.spj` was never hand-edited. The output rings are
+single-colour because the engine only has `PANEL / LABEL / IMAGE / ARC` — the concept's gradient and glow
+are not reproduced. Figures are the toolkit's own reverse render, not mockups.
+上面两屏由 `tests/fixtures/focusring_concept.png` 经 `init → assets → check → build → verify` 完整生成，`.spj`
+没有手改过。生成图的进度环是单色的：引擎只有 `PANEL / LABEL / IMAGE / ARC`，概念图里的渐变和发光不会复刻。
+图片是工具链的反渲染结果，不是示意图。
+
+## Generated files / 生成的工程文件
+
+The deliverable is `squareline/<Name>/<Name>.spj`; open it with SquareLine Studio 1.6.2 → Open Project.
+Font subsets, PNGs and editor metadata are written next to it:
+
+```
+<Name>/
+├── UI需求清单.md  <Name>设计规格文档.md      requirements + design spec (source of truth)
+├── <Name>.spec.json  assets.manifest.json   declarative layout + asset manifest
+├── assets/images/*.png                      rasterised icons / baked images
+├── preview/project_preview.html             reverse-rendered preview (screenshots, diffs)
+├── requirements.json  需求追溯矩阵.md        requirement traceability (after `reqs extract/report`)
+└── squareline/<Name>/                       ← deliverable project
+    ├── <Name>.spj                           project file — open this one
+    ├── <Name>.sll  <Name>.slp  Themes.slt  project.info
+    └── assets/
+        ├── *.png                            images referenced by the project
+        └── ui_font_*.c/.bin/.fcfg           font subsets used by the labels
+```
+
+Counts from the demo above: 26 files in `squareline/`, 21 objects, 6 images, 4 font subsets, 0 validation errors.
+
 ## Install (Claude Code / Cowork)
 
 ```
